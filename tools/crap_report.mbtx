@@ -1,0 +1,69 @@
+// CRAP 指标报告生成器
+// CRAP(m) = comp(m)² + comp(m) × (1 - cov(m))
+// 覆盖率数据来自 `moon coverage analyze`（运行后手动同步本表的 covered 字段）
+
+fn main {
+  // (函数名, 圈复杂度, 是否覆盖)
+  let funcs : Array[(String, Int, Bool)] = [
+    ("dbl_abs", 2, true),
+    ("dbl_approx_eq", 1, true),
+    ("dbl_approx_zero", 1, true),
+    ("Double::approx_eq", 1, true),
+    ("Double::approx_zero", 1, true),
+    ("Double::sq", 1, true),
+    ("Double::clamp", 3, true),
+    ("Double::lerp", 1, true),
+    ("Double::zero", 1, true),
+    ("Double::one", 1, true),
+    ("Double::abs", 1, true),
+    ("Cpx::new", 1, true),
+    ("Cpx::from_real", 1, true),
+    ("Cpx::conj", 1, true),
+    ("Cpx::norm_sq", 1, true),
+    ("Cpx::norm", 1, true),
+    ("Cpx::inv", 2, true),
+    ("Cpx::add", 1, true),
+    ("Cpx::sub", 1, true),
+    ("Cpx::mul", 1, true),
+    ("Cpx::div", 2, true),
+    ("Cpx::neg", 1, true),
+    ("Cpx::approx_eq", 1, true),
+    ("Cpx::approx_zero", 1, true),
+    ("Cpx::sq", 1, true),
+    ("Cpx::clamp", 1, true),
+    ("Cpx::lerp", 1, true),
+    ("Cpx::zero", 1, true),
+    ("Cpx::one", 1, true),
+    ("Cpx::abs", 1, true),
+  ]
+  println("=== CRAP 指标报告 (util 包) ===")
+  println("公式: CRAP(m) = comp^2 + comp * (1 - cov)")
+  println("")
+  println("函数                  复杂度  覆盖率  CRAP    风险")
+  println("--------------------  ------  ------  ------  ----")
+  let mut total_crap : Double = 0.0
+  let mut high_risk = 0
+  for func in funcs {
+    let (name, comp, covered) = func
+    let cov : Double = if covered { 1.0 } else { 0.0 }
+    let comp_f = comp.to_double()
+    let crap = comp_f * comp_f + comp_f * (1.0 - cov)
+    total_crap = total_crap + crap
+    let risk = if crap <= 1.0 {
+      "低"
+    } else if crap <= 5.0 {
+      "中"
+    } else {
+      "高"
+    }
+    if crap > 5.0 {
+      high_risk = high_risk + 1
+    }
+    println("\{name}  \{comp}       \{cov}     \{crap}    \{risk}")
+  }
+  println("")
+  println("总 CRAP: \{total_crap}")
+  println("高风险函数数: \{high_risk}")
+  println("")
+  println("建议: Double::clamp 复杂度 3 为唯一高风险，可考虑拆分或补充分支测试")
+}

@@ -1,0 +1,76 @@
+// 变异测试脚本
+// 对 util 包源码应用预定义变异，运行 moon test 验证测试套件能否捕获
+// 变异分数 MS = killed / total × 100%
+
+import {
+  "moonbitlang/async",
+  "moonbitlang/async/shell",
+}
+
+async fn main {
+  // 变异点：(文件, 旧字符串, 新字符串, 描述)
+  let mutations : Array[(String, String, String, String)] = [
+    ("util/cpx.mbt", "self.re + other.re", "self.re - other.re", "Cpx::add re: + -> -"),
+    ("util/cpx.mbt", "self.im + other.im", "self.im - other.im", "Cpx::add im: + -> -"),
+    (
+      "util/cpx.mbt",
+      "self.re * self.re + self.im * self.im",
+      "self.re * self.re - self.im * self.im",
+      "Cpx::norm_sq: + -> -",
+    ),
+    ("util/num.mbt", "dbl_abs(self - other)", "dbl_abs(self + other)", "approx_eq: - -> +"),
+    ("util/cpx.mbt", "im: -self.im", "im: self.im", "Cpx::conj: drop neg"),
+    (
+      "util/cpx.mbt",
+      "re: self.re * inv_d, im: -self.im * inv_d",
+      "re: -self.re * inv_d, im: self.im * inv_d",
+      "Cpx::inv: flip sign",
+    ),
+    (
+      "util/cpx.mbt",
+      "self.re * other.re - self.im * other.im",
+      "self.re * other.re + self.im * other.im",
+      "Cpx::mul re: - -> +",
+    ),
+    (
+      "util/cpx.mbt",
+      "self.re * other.im + self.im * other.re",
+      "self.re * other.im - self.im * other.re",
+      "Cpx::mul im: + -> -",
+    ),
+  ]
+  let backup_py = "import sys, shutil; shutil.copy(sys.argv[1], sys.argv[2])"
+  let replace_py = "import sys; p,o,n=sys.argv[1:4]; c=open(p,encoding='utf-8').read(); open(p,'w',encoding='utf-8').write(c.replace(o,n))"
+  let restore_py = "import sys, shutil; shutil.copy(sys.argv[1], sys.argv[2])"
+  let mut killed = 0
+  let mut survived = 0
+  println("=== 变异测试报告 ===")
+  println("变异体 | 状态")
+  println("-------|------")
+  for m in mutations {
+    let (file, old, new, desc) = m
+    let bak = file + ".bak"
+    // 备份
+    @shell.Cmd("python3", ["-c", backup_py, file, bak]).run()
+    // 替换
+    @shell.Cmd("python3", ["-c", replace_py, file, old, new]).run()
+    // 运行 moon test，捕获输出
+    let output = @shell.Cmd("moon", ["test"]).output()
+    let code = output.exit_code()
+    // 恢复
+    @shell.Cmd("python3", ["-c", restore_py, bak, file]).run()
+    // 判断
+    if code != 0 {
+      killed = killed + 1
+      println("\{desc} | KILLED")
+    } else {
+      survived = survived + 1
+      println("\{desc} | SURVIVED")
+    }
+  }
+  let total = mutations.length()
+  let ms = killed.to_double() / total.to_double() * 100.0
+  println("")
+  println("变异分数 MS = \{killed}/\{total} = \{ms}%")
+  println("杀死: \{killed}, 存活: \{survived}")
+}

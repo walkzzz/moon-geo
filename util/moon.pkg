@@ -1,0 +1,7 @@
+// util 包：基础数值工具层（第-1层，终身稳定）
+// 依赖：moonbitlang/core/debug（Cpx Debug 提升）、moonbitlang/core/math（三角函数）
+
+import {
+  "moonbitlang/core/debug",
+  "moonbitlang/core/math",
+}

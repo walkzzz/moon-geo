@@ -1,0 +1,169 @@
+// Generated using `moon info`, DON'T EDIT IT
+package "walkzzz/moon-geo/util"
+
+import {
+  "moonbitlang/core/debug",
+}
+
+// Values
+pub const EPS : Double = 1.0e-8
+
+pub const MIN_POSITIVE : Double = 1.0e-12
+
+pub fn dbl_approx_eq(Double, Double, Double) -> Bool
+
+pub fn dbl_approx_zero(Double, Double) -> Bool
+
+// Errors
+pub(all) suberror CpxError {
+  ZeroInverse
+  ZeroDivide
+}
+
+pub(all) suberror MatError {
+  Singular
+}
+
+// Types and methods
+pub(all) struct Cpx {
+  re : Double
+  im : Double
+} derive(Eq, @debug.Debug)
+pub fn Cpx::abs(Self) -> Double
+pub fn Cpx::add(Self, Self) -> Self
+pub fn Cpx::approx_eq(Self, Self, Double) -> Bool
+pub fn Cpx::approx_zero(Self, Double) -> Bool
+pub fn Cpx::clamp(Self, Self, Self) -> Self
+pub fn Cpx::conj(Self) -> Self
+pub fn Cpx::div(Self, Self) -> Self raise CpxError
+pub fn Cpx::equal(Self, Self) -> Bool
+pub fn Cpx::from_real(Double) -> Self
+pub fn Cpx::inv(Self) -> Self raise CpxError
+pub fn Cpx::lerp(Self, Self, Double) -> Self
+pub fn Cpx::mul(Self, Self) -> Self
+pub fn Cpx::neg(Self) -> Self
+pub fn Cpx::new(Double, Double) -> Self
+pub fn Cpx::norm(Self) -> Double
+pub fn Cpx::norm_sq(Self) -> Double
+pub fn Cpx::not_equal(Self, Self) -> Bool
+pub fn Cpx::one() -> Self
+pub fn Cpx::sq(Self) -> Self
+pub fn Cpx::sub(Self, Self) -> Self
+pub fn Cpx::to_repr(Self) -> @debug.Repr
+pub fn Cpx::zero() -> Self
+
+pub(all) struct Mat3 {
+  m : Array[Double]
+} derive(@debug.Debug)
+pub fn Mat3::approx_eq(Self, Self, Double) -> Bool
+pub fn Mat3::approx_zero(Self, Double) -> Bool
+pub fn Mat3::det(Self) -> Double
+pub fn Mat3::get(Self, Int32, Int32) -> Double
+pub fn Mat3::identity() -> Self
+pub fn Mat3::inv(Self) -> Self raise MatError
+pub fn Mat3::mul_mat(Self, Self) -> Self
+pub fn Mat3::mul_vec(Self, Vec3) -> Vec3
+pub fn Mat3::new(Double, Double, Double, Double, Double, Double, Double, Double, Double) -> Self
+pub fn Mat3::to_repr(Self) -> @debug.Repr
+pub fn Mat3::transpose(Self) -> Self
+
+pub(all) struct Mat4 {
+  m : Array[Double]
+} derive(@debug.Debug)
+pub fn Mat4::approx_eq(Self, Self, Double) -> Bool
+pub fn Mat4::approx_zero(Self, Double) -> Bool
+pub fn Mat4::identity() -> Self
+pub fn Mat4::mul_mat(Self, Self) -> Self
+pub fn Mat4::mul_vec(Self, Vec3) -> Vec3
+pub fn Mat4::new(Double, Double, Double, Double, Double, Double, Double, Double, Double, Double, Double, Double, Double, Double, Double, Double) -> Self
+pub fn Mat4::scaling(Double, Double, Double) -> Self
+pub fn Mat4::to_repr(Self) -> @debug.Repr
+pub fn Mat4::translation(Double, Double, Double) -> Self
+pub fn Mat4::transpose(Self) -> Self
+
+pub(all) struct Quat {
+  w : Double
+  x : Double
+  y : Double
+  z : Double
+} derive(Eq, @debug.Debug)
+pub fn Quat::approx_eq(Self, Self, Double) -> Bool
+pub fn Quat::approx_zero(Self, Double) -> Bool
+pub fn Quat::conjugate(Self) -> Self
+pub fn Quat::equal(Self, Self) -> Bool
+pub fn Quat::from_axis_angle(Vec3, Double) -> Self
+pub fn Quat::from_euler(Double, Double, Double) -> Self
+pub fn Quat::identity() -> Self
+pub fn Quat::mul(Self, Self) -> Self
+pub fn Quat::new(Double, Double, Double, Double) -> Self
+pub fn Quat::norm(Self) -> Double
+pub fn Quat::norm_sq(Self) -> Double
+pub fn Quat::normalize(Self) -> Self
+pub fn Quat::not_equal(Self, Self) -> Bool
+pub fn Quat::slerp(Self, Self, Double) -> Self
+pub fn Quat::to_mat4(Self) -> Mat4
+pub fn Quat::to_repr(Self) -> @debug.Repr
+
+pub(all) struct Vec2 {
+  x : Double
+  y : Double
+} derive(Eq, @debug.Debug)
+pub fn Vec2::add(Self, Self) -> Self
+pub fn Vec2::approx_eq(Self, Self, Double) -> Bool
+pub fn Vec2::approx_zero(Self, Double) -> Bool
+pub fn Vec2::cross(Self, Self) -> Double
+pub fn Vec2::dot(Self, Self) -> Double
+pub fn Vec2::equal(Self, Self) -> Bool
+pub fn Vec2::len(Self) -> Double
+pub fn Vec2::len_sq(Self) -> Double
+pub fn Vec2::neg(Self) -> Self
+pub fn Vec2::new(Double, Double) -> Self
+pub fn Vec2::normalize(Self) -> Self
+pub fn Vec2::not_equal(Self, Self) -> Bool
+pub fn Vec2::perp(Self) -> Self
+pub fn Vec2::scale(Self, Double) -> Self
+pub fn Vec2::sub(Self, Self) -> Self
+pub fn Vec2::to_repr(Self) -> @debug.Repr
+pub fn Vec2::zero() -> Self
+
+pub(all) struct Vec3 {
+  x : Double
+  y : Double
+  z : Double
+} derive(Eq, @debug.Debug)
+pub fn Vec3::add(Self, Self) -> Self
+pub fn Vec3::approx_eq(Self, Self, Double) -> Bool
+pub fn Vec3::approx_zero(Self, Double) -> Bool
+pub fn Vec3::cross(Self, Self) -> Self
+pub fn Vec3::dot(Self, Self) -> Double
+pub fn Vec3::equal(Self, Self) -> Bool
+pub fn Vec3::len(Self) -> Double
+pub fn Vec3::len_sq(Self) -> Double
+pub fn Vec3::neg(Self) -> Self
+pub fn Vec3::new(Double, Double, Double) -> Self
+pub fn Vec3::normalize(Self) -> Self
+pub fn Vec3::not_equal(Self, Self) -> Bool
+pub fn Vec3::scale(Self, Double) -> Self
+pub fn Vec3::sub(Self, Self) -> Self
+pub fn Vec3::to_repr(Self) -> @debug.Repr
+pub fn Vec3::zero() -> Self
+
+// Type aliases
+
+// Traits
+pub trait ApproxEq {
+  fn approx_eq(Self, Self, Double) -> Bool
+  fn approx_zero(Self, Double) -> Bool
+}
+
+pub trait Field : NumExt + ApproxEq {
+  fn zero() -> Self
+  fn one() -> Self
+  fn abs(Self) -> Double
+}
+
+pub trait NumExt {
+  fn sq(Self) -> Self
+  fn clamp(Self, Self, Self) -> Self
+  fn lerp(Self, Self, Double) -> Self
+}
