@@ -94,6 +94,13 @@ pub enum SpaceKind {
   Raster2
 }
 
+pub struct StereoMap {
+  dummy : Unit
+}
+pub fn StereoMap::new() -> Self
+pub fn StereoMap::to_plane(Self, Euclid3) -> Complex2 raise @util.GeoError
+pub fn StereoMap::to_sphere(Self, Complex2) -> Euclid3
+
 // Type aliases
 
 // Traits
