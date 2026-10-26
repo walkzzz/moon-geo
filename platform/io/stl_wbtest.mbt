@@ -448,3 +448,49 @@ test "binary STL 负向：部分截断三角形数据" {
     None => assert_true(true)
   }
 }
+
+///|
+test "STL ASCII 极端值往返-大数" {
+  let m = @mesh.IndexedMesh::new()
+  let (m1, i0) = m.add_vertex(123456789.123456789, 0.0, 0.0)
+  let (m2, i1) = m1.add_vertex(987654321.987654321, 0.0, 0.0)
+  let (m3, i2) = m2.add_vertex(0.0, 111111111.111111111, 0.0)
+  let m4 = m3.add_triangle(i0, i1, i2)
+  let stl = mesh_to_stl_ascii(m4, "test")
+  match safe_stl_read(stl) {
+    Some(m5) => {
+      match m5.get_vertex(0) {
+        Some(v) => assert_true(approx(v.x(), 123456789.123456789, 1.0))
+        None => assert_true(false)
+      }
+      match m5.get_vertex(1) {
+        Some(v) => assert_true(approx(v.x(), 987654321.987654321, 1.0))
+        None => assert_true(false)
+      }
+    }
+    None => assert_true(false)
+  }
+}
+
+///|
+test "STL ASCII 极端值往返-小数" {
+  let m = @mesh.IndexedMesh::new()
+  let (m1, i0) = m.add_vertex(1.0e-10, 0.0, 0.0)
+  let (m2, i1) = m1.add_vertex(1.5e-8, 0.0, 0.0)
+  let (m3, i2) = m2.add_vertex(0.0, 3.0e-9, 0.0)
+  let m4 = m3.add_triangle(i0, i1, i2)
+  let stl = mesh_to_stl_ascii(m4, "test")
+  match safe_stl_read(stl) {
+    Some(m5) => {
+      match m5.get_vertex(0) {
+        Some(v) => assert_true(approx(v.x(), 1.0e-10, 1.0e-10))
+        None => assert_true(false)
+      }
+      match m5.get_vertex(1) {
+        Some(v) => assert_true(approx(v.x(), 1.5e-8, 1.0e-9))
+        None => assert_true(false)
+      }
+    }
+    None => assert_true(false)
+  }
+}

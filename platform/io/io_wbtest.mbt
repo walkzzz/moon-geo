@@ -797,3 +797,97 @@ test "JSON 解析错误-残缺 \\uXXXX" {
     None => assert_true(true)
   }
 }
+
+///|
+test "GeoJSON 读 GeometryCollection" {
+  let json = "{\"type\":\"Feature\",\"geometry\":{\"type\":\"GeometryCollection\",\"geometries\":[{\"type\":\"Point\",\"coordinates\":[1,2]},{\"type\":\"LineString\",\"coordinates\":[[0,0],[1,1]]}]},\"properties\":{}}"
+  match safe_feature(json) {
+    Some(f) =>
+      match f.geometry() {
+        Some(@data.GeometryCollection(geoms)) => {
+          assert_eq(geoms.length(), 2)
+          assert_eq(geoms[0].type_name(), "Point")
+          assert_eq(geoms[1].type_name(), "LineString")
+        }
+        _ => assert_true(false)
+      }
+    None => assert_true(false)
+  }
+}
+
+///|
+test "GeoJSON 写 GeometryCollection" {
+  let crs = @crs.wgs84_geographic()
+  let f = @data.Feature::new(crs).with_geometry(
+    @data.GeometryCollection([
+      @data.Point(@alg.Pt2::new(1.0, 2.0)),
+      @data.LineString([@alg.Pt2::new(0.0, 0.0), @alg.Pt2::new(1.0, 1.0)]),
+    ]),
+  )
+  let json = feature_to_geojson(f)
+  assert_true(json.contains("\"type\":\"GeometryCollection\""))
+  assert_true(json.contains("\"geometries\":["))
+}
+
+///|
+test "GeoJSON GeometryCollection 往返" {
+  let original = @data.GeometryCollection([
+    @data.Point(@alg.Pt2::new(1.0, 2.0)),
+    @data.LineString([@alg.Pt2::new(0.0, 0.0), @alg.Pt2::new(3.0, 4.0)]),
+  ])
+  let json = geometry_to_geojson(original)
+  let feature_json = "{\"type\":\"Feature\",\"geometry\":" + json + ",\"properties\":{}}"
+  match safe_feature(feature_json) {
+    Some(f) =>
+      match f.geometry() {
+        Some(@data.GeometryCollection(geoms)) => {
+          assert_eq(geoms.length(), 2)
+          assert_eq(geoms[0].type_name(), "Point")
+          assert_eq(geoms[1].type_name(), "LineString")
+        }
+        _ => assert_true(false)
+      }
+    None => assert_true(false)
+  }
+}
+
+///|
+test "JSON 递归深度超限 raise FormatError" {
+  let mut json = ""
+  let mut i = 0
+  while i < 1002 {
+    json += "["
+    i += 1
+  }
+  i = 0
+  while i < 1002 {
+    json += "]"
+    i += 1
+  }
+  match safe_parse(json) {
+    Some(_) => assert_true(false)
+    None => assert_true(true)
+  }
+}
+
+///|
+test "GeoJSON 读 GeometryCollection 空" {
+  let json = "{\"type\":\"Feature\",\"geometry\":{\"type\":\"GeometryCollection\",\"geometries\":[]},\"properties\":{}}"
+  match safe_feature(json) {
+    Some(f) =>
+      match f.geometry() {
+        Some(@data.GeometryCollection(geoms)) => assert_eq(geoms.length(), 0)
+        _ => assert_true(false)
+      }
+    None => assert_true(false)
+  }
+}
+
+///|
+test "GeoJSON 读 GeometryCollection 缺 geometries" {
+  let json = "{\"type\":\"Feature\",\"geometry\":{\"type\":\"GeometryCollection\"},\"properties\":{}}"
+  match safe_feature(json) {
+    Some(_) => assert_true(false)
+    None => assert_true(true)
+  }
+}

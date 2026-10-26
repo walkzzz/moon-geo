@@ -66,6 +66,7 @@ fn is_shared_edge(
 /// Delaunay 三角剖分（Bowyer-Watson 算法）
 /// 输入：点集 Array[@alg.Pt2]
 /// 输出：三角形列表 Array[(i, j, k)]，i/j/k 为点索引
+/// ⚠️ 不保证退化输入（共圆/共线/近乎重合点）下正确——in_circumcircle 用裸浮点比较，无精确谓词
 pub fn delaunay(points : Array[@alg.Pt2]) -> Array[(Int32, Int32, Int32)] {
   let n = points.length()
   if n < 3 {
