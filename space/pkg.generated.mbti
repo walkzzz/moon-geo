@@ -59,6 +59,26 @@ pub fn Euclid3::x(Self) -> Double
 pub fn Euclid3::y(Self) -> Double
 pub fn Euclid3::z(Self) -> Double
 
+pub struct Proj3 {
+  x : Double
+  y : Double
+  z : Double
+  w : Double
+}
+pub fn Proj3::dot(Self, Self) -> Double
+pub fn Proj3::from_affine(Double, Double, Double) -> Self
+pub fn Proj3::is_at_infinity(Self) -> Bool
+pub fn Proj3::new(Double, Double, Double, Double) -> Self
+pub fn Proj3::norm(Self) -> Double
+pub fn Proj3::normalize(Self) -> Self
+pub fn Proj3::scale(Self, Double) -> Self
+pub fn Proj3::space_kind(Self) -> SpaceKind
+pub fn Proj3::to_affine(Self) -> (Double, Double, Double) raise @util.GeoError
+pub fn Proj3::w(Self) -> Double
+pub fn Proj3::x(Self) -> Double
+pub fn Proj3::y(Self) -> Double
+pub fn Proj3::z(Self) -> Double
+
 pub struct Project3To2 {
   dummy : Unit
 }

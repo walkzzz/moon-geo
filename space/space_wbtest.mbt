@@ -218,3 +218,143 @@ test "FAKE: Complex2 field completeness" {
   let _ = @atop.MetricSpace::distance(z, z)
   let _ = Space::space_kind(z)
 }
+
+///|
+test "Proj3 construction" {
+  let p = Proj3::new(1.0, 2.0, 3.0, 4.0)
+  assert_true(@util.dbl_approx_eq(p.x(), 1.0, @util.EPS))
+  assert_true(@util.dbl_approx_eq(p.y(), 2.0, @util.EPS))
+  assert_true(@util.dbl_approx_eq(p.z(), 3.0, @util.EPS))
+  assert_true(@util.dbl_approx_eq(p.w(), 4.0, @util.EPS))
+}
+
+///|
+test "Proj3 from_affine" {
+  let p = Proj3::from_affine(2.0, 3.0, 4.0)
+  assert_true(@util.dbl_approx_eq(p.x(), 2.0, @util.EPS))
+  assert_true(@util.dbl_approx_eq(p.y(), 3.0, @util.EPS))
+  assert_true(@util.dbl_approx_eq(p.z(), 4.0, @util.EPS))
+  assert_true(@util.dbl_approx_eq(p.w(), 1.0, @util.EPS))
+}
+
+///|
+test "Proj3 is_at_infinity" {
+  let finite = Proj3::from_affine(1.0, 2.0, 3.0)
+  assert_false(finite.is_at_infinity())
+  let infinite = Proj3::new(1.0, 2.0, 3.0, 0.0)
+  assert_true(infinite.is_at_infinity())
+}
+
+///|
+test "Proj3 to_affine" {
+  let p = Proj3::new(2.0, 4.0, 6.0, 2.0)
+  try {
+    let (x, y, z) = p.to_affine()
+    assert_true(@util.dbl_approx_eq(x, 1.0, @util.EPS))
+    assert_true(@util.dbl_approx_eq(y, 2.0, @util.EPS))
+    assert_true(@util.dbl_approx_eq(z, 3.0, @util.EPS))
+  } catch {
+    _ => assert_true(false)
+  }
+}
+
+///|
+test "Proj3 to_affine infinity raises" {
+  let p = Proj3::new(1.0, 2.0, 3.0, 0.0)
+  try {
+    let _ = p.to_affine()
+    assert_true(false)
+  } catch {
+    _ => assert_true(true)
+  }
+}
+
+///|
+test "Proj3 dot" {
+  let p = Proj3::new(1.0, 2.0, 3.0, 4.0)
+  let q = Proj3::new(2.0, 3.0, 4.0, 5.0)
+  // 1*2 + 2*3 + 3*4 + 4*5 = 2 + 6 + 12 + 20 = 40
+  assert_true(@util.dbl_approx_eq(p.dot(q), 40.0, @util.EPS))
+}
+
+///|
+test "Proj3 norm" {
+  let p = Proj3::new(1.0, 2.0, 2.0, 0.0)
+  // sqrt(1 + 4 + 4 + 0) = 3
+  assert_true(@util.dbl_approx_eq(p.norm(), 3.0, @util.EPS))
+}
+
+///|
+test "Proj3 normalize" {
+  let p = Proj3::new(3.0, 0.0, 0.0, 0.0)
+  let pn = p.normalize()
+  assert_true(@util.dbl_approx_eq(pn.norm(), 1.0, @util.EPS))
+}
+
+///|
+test "Proj3 scale" {
+  let p = Proj3::new(1.0, 2.0, 3.0, 1.0)
+  let ps = p.scale(2.0)
+  assert_true(@util.dbl_approx_eq(ps.x(), 2.0, @util.EPS))
+  assert_true(@util.dbl_approx_eq(ps.y(), 4.0, @util.EPS))
+  assert_true(@util.dbl_approx_eq(ps.z(), 6.0, @util.EPS))
+  assert_true(@util.dbl_approx_eq(ps.w(), 2.0, @util.EPS))
+}
+
+///|
+test "Proj3 Space dim" {
+  let p = Proj3::from_affine(1.0, 2.0, 3.0)
+  assert_eq(@atop.Dim::dim(p), 3)
+}
+
+///|
+test "Proj3 Space distance same point" {
+  let p = Proj3::from_affine(1.0, 2.0, 3.0)
+  let d = @atop.MetricSpace::distance(p, p)
+  assert_true(@util.dbl_approx_eq(d, 0.0, @util.EPS))
+}
+
+///|
+test "Proj3 Space distance scaled" {
+  let p1 = Proj3::new(1.0, 2.0, 3.0, 1.0)
+  let p2 = Proj3::new(2.0, 4.0, 6.0, 2.0) // same projective point
+  let d = @atop.MetricSpace::distance(p1, p2)
+  assert_true(@util.dbl_approx_eq(d, 0.0, @util.EPS))
+}
+
+///|
+test "Proj3 Space space_kind" {
+  let p = Proj3::from_affine(1.0, 2.0, 3.0)
+  assert_true(Space::space_kind(p) is SpaceKind::Projective3)
+  assert_true(p.space_kind() is SpaceKind::Projective3)
+}
+
+///|
+test "E2E: affine -> projective -> affine round-trip" {
+  let p = Proj3::from_affine(2.0, 3.0, 5.0)
+  try {
+    let (x, y, z) = p.to_affine()
+    assert_true(@util.dbl_approx_eq(x, 2.0, @util.EPS))
+    assert_true(@util.dbl_approx_eq(y, 3.0, @util.EPS))
+    assert_true(@util.dbl_approx_eq(z, 5.0, @util.EPS))
+  } catch {
+    _ => assert_true(false)
+  }
+}
+
+///|
+test "FAKE: Proj3 field completeness" {
+  let p = Proj3::new(1.0, 2.0, 3.0, 4.0)
+  let _ = p.x()
+  let _ = p.y()
+  let _ = p.z()
+  let _ = p.w()
+  let _ = p.is_at_infinity()
+  let _ = p.dot(p)
+  let _ = p.norm()
+  let _ = p.normalize()
+  let _ = p.scale(2.0)
+  let _ = @atop.Dim::dim(p)
+  let _ = @atop.MetricSpace::distance(p, p)
+  let _ = Space::space_kind(p)
+}

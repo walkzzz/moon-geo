@@ -61,7 +61,7 @@
 | 月 | 版本 | 任务包 | 交付 | 验收 |
 |----|------|--------|------|------|
 | 01 | `0.1.2.0` | space Complex2 复空间 | 复平面几何 | 复空间单测 ✅ |
-| 02 | `0.1.2.1` | space Proj3 射影空间 | 齐次坐标/无穷远点 | 射影运算测试 |
+| 02 | `0.1.2.1` | space Proj3 射影空间 | 齐次坐标/无穷远点 | 射影运算测试 ✅ |
 | 03 | `0.1.2.2` | space 球极投影 StereoMap | 复↔3D 保圆映射 | 球极投影保圆性测试 |
 | 04 | `0.1.2.3` | **platform/crs CRS + 常用投影** | WGS84/UTM/CGCS2000 + 投影变换 | CRS 转换测试 |
 | 05 | `0.1.2.4` | **platform/data Feature/Layer/Dataset 要素模型** | Feature=Geometry+Attributes+CRS | 要素模型测试 |

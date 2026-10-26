@@ -77,8 +77,9 @@ README 中英文，默认中文。当前 `README.mbt.md` 为项目 README。
 | `0.1.1.11` | brep Shell/Solid + check + repair + BRep API | ✅ |
 | `0.1.1.12` | 核心 Trait 冻结 + ADR-005 + 稳定性测试 | ✅ |
 | `0.1.2.0` | space Complex2 复空间 + 复平面几何 | ✅ |
+| `0.1.2.1` | space Proj3 射影空间 + 齐次坐标 + 无穷远点 | ✅ |
 
-测试：299 通过 · CRAP：490 · 变异分数：100%
+测试：314 通过 · CRAP：490 · 变异分数：100%
 
 ---
 
