@@ -1,0 +1,35 @@
+// Generated using `moon info`, DON'T EDIT IT
+package "walkzzz/moon-geo/space"
+
+import {
+  "walkzzz/moon-geo/atop",
+}
+
+// Values
+
+// Errors
+
+// Types and methods
+pub struct Euclid2 {
+  x : Double
+  y : Double
+}
+pub fn Euclid2::new(Double, Double) -> Self
+pub fn Euclid2::x(Self) -> Double
+pub fn Euclid2::y(Self) -> Double
+
+pub enum SpaceKind {
+  Euclidean2
+  Euclidean3
+  Complex2
+  Projective3
+  Spherical3
+  Raster2
+}
+
+// Type aliases
+
+// Traits
+pub trait Space : @atop.MetricSpace + @atop.Dim {
+  fn space_kind(Self) -> SpaceKind
+}

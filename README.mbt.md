@@ -46,9 +46,10 @@ util(-1) → atop(0) → space(1) → alg(2) → bv(3) → brep(4) → algo(5) �
 | `0.1.1.0` | util num/cpx + CRAP/变异工具 | ✅ |
 | `0.1.1.1` | util vec/mat/quat | ✅ |
 | `0.1.1.2` | util poly + atop 拓扑空间 Trait | ✅ |
-| `0.1.1.3` | space Space Trait + Euclid2 | 进行中 |
+| `0.1.1.3` | space Space Trait + Euclid2 | ✅ |
+| `0.1.1.4` | space Euclid3 + SpaceMap | 进行中 |
 
-测试：71+ 通过 · CRAP：115 · 变异分数：100%
+测试：84 通过 · CRAP：115 · 变异分数：100%
 
 ## 构建与测试
 

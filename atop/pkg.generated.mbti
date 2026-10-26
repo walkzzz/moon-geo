@@ -11,18 +11,18 @@ pub fn[M : MetricSpace] in_metric_ball(M, M, Double) -> Bool
 // Type aliases
 
 // Traits
-pub trait Dim {
+pub(open) trait Dim {
   fn dim(Self) -> Int32
 }
 
-pub trait Manifold : TopologicalSpace + Dim {
+pub(open) trait Manifold : TopologicalSpace + Dim {
   fn local_chart(Self) -> Array[Double]
 }
 
-pub trait MetricSpace : TopologicalSpace {
+pub(open) trait MetricSpace : TopologicalSpace {
   fn distance(Self, Self) -> Double
 }
 
-pub trait TopologicalSpace {
+pub(open) trait TopologicalSpace {
   fn is_in_neighborhood(Self, Self, Double) -> Bool
 }

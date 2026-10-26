@@ -5,7 +5,7 @@
 
 ///|
 /// 维度标记 Trait
-pub trait Dim {
+pub(open) trait Dim {
   /// 空间维度
   fn dim(self : Self) -> Int32
 }
@@ -13,7 +13,7 @@ pub trait Dim {
 ///|
 /// 拓扑空间抽象：最普适的空间抽象
 /// Self = 点类型；邻域以中心和半径描述（度量诱导拓扑）
-pub trait TopologicalSpace {
+pub(open) trait TopologicalSpace {
   /// 邻域判定：self 是否在 center 的 radius 邻域内
   fn is_in_neighborhood(self : Self, center : Self, radius : Double) -> Bool
 }

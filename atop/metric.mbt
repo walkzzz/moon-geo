@@ -4,7 +4,7 @@
 ///|
 /// 度量空间：有距离定义的拓扑空间
 /// 公理：非负性 d(a,b)≥0、同一性 d(a,a)=0、对称性 d(a,b)=d(b,a)、三角不等式 d(a,c)≤d(a,b)+d(b,c)
-pub trait MetricSpace: TopologicalSpace {
+pub(open) trait MetricSpace: TopologicalSpace {
   /// 两点距离
   fn distance(self : Self, other : Self) -> Double
 }
