@@ -1,0 +1,26 @@
+// Generated using `moon info`, DON'T EDIT IT
+package "walkzzz/moon-geo/platform/pcloud"
+
+import {
+  "walkzzz/moon-geo/alg",
+  "walkzzz/moon-geo/util",
+}
+
+// Values
+pub fn random_downsample(Array[@alg.Pt3], Double) -> Array[@alg.Pt3] raise @util.GeoError
+
+pub fn voxel_downsample(Array[@alg.Pt3], Double) -> Array[@alg.Pt3] raise @util.GeoError
+
+// Errors
+
+// Types and methods
+pub struct PointCloud {
+  points : Array[@alg.Pt3]
+}
+pub fn PointCloud::get_points(Self) -> Array[@alg.Pt3]
+pub fn PointCloud::new(Array[@alg.Pt3]) -> Self
+pub fn PointCloud::size(Self) -> Int32
+
+// Type aliases
+
+// Traits
