@@ -11,7 +11,7 @@ pub enum SpaceKind {
   Euclidean3
   Complex2
   Projective3
-  Spherical3
+  Spherical3 // TODO: not implemented, placeholder
   Raster2
 }
 

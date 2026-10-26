@@ -1,45 +1,52 @@
-# moon-geo · 统一空间数学引擎 + 数据处理平台
+# moon-geo · MoonBit 生态几何计算库
 
-> MoonBit 实现的开源学术驱动空间数学基础设施。**后端库**：以复射影代数几何 + 代数拓扑为底层内核的统一空间数学引擎（九层洋葱，终身稳定）。**前端平台**：`platform/` 数据处理平台，承载要素/图层/数据集 + CRS + 格式 I/O + 流式/LOD，覆盖点云/倾斜摄影/正射影像/栅格/矢量/CAD/3D 模型等真实业务数据类型。
+> MoonBit 语言生态的几何计算库。提供 2D/3D 欧氏几何、求交/变换、Delaunay 三角剖分、布尔运算、BVH 空间索引、半边结构、CRS 投影（UTM/Web Mercator/CGCS2000）与格式 I/O（GeoJSON/STL）。编译到 WASM，适合 Web 端轻量几何计算。
 
-**20 年规划**（2026 → 2046）：4 纪元 × 5 年，核心架构终身稳定。
+**近期目标**（2-3 年 → 1.0）：2D/3D 欧氏几何 + 求交/变换 + Delaunay/凸包/BVH + GeoJSON/STL I/O + UTM/Web Mercator + 半边结构，全部有测试和文档。
+
+## 目标用户
+
+| 用户 | 当前用什么 | 为什么用 moon-geo |
+|------|-----------|-------------------|
+| **Web WASM 开发者** | Turf.js / geos-wasm / 手写几何 | MoonBit 编译到 WASM，体积小无 GC 暂停，适合在浏览器做点包含/缓冲区/三角剖分等计算密集任务 |
+| **MoonBit 应用开发者** | 无（生态尚缺几何库） | moon-geo 是 MoonBit 生态的几何基础设施，直接 `import` 使用，无需 FFI 桥接 |
 
 ## 架构：后端九层 + 前端平台
 
-### 后端库：统一空间数学引擎
+### 后端库
 
 ```
 util(-1) → atop(0) → space(1) → alg(2) → bv(3) → brep(4) → algo(5) → parallel(6) → domain(7) → eco(8)
 ```
 
-| 层 | 包名 | 职责 |
-|----|------|------|
-| -1 | `util` | 数域/数值/矩阵/精度体系 |
-| 0 | `atop` | 拓扑空间/流形/范畴化抽象 |
-| 1 | `space` | 欧氏/复/射影/非欧/时空/栅格 |
-| 2 | `alg` | 代数簇/变换/不变量/求交 |
-| 3 | `bv` | 包围体/空间索引树 |
-| 4 | `brep` | 流形/非流形/胞腔复形 |
-| 5 | `algo` | 基础几何/GIS/高阶拓扑 |
-| 6 | `parallel` | CPU多线程/GPU/分布式 |
-| 7 | `domain` | CAD/GIS/仿真/视觉/机器人 |
-| 8 | `eco` | 语言绑定/格式兼容/引擎对接 |
+| 层 | 包名 | 职责 | 备注 |
+|----|------|------|------|
+| -1 | `util` | 数域/数值/矩阵/精度体系 | |
+| 0 | `atop` | 拓扑空间/流形/范畴化抽象 | |
+| 1 | `space` | 欧氏/复/射影/非欧/时空/栅格 | |
+| 2 | `alg` | 代数簇/变换/不变量/求交 | |
+| 3 | `bv` | 包围体/空间索引树 | |
+| 4 | `brep` | 流形/非流形/胞腔复形 | |
+| 5 | `algo` | 基础几何/GIS/高阶拓扑 | |
+| 6 | `parallel` | CPU多线程/GPU/分布式 | 远期方向，不承诺时间线 |
+| 7 | `domain` | CAD/GIS/仿真/视觉/机器人 | 远期方向，不承诺时间线 |
+| 8 | `eco` | 语言绑定/格式兼容/引擎对接 | 远期方向，不承诺时间线 |
 
-### 前端平台：数据处理平台（`platform/`）
+### 前端平台（`platform/`）
 
-| 层 | 包名 | 职责 |
-|----|------|------|
-| P1 | `platform/crs` | CRS/EPSG/投影变换（WGS84/UTM/CGCS2000） |
-| P2 | `platform/mesh` | IndexedMesh + 属性通道（法向/UV/材质）+ 网格简化 |
-| P3 | `platform/pcloud` | PointCloud + 属性 + 降采样/法向/地面滤波/RANSAC/ICP |
-| P4 | `platform/data` | Feature/Layer/Dataset + RasterDataset/Tiled/Pyramid + Streaming/LOD |
-| P5 | `platform/io` | 格式 I/O（LAS/GeoTIFF/shp/DXF/OBJ/GLTF/OSGB/3DTiles）+ 流式 |
+| 层 | 包名 | 职责 | 备注 |
+|----|------|------|------|
+| P1 | `platform/crs` | CRS/EPSG/投影变换（WGS84/UTM/CGCS2000） | |
+| P2 | `platform/mesh` | IndexedMesh + 属性通道 + 网格简化 | |
+| P3 | `platform/pcloud` | PointCloud + 降采样/法向/地面滤波/RANSAC/ICP | RANSAC/ICP 远期 |
+| P4 | `platform/data` | Feature/Layer/Dataset + RasterDataset + Streaming/LOD | |
+| P5 | `platform/io` | 格式 I/O（GeoJSON/STL 已实现；LAS/GeoTIFF/shp/DXF/OBJ/GLTF/OSGB/3DTiles 远期） | |
 
 **时序铁律**：I/O 不能先于数据模型和 CRS——先建 `platform/data` + `platform/crs`，再建 `platform/io`。
 
 ## 当前进度
 
-**纪元一·奠基纪元 → 阶段一·基础可用（2026）→ `0.1.1.z`**
+**纪元一·奠基纪元 → 阶段二·能力完善 → `0.1.2.z`**
 
 | 版本 | 任务 | 状态 |
 |------|------|------|
@@ -69,11 +76,9 @@ util(-1) → atop(0) → space(1) → alg(2) → bv(3) → brep(4) → algo(5) �
 | `0.1.2.10` | platform/mesh IndexedMesh + platform/io STL 读写 | ✅ |
 | `0.1.2.11` | 复射影大一统验证 + 阶段二收尾 | ✅ |
 
-测试：655 通过 · 基准：13 · CRAP：490 · 变异分数：100%
+测试：664 通过 · 基准：13 · CRAP：490 · 变异分数：100%
 
-> **核心 Trait 已冻结**（0.1.1.12）：Geo/Space/Bv/Topo 接口纪元一内锁定（至 2031），新增能力只扩展不修改。详见 [ADR-005](docs/adr/005-core-trait-freeze.md)
-
-> **阶段二增强**：GeoError 改为 `pub(all) suberror` + `raise`/`try-catch`；Geo/Space/Bv trait 改为 `pub(open)` + `pub extend` 点语法；添加 `&Geo` trait 对象运行时多态示例
+> **核心 Trait 冻结**（0.1.1.12）：Geo/Space/Bv/Topo 接口冻结至 1.0 发布前。0.x 阶段不承诺 API 冻结——接口可能调整，到 1.0 后锁定。详见 [ADR-005](docs/adr/005-core-trait-freeze.md)
 
 ## 构建与测试
 
@@ -82,15 +87,14 @@ moon check    # 类型检查
 moon test     # 运行测试
 moon fmt      # 格式化
 moon info     # 生成 .mbti 接口
-moon prove    # 形式化验证（需 Why3 + SMT 求解器）
 ```
 
 ## 文档
 
-- [技术规范](docs/geo%20统一空间数学引擎%20·%20开发立项技术规范.md)（1128 行）
-- [迭代详表](docs/geo%20统一空间数学引擎%20·%20迭代计划详表.md)（441 行，排到 2046）
+- [技术规范](docs/geo%20统一空间数学引擎%20·%20开发立项技术规范.md)
+- [迭代详表](docs/geo%20统一空间数学引擎%20·%20迭代计划详表.md)
 - [开发规则](docs/rules.md)
-- [工程规约](AGENTS.md)（§0-§8，含 CRAP/变异/多手段测试/迭代收尾流程）
+- [工程规约](AGENTS.md)
 
 ## License
 
