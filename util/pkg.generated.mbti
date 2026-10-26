@@ -10,9 +10,19 @@ pub const EPS : Double = 1.0e-8
 
 pub const MIN_POSITIVE : Double = 1.0e-12
 
+pub fn ctx_approx_eq(Double, Double, GeoContext) -> Bool
+
 pub fn dbl_approx_eq(Double, Double, Double) -> Bool
 
 pub fn dbl_approx_zero(Double, Double) -> Bool
+
+pub fn geo_error_code_str(GeoErrorCode) -> String
+
+pub fn log_level_str(LogLevel) -> String
+
+pub fn mixed_approx_eq(Double, Double, Double, Double) -> Bool
+
+pub fn rel_approx_eq(Double, Double, Double) -> Bool
 
 // Errors
 pub(all) suberror CpxError {
@@ -52,6 +62,50 @@ pub fn Cpx::sub(Self, Self) -> Self
 pub fn Cpx::to_repr(Self) -> @debug.Repr
 pub fn Cpx::zero() -> Self
 
+pub struct GeoContext {
+  abs_tol : Double
+  rel_tol : Double
+  precision_mode : PrecisionMode
+  parallelism : Int32
+  memory_limit : Int64
+}
+pub fn GeoContext::custom(Double, Double) -> Self
+pub fn GeoContext::default() -> Self
+pub fn GeoContext::game() -> Self
+pub fn GeoContext::surveying() -> Self
+
+pub(all) struct GeoError {
+  code : GeoErrorCode
+  message : String
+  context : Array[String]
+  suggestion : String?
+}
+pub fn GeoError::new(GeoErrorCode, String) -> Self
+pub fn GeoError::with_context(GeoErrorCode, String, Array[String]) -> Self
+pub fn GeoError::with_suggestion(GeoErrorCode, String, String) -> Self
+
+pub enum GeoErrorCode {
+  DegenerateInput
+  NumericalOverflow
+  NumericalUnderflow
+  NotConverged
+  TopoInconsistent
+  IntersectFailed
+  TransformFailed
+  OutOfBounds
+  IoError
+  FormatError
+  Unsupported
+  Unknown
+}
+
+pub enum LogLevel {
+  Debug
+  Info
+  Warn
+  Error
+}
+
 pub(all) struct Mat3 {
   m : Array[Double]
 } derive(@debug.Debug)
@@ -83,6 +137,11 @@ pub fn Mat4::scaling(Double, Double, Double) -> Self
 pub fn Mat4::to_repr(Self) -> @debug.Repr
 pub fn Mat4::translation(Double, Double, Double) -> Self
 pub fn Mat4::transpose(Self) -> Self
+
+pub struct NullLogger {
+  dummy : Unit
+}
+pub fn NullLogger::new() -> Self
 
 pub(all) struct Poly1 {
   coeffs : Array[Double]
@@ -121,6 +180,13 @@ pub(all) struct PolyTerm {
 } derive(@debug.Debug)
 pub fn PolyTerm::new(Double, Array[Int32]) -> Self
 pub fn PolyTerm::to_repr(Self) -> @debug.Repr
+
+pub enum PrecisionMode {
+  Engineering
+  Surveying
+  Game
+  Custom
+}
 
 pub(all) struct Quat {
   w : Double
@@ -207,6 +273,11 @@ pub trait Field : NumExt + ApproxEq {
   fn zero() -> Self
   fn one() -> Self
   fn abs(Self) -> Double
+}
+
+pub trait Logger {
+  fn enabled(Self, LogLevel) -> Bool
+  fn log(Self, LogLevel, String) -> Unit
 }
 
 pub trait NumExt {

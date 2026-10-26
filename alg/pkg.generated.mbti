@@ -1,0 +1,68 @@
+// Generated using `moon info`, DON'T EDIT IT
+package "walkzzz/moon-geo/alg"
+
+import {
+  "walkzzz/moon-geo/space",
+}
+
+// Values
+
+// Errors
+
+// Types and methods
+pub enum GeoDim {
+  Point
+  Curve
+  Surface
+  Volume
+}
+
+pub struct Line2 {
+  a : Double
+  b : Double
+  c : Double
+}
+pub fn Line2::a(Self) -> Double
+pub fn Line2::b(Self) -> Double
+pub fn Line2::c(Self) -> Double
+pub fn Line2::contains(Self, Pt2) -> Bool
+pub fn Line2::distance_to_point(Self, Pt2) -> Double
+pub fn Line2::eval(Self, Pt2) -> Double
+pub fn Line2::from_two_points(Pt2, Pt2) -> Self
+pub fn Line2::intersect(Self, Self) -> Pt2?
+pub fn Line2::is_parallel(Self, Self) -> Bool
+pub fn Line2::new(Double, Double, Double) -> Self
+
+pub struct Pt2 {
+  x : Double
+  y : Double
+}
+pub fn Pt2::coincident(Self, Self) -> Bool
+pub fn Pt2::distance_to(Self, Self) -> Double
+pub fn Pt2::from_euclid(@space.Euclid2) -> Self
+pub fn Pt2::new(Double, Double) -> Self
+pub fn Pt2::to_euclid(Self) -> @space.Euclid2
+pub fn Pt2::x(Self) -> Double
+pub fn Pt2::y(Self) -> Double
+
+pub struct Pt3 {
+  x : Double
+  y : Double
+  z : Double
+}
+pub fn Pt3::coincident(Self, Self) -> Bool
+pub fn Pt3::distance_to(Self, Self) -> Double
+pub fn Pt3::from_euclid(@space.Euclid3) -> Self
+pub fn Pt3::new(Double, Double, Double) -> Self
+pub fn Pt3::to_euclid(Self) -> @space.Euclid3
+pub fn Pt3::x(Self) -> Double
+pub fn Pt3::y(Self) -> Double
+pub fn Pt3::z(Self) -> Double
+
+// Type aliases
+
+// Traits
+pub trait Geo {
+  fn geo_dim(Self) -> GeoDim
+  fn is_degenerate(Self) -> Bool
+}

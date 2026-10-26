@@ -1,0 +1,7 @@
+// alg 包：代数几何层（第2层）
+// 依赖：util（EPS、dbl_approx_eq）、space（Euclid2/Euclid3 空间点转换）
+
+import {
+  "walkzzz/moon-geo/util",
+  "walkzzz/moon-geo/space",
+}
