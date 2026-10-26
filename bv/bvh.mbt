@@ -1,6 +1,6 @@
 // 包围体层次树（BVH）
 // 第3层 bv，依赖 util, alg
-// 简化版：二叉树结构，支持构建和查询
+// reference implementation, not optimized for scale — 递归 Option 结构 + 每层 sort + array copy，O(n log²n) 高常数，10⁶ 叶子不可用
 
 ///|
 /// BVH 节点

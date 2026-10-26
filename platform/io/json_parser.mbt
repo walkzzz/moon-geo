@@ -337,7 +337,7 @@ fn parse_number(p : JsonParser) -> (JsonValue, Int32) raise @util.GeoError {
 
 ///|
 /// 简易字符串转 Double（支持负号、小数点、科学记数法）
-fn local_parse_double(s : String) -> Double {
+fn local_parse_double(s : String) -> Double raise @util.GeoError {
   let mut result = 0.0
   let mut pos = 0
   let n = s.length()
@@ -399,6 +399,9 @@ fn local_parse_double(s : String) -> Double {
     } else {
       result *= multiplier
     }
+  }
+  if pos < n {
+    raise @util.GeoError::FormatError("数字解析失败：未消费字符")
   }
   if negative {
     -result

@@ -22,6 +22,8 @@ pub fn mixed_approx_eq(Double, Double, Double, Double) -> Bool
 
 pub fn rel_approx_eq(Double, Double, Double) -> Bool
 
+pub fn scaled_approx_zero(Double, Double, Double) -> Bool
+
 // Errors
 pub(all) suberror CpxError {
   ZeroInverse

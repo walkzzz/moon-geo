@@ -103,7 +103,7 @@ pub fn mesh_from_stl_ascii(
 pub fn mesh_to_stl_binary(mesh : @mesh.IndexedMesh, header : String) -> Bytes {
   let n = mesh.triangle_count()
   let out : Array[Byte] = []
-  // 80 字节头
+  // 80 字节头（header 限 ASCII，非 ASCII 字符静默截断为单字节）
   let header_bytes = header.to_array()
   let header_len = if header_bytes.length() < 80 {
     header_bytes.length()
@@ -268,7 +268,7 @@ fn get_vtx(mesh : @mesh.IndexedMesh, i : Int32) -> @alg.Pt3 {
 
 ///|
 /// 解析 vertex 行
-fn parse_vertex_line(line : String) -> (Double, Double, Double) {
+fn parse_vertex_line(line : String) -> (Double, Double, Double) raise @util.GeoError {
   let parts = split_whitespace(line)
   if parts.length() >= 4 {
     let x = local_parse_double(parts[1])

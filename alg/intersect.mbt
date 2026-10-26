@@ -24,13 +24,13 @@ pub fn intersect_line_circle(line : Line2, circle : Circle) -> Array[Pt2] {
     let qb = 2.0 * b * d - 2.0 * a * a * cy
     let qc = d * d + a * a * (cy * cy - r * r)
     let disc = qb * qb - 4.0 * qa * qc
-    if disc < -@util.EPS {
-      return result
-    }
-    if disc < @util.EPS {
+    let disc_scale = (qb * qb).abs() + (4.0 * qa * qc).abs()
+    if @util.scaled_approx_zero(disc, disc_scale, @util.EPS) {
       let y = -qb / (2.0 * qa)
       let x = -(b * y + c) / a
       result.push(Pt2::new(x, y))
+    } else if disc < 0.0 {
+      return result
     } else {
       let sq = disc.sqrt()
       let y1 = (-qb + sq) / (2.0 * qa)
@@ -46,13 +46,13 @@ pub fn intersect_line_circle(line : Line2, circle : Circle) -> Array[Pt2] {
     let qb = 2.0 * a * e - 2.0 * b * b * cx
     let qc = e * e + b * b * (cx * cx - r * r)
     let disc = qb * qb - 4.0 * qa * qc
-    if disc < -@util.EPS {
-      return result
-    }
-    if disc < @util.EPS {
+    let disc_scale = (qb * qb).abs() + (4.0 * qa * qc).abs()
+    if @util.scaled_approx_zero(disc, disc_scale, @util.EPS) {
       let x = -qb / (2.0 * qa)
       let y = -(a * x + c) / b
       result.push(Pt2::new(x, y))
+    } else if disc < 0.0 {
+      return result
     } else {
       let sq = disc.sqrt()
       let x1 = (-qb + sq) / (2.0 * qa)

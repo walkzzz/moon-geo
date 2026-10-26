@@ -125,6 +125,15 @@ pub fn mixed_approx_eq(
 }
 
 ///|
+/// 带量级标定的近似为零：|a| <= max(EPS, scale * rel_tol)
+/// scale 为问题量级（如判别式各项绝对值之和），用于大尺度坐标场景
+/// 当 scale >> 1 时公差随量级自适应，避免大坐标下绝对公差失效
+pub fn scaled_approx_zero(a : Double, scale : Double, rel_tol : Double) -> Bool {
+  let tol = if EPS > scale * rel_tol { EPS } else { scale * rel_tol }
+  dbl_abs(a) <= tol
+}
+
+///|
 /// 精度模式
 pub enum PrecisionMode {
   /// 工程级：绝对公差 1e-8，适用 CAD/GIS 一般场景

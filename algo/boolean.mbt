@@ -44,15 +44,20 @@ pub fn polygon_centroid(coords : Array[@alg.Pt2]) -> @alg.Pt2 {
   let mut cx = 0.0
   let mut cy = 0.0
   let mut area = 0.0
+  let mut area_scale = 0.0
   for i in 0..<n {
     let j = (i + 1) % n
-    let cross = coords[i].x() * coords[j].y() - coords[j].x() * coords[i].y()
+    let t1 = coords[i].x() * coords[j].y()
+    let t2 = coords[j].x() * coords[i].y()
+    let cross = t1 - t2
     cx += (coords[i].x() + coords[j].x()) * cross
     cy += (coords[i].y() + coords[j].y()) * cross
     area += cross
+    area_scale += t1.abs() + t2.abs()
   }
   area = area / 2.0
-  if @util.dbl_approx_zero(area, @util.EPS) {
+  area_scale = area_scale / 2.0
+  if @util.scaled_approx_zero(area, area_scale, @util.EPS) {
     let mut mx = 0.0
     let mut my = 0.0
     for i in 0..<n {
@@ -73,9 +78,13 @@ fn is_inside(
   edge_start : @alg.Pt2,
   edge_end : @alg.Pt2,
 ) -> Bool {
-  let cross = (edge_end.x() - edge_start.x()) * (point.y() - edge_start.y()) -
-    (edge_end.y() - edge_start.y()) * (point.x() - edge_start.x())
-  cross >= -@util.EPS
+  let dx = edge_end.x() - edge_start.x()
+  let dy = edge_end.y() - edge_start.y()
+  let px = point.x() - edge_start.x()
+  let py = point.y() - edge_start.y()
+  let cross = dx * py - dy * px
+  let scale = (dx * py).abs() + (dy * px).abs()
+  cross >= 0.0 || @util.scaled_approx_zero(cross, scale, @util.EPS)
 }
 
 ///|
@@ -86,9 +95,11 @@ fn line_intersect(
   p3 : @alg.Pt2,
   p4 : @alg.Pt2,
 ) -> @alg.Pt2? {
-  let denom = (p1.x() - p2.x()) * (p3.y() - p4.y()) -
-    (p1.y() - p2.y()) * (p3.x() - p4.x())
-  if @util.dbl_approx_zero(denom, @util.EPS) {
+  let t1 = (p1.x() - p2.x()) * (p3.y() - p4.y())
+  let t2 = (p1.y() - p2.y()) * (p3.x() - p4.x())
+  let denom = t1 - t2
+  let denom_scale = t1.abs() + t2.abs()
+  if @util.scaled_approx_zero(denom, denom_scale, @util.EPS) {
     return None
   }
   let t = (

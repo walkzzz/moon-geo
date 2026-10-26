@@ -23,4 +23,4 @@ keywords = [ "geometry", "math", "spatial", "moonbit", "cgal", "topology" ]
 
 preferred_target = "wasm"
 
-description = "统一空间数学引擎：复射影代数几何 + 代数拓扑内核，覆盖全维度/全数域/全空间类型的通用几何计算"
+description = "MoonBit 生态几何计算库：2D/3D 欧氏几何 + 求交/变换 + Delaunay + 布尔运算 + BVH + 半边结构 + CRS 投影 + 格式 I/O"
