@@ -67,7 +67,7 @@
 | 05 | `0.1.2.4` | **platform/data Feature/Layer/Dataset 要素模型** | Feature=Geometry+Attributes+CRS | 要素模型测试 ✅ |
 | 06 | `0.1.2.5` | space Raster2 + 矢栅转换 | 栅格空间 + 双向转换 | 矢栅互转测试 ✅ |
 | 07 | `0.1.2.6` | algo boolean 布尔运算 | 交/并/差 | 布尔基准对标 ✅ |
-| 08 | `0.1.2.7` | algo triangulate + buffer + 拓扑修复增强 | 三角剖分/缓冲区/修复 | 德劳内+缓冲基准 |
+| 08 | `0.1.2.7` | algo triangulate + buffer + 拓扑修复增强 | 三角剖分/缓冲区/修复 | 德劳内+缓冲基准 ✅ |
 | 09 | `0.1.2.8` | draw style + canvas2 + canvas3 | 样式 + 2D/3D 画布 | SVG/线框验证 |
 | 10 | `0.1.2.9` | io geojson（携带 CRS + 属性） | GeoJSON 读写 | 规范符合测试 |
 | 11 | `0.1.2.10` | io stl（IndexedMesh 通道） | STL 读写 | 模型往返测试 |

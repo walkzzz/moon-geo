@@ -118,12 +118,13 @@
 - `0.1.2.4`（2027-06）：`platform/data`（Feature/Layer/Dataset 要素模型 + Geometry + 属性类型系统 + CRS 变换）
 - `0.1.2.5`（2027-07）：`space/`（Raster2 栅格空间 + 坐标变换 + Bresenham 线栅格化 + 多边形栅格化/矢量化）
 - `0.1.2.6`（2027-08）：`algo/`（Sutherland-Hodgman 多边形裁剪 + 凸多边形交集 + 矩形布尔运算 + 多边形面积/质心）
+- `0.1.2.7`（2027-09）：`algo/`（Delaunay 三角剖分 Bowyer-Watson + 点/线缓冲区 + 重复顶点合并/方向修正）
 
 **阶段一完成**。核心 Trait 已冻结。
 
-本月任务包（2027-09，`0.1.2.7`）：
-- `algo/`：triangulate 三角剖分 + buffer 缓冲区 + 拓扑修复增强
-- 验收：德劳内+缓冲基准
+本月任务包（2027-10，`0.1.2.8`）：
+- `draw/`：style + canvas2 + canvas3（样式 + 2D/3D 画布）
+- 验收：SVG/线框验证
 
 后续月度任务见迭代详表。
 

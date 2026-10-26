@@ -2,19 +2,43 @@
 package "walkzzz/moon-geo/algo"
 
 // Values
+pub fn buffer_line_segment(Double, Double, Double, Double, Double) -> Array[(Double, Double)]
+
+pub fn buffer_point(Double, Double, Double, Int32) -> Array[(Double, Double)]
+
+pub fn buffer_polyline(Array[(Double, Double)], Double) -> Array[Array[(Double, Double)]]
+
 pub fn clip_polygon(Array[(Double, Double)], Array[(Double, Double)]) -> Array[(Double, Double)]
 
+pub fn delaunay(Array[(Double, Double)]) -> Array[(Int32, Int32, Int32)]
+
 pub fn ensure_counterclockwise(Array[(Double, Double)]) -> Array[(Double, Double)]
+
+pub fn fix_orientation(Array[(Double, Double)]) -> Array[(Double, Double)]
+
+pub fn has_duplicate_vertices(Array[(Double, Double)], Double) -> Bool
 
 pub fn intersect_convex(Array[(Double, Double)], Array[(Double, Double)]) -> Array[(Double, Double)]
 
 pub fn is_counterclockwise(Array[(Double, Double)]) -> Bool
 
+pub fn merge_duplicate_vertices(Array[(Double, Double)], Double) -> (Array[(Double, Double)], Array[Int32])
+
 pub fn polygon_area(Array[(Double, Double)]) -> Double
 
 pub fn polygon_centroid(Array[(Double, Double)]) -> (Double, Double)
 
+pub fn polygon_perimeter(Array[(Double, Double)]) -> Double
+
 pub fn polygon_signed_area(Array[(Double, Double)]) -> Double
+
+pub fn polyline_length(Array[(Double, Double)]) -> Double
+
+pub fn remove_duplicate_vertices(Array[(Double, Double)], Double) -> Array[(Double, Double)]
+
+pub fn triangle_count(Array[(Int32, Int32, Int32)]) -> Int32
+
+pub fn triangulation_total_area(Array[(Double, Double)], Array[(Int32, Int32, Int32)]) -> Double
 
 // Errors
 

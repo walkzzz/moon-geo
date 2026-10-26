@@ -83,8 +83,9 @@ README 中英文，默认中文。当前 `README.mbt.md` 为项目 README。
 | `0.1.2.4` | platform/data Feature/Layer/Dataset 要素模型 | ✅ |
 | `0.1.2.5` | space Raster2 栅格空间 + 矢栅转换 | ✅ |
 | `0.1.2.6` | algo boolean 布尔运算（交/并/差） | ✅ |
+| `0.1.2.7` | algo triangulate + buffer + 拓扑修复 | ✅ |
 
-测试：431 通过 · CRAP：490 · 变异分数：100%
+测试：454 通过 · CRAP：490 · 变异分数：100%
 
 ---
 
