@@ -81,8 +81,9 @@ README 中英文，默认中文。当前 `README.mbt.md` 为项目 README。
 | `0.1.2.2` | space StereoMap 球极投影 + 保圆性 | ✅ |
 | `0.1.2.3` | platform/crs CRS + WGS84/UTM/CGCS2000 + 投影变换 | ✅ |
 | `0.1.2.4` | platform/data Feature/Layer/Dataset 要素模型 | ✅ |
+| `0.1.2.5` | space Raster2 栅格空间 + 矢栅转换 | ✅ |
 
-测试：386 通过 · CRAP：490 · 变异分数：100%
+测试：406 通过 · CRAP：490 · 变异分数：100%
 
 ---
 

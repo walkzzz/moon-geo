@@ -85,6 +85,28 @@ pub struct Project3To2 {
 pub fn Project3To2::map(Self, Euclid3) -> Euclid2
 pub fn Project3To2::new() -> Self
 
+pub struct Raster2 {
+  origin_x : Double
+  origin_y : Double
+  pixel_w : Double
+  pixel_h : Double
+  width : Int32
+  height : Int32
+}
+pub fn Raster2::bounds(Self) -> ((Double, Double), (Double, Double))
+pub fn Raster2::cell_center_to_world(Self, Int32, Int32) -> (Double, Double)
+pub fn Raster2::cell_count(Self) -> Int32
+pub fn Raster2::cell_in_bounds(Self, Int32, Int32) -> Bool
+pub fn Raster2::cell_polygon(Self, Int32, Int32) -> Array[(Double, Double)]
+pub fn Raster2::cell_to_world(Self, Int32, Int32) -> (Double, Double)
+pub fn Raster2::cells_to_polygons(Self, Array[Array[Bool]]) -> Array[Array[(Double, Double)]]
+pub fn Raster2::contains(Self, Double, Double) -> Bool
+pub fn Raster2::new(Double, Double, Double, Double, Int32, Int32) -> Self
+pub fn Raster2::rasterize_line(Self, Double, Double, Double, Double) -> Array[(Int32, Int32)]
+pub fn Raster2::rasterize_point(Self, Double, Double) -> (Int32, Int32)?
+pub fn Raster2::rasterize_polygon(Self, Array[(Double, Double)]) -> Array[(Int32, Int32)]
+pub fn Raster2::world_to_cell(Self, Double, Double) -> (Int32, Int32)
+
 pub enum SpaceKind {
   Euclidean2
   Euclidean3
