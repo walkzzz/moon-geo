@@ -1,6 +1,6 @@
 // Delaunay 三角剖分（Bowyer-Watson 算法）
-// 第5层 algo，依赖 util（EPS）
-// 输入：点集，输出：三角形顶点索引列表
+// 第5层 algo，依赖 util（EPS）、alg（Pt2）
+// 输入：点集 Array[@alg.Pt2]，输出：三角形顶点索引列表
 
 ///|
 /// 判断点 d 是否在三角形 (a,b,c) 的外接圆内
@@ -47,7 +47,7 @@ fn is_shared_edge(
   exclude : (Int32, Int32, Int32),
 ) -> Bool {
   for tri in bad {
-    if not(tri_equal(tri, exclude)) {
+    if !tri_equal(tri, exclude) {
       let (a, b, c) = tri
       if (a == ea && b == eb) ||
         (b == ea && c == eb) ||
@@ -64,21 +64,20 @@ fn is_shared_edge(
 
 ///|
 /// Delaunay 三角剖分（Bowyer-Watson 算法）
-/// 输入：点集 Array[(x, y)]
+/// 输入：点集 Array[@alg.Pt2]
 /// 输出：三角形列表 Array[(i, j, k)]，i/j/k 为点索引
-pub fn delaunay(
-  points : Array[(Double, Double)],
-) -> Array[(Int32, Int32, Int32)] {
+pub fn delaunay(points : Array[@alg.Pt2]) -> Array[(Int32, Int32, Int32)] {
   let n = points.length()
   if n < 3 {
     return []
   }
-  let mut min_x = points[0].0
-  let mut max_x = points[0].0
-  let mut min_y = points[0].1
-  let mut max_y = points[0].1
+  let mut min_x = points[0].x()
+  let mut max_x = points[0].x()
+  let mut min_y = points[0].y()
+  let mut max_y = points[0].y()
   for i in 1..<n {
-    let (x, y) = points[i]
+    let x = points[i].x()
+    let y = points[i].y()
     if x < min_x {
       min_x = x
     }
@@ -97,13 +96,13 @@ pub fn delaunay(
   let delta_max = if dx > dy { dx } else { dy }
   let mid_x = (min_x + max_x) / 2.0
   let mid_y = (min_y + max_y) / 2.0
-  let all_points : Array[(Double, Double)] = []
+  let all_points : Array[@alg.Pt2] = []
   for p in points {
     all_points.push(p)
   }
-  all_points.push((mid_x - 20.0 * delta_max, mid_y - delta_max))
-  all_points.push((mid_x + 20.0 * delta_max, mid_y - delta_max))
-  all_points.push((mid_x, mid_y + 20.0 * delta_max))
+  all_points.push(@alg.Pt2::new(mid_x - 20.0 * delta_max, mid_y - delta_max))
+  all_points.push(@alg.Pt2::new(mid_x + 20.0 * delta_max, mid_y - delta_max))
+  all_points.push(@alg.Pt2::new(mid_x, mid_y + 20.0 * delta_max))
   let super_a = n
   let super_b = n + 1
   let super_c = n + 2
@@ -111,14 +110,18 @@ pub fn delaunay(
     (super_a, super_b, super_c),
   ]
   for i in 0..<n {
-    let (px, py) = all_points[i]
+    let px = all_points[i].x()
+    let py = all_points[i].y()
     let bad_triangles : Array[(Int32, Int32, Int32)] = []
     let good_triangles : Array[(Int32, Int32, Int32)] = []
     for tri in triangles {
       let (a, b, c) = tri
-      let (ax, ay) = all_points[a]
-      let (bx, by) = all_points[b]
-      let (cx, cy) = all_points[c]
+      let ax = all_points[a].x()
+      let ay = all_points[a].y()
+      let bx = all_points[b].x()
+      let by = all_points[b].y()
+      let cx = all_points[c].x()
+      let cy = all_points[c].y()
       if in_circumcircle(ax, ay, bx, by, cx, cy, px, py) {
         bad_triangles.push(tri)
       } else {
@@ -130,7 +133,7 @@ pub fn delaunay(
       let (a, b, c) = tri
       let edges = [(a, b), (b, c), (c, a)]
       for edge in edges {
-        if not(is_shared_edge(edge.0, edge.1, bad_triangles, tri)) {
+        if !is_shared_edge(edge.0, edge.1, bad_triangles, tri) {
           boundary_edges.push(edge)
         }
       }
@@ -153,15 +156,18 @@ pub fn delaunay(
 ///|
 /// 三角剖分结果验证：三角形面积之和应等于凸包面积
 pub fn triangulation_total_area(
-  points : Array[(Double, Double)],
+  points : Array[@alg.Pt2],
   triangles : Array[(Int32, Int32, Int32)],
 ) -> Double {
   let mut total = 0.0
   for tri in triangles {
     let (a, b, c) = tri
-    let (ax, ay) = points[a]
-    let (bx, by) = points[b]
-    let (cx, cy) = points[c]
+    let ax = points[a].x()
+    let ay = points[a].y()
+    let bx = points[b].x()
+    let by = points[b].y()
+    let cx = points[c].x()
+    let cy = points[c].y()
     let area = ((bx - ax) * (cy - ay) - (cx - ax) * (by - ay)).abs() / 2.0
     total += area
   }

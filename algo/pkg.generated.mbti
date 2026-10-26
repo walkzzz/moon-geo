@@ -1,44 +1,49 @@
 // Generated using `moon info`, DON'T EDIT IT
 package "walkzzz/moon-geo/algo"
 
+import {
+  "moonbitlang/core/debug",
+  "walkzzz/moon-geo/alg",
+}
+
 // Values
-pub fn buffer_line_segment(Double, Double, Double, Double, Double) -> Array[(Double, Double)]
+pub fn buffer_line_segment(@alg.Pt2, @alg.Pt2, Double) -> Array[@alg.Pt2]
 
-pub fn buffer_point(Double, Double, Double, Int32) -> Array[(Double, Double)]
+pub fn buffer_point(@alg.Pt2, Double, Int32) -> Array[@alg.Pt2]
 
-pub fn buffer_polyline(Array[(Double, Double)], Double) -> Array[Array[(Double, Double)]]
+pub fn buffer_polyline(Array[@alg.Pt2], Double) -> Array[Array[@alg.Pt2]]
 
-pub fn clip_polygon(Array[(Double, Double)], Array[(Double, Double)]) -> Array[(Double, Double)]
+pub fn clip_polygon(Array[@alg.Pt2], Array[@alg.Pt2]) -> Array[@alg.Pt2]
 
-pub fn delaunay(Array[(Double, Double)]) -> Array[(Int32, Int32, Int32)]
+pub fn delaunay(Array[@alg.Pt2]) -> Array[(Int32, Int32, Int32)]
 
-pub fn ensure_counterclockwise(Array[(Double, Double)]) -> Array[(Double, Double)]
+pub fn ensure_counterclockwise(Array[@alg.Pt2]) -> Array[@alg.Pt2]
 
-pub fn fix_orientation(Array[(Double, Double)]) -> Array[(Double, Double)]
+pub fn fix_orientation(Array[@alg.Pt2]) -> Array[@alg.Pt2]
 
-pub fn has_duplicate_vertices(Array[(Double, Double)], Double) -> Bool
+pub fn has_duplicate_vertices(Array[@alg.Pt2], Double) -> Bool
 
-pub fn intersect_convex(Array[(Double, Double)], Array[(Double, Double)]) -> Array[(Double, Double)]
+pub fn intersect_convex(Array[@alg.Pt2], Array[@alg.Pt2]) -> Array[@alg.Pt2]
 
-pub fn is_counterclockwise(Array[(Double, Double)]) -> Bool
+pub fn is_counterclockwise(Array[@alg.Pt2]) -> Bool
 
-pub fn merge_duplicate_vertices(Array[(Double, Double)], Double) -> (Array[(Double, Double)], Array[Int32])
+pub fn merge_duplicate_vertices(Array[@alg.Pt2], Double) -> (Array[@alg.Pt2], Array[Int32])
 
-pub fn polygon_area(Array[(Double, Double)]) -> Double
+pub fn polygon_area(Array[@alg.Pt2]) -> Double
 
-pub fn polygon_centroid(Array[(Double, Double)]) -> (Double, Double)
+pub fn polygon_centroid(Array[@alg.Pt2]) -> @alg.Pt2
 
-pub fn polygon_perimeter(Array[(Double, Double)]) -> Double
+pub fn polygon_perimeter(Array[@alg.Pt2]) -> Double
 
-pub fn polygon_signed_area(Array[(Double, Double)]) -> Double
+pub fn polygon_signed_area(Array[@alg.Pt2]) -> Double
 
-pub fn polyline_length(Array[(Double, Double)]) -> Double
+pub fn polyline_length(Array[@alg.Pt2]) -> Double
 
-pub fn remove_duplicate_vertices(Array[(Double, Double)], Double) -> Array[(Double, Double)]
+pub fn remove_duplicate_vertices(Array[@alg.Pt2], Double) -> Array[@alg.Pt2]
 
 pub fn triangle_count(Array[(Int32, Int32, Int32)]) -> Int32
 
-pub fn triangulation_total_area(Array[(Double, Double)], Array[(Int32, Int32, Int32)]) -> Double
+pub fn triangulation_total_area(Array[@alg.Pt2], Array[(Int32, Int32, Int32)]) -> Double
 
 // Errors
 
@@ -48,15 +53,15 @@ pub struct Rect {
   min_y : Double
   max_x : Double
   max_y : Double
-}
+} derive(@debug.Debug)
 pub fn Rect::area(Self) -> Double
-pub fn Rect::center(Self) -> (Double, Double)
-pub fn Rect::contains(Self, Double, Double) -> Bool
+pub fn Rect::center(Self) -> @alg.Pt2
+pub fn Rect::contains(Self, @alg.Pt2) -> Bool
 pub fn Rect::height(Self) -> Double
 pub fn Rect::intersect(Self, Self) -> Self?
 pub fn Rect::intersects(Self, Self) -> Bool
 pub fn Rect::new(Double, Double, Double, Double) -> Self
-pub fn Rect::to_polygon(Self) -> Array[(Double, Double)]
+pub fn Rect::to_polygon(Self) -> Array[@alg.Pt2]
 pub fn Rect::union(Self, Self) -> Self
 pub fn Rect::width(Self) -> Double
 

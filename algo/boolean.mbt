@@ -1,10 +1,10 @@
 // 布尔运算：多边形裁剪 + 交/并/差
-// 第5层 algo，依赖 util（EPS）、alg（几何类型）
+// 第5层 algo，依赖 util（EPS）、alg（Pt2）
 // Sutherland-Hodgman 凸裁剪 + 矩形布尔 + 多边形面积/质心
 
 ///|
 /// 多边形面积（Shoelace 公式），结果为绝对值
-pub fn polygon_area(coords : Array[(Double, Double)]) -> Double {
+pub fn polygon_area(coords : Array[@alg.Pt2]) -> Double {
   let n = coords.length()
   if n < 3 {
     return 0.0
@@ -12,15 +12,15 @@ pub fn polygon_area(coords : Array[(Double, Double)]) -> Double {
   let mut sum = 0.0
   for i in 0..<n {
     let j = (i + 1) % n
-    sum += coords[i].0 * coords[j].1
-    sum -= coords[j].0 * coords[i].1
+    sum += coords[i].x() * coords[j].y()
+    sum -= coords[j].x() * coords[i].y()
   }
   sum.abs() / 2.0
 }
 
 ///|
 /// 多边形带符号面积（正=逆时针，负=顺时针）
-pub fn polygon_signed_area(coords : Array[(Double, Double)]) -> Double {
+pub fn polygon_signed_area(coords : Array[@alg.Pt2]) -> Double {
   let n = coords.length()
   if n < 3 {
     return 0.0
@@ -28,27 +28,27 @@ pub fn polygon_signed_area(coords : Array[(Double, Double)]) -> Double {
   let mut sum = 0.0
   for i in 0..<n {
     let j = (i + 1) % n
-    sum += coords[i].0 * coords[j].1
-    sum -= coords[j].0 * coords[i].1
+    sum += coords[i].x() * coords[j].y()
+    sum -= coords[j].x() * coords[i].y()
   }
   sum / 2.0
 }
 
 ///|
 /// 多边形质心
-pub fn polygon_centroid(coords : Array[(Double, Double)]) -> (Double, Double) {
+pub fn polygon_centroid(coords : Array[@alg.Pt2]) -> @alg.Pt2 {
   let n = coords.length()
   if n < 3 {
-    return (0.0, 0.0)
+    return @alg.Pt2::new(0.0, 0.0)
   }
   let mut cx = 0.0
   let mut cy = 0.0
   let mut area = 0.0
   for i in 0..<n {
     let j = (i + 1) % n
-    let cross = coords[i].0 * coords[j].1 - coords[j].0 * coords[i].1
-    cx += (coords[i].0 + coords[j].0) * cross
-    cy += (coords[i].1 + coords[j].1) * cross
+    let cross = coords[i].x() * coords[j].y() - coords[j].x() * coords[i].y()
+    cx += (coords[i].x() + coords[j].x()) * cross
+    cy += (coords[i].y() + coords[j].y()) * cross
     area += cross
   }
   area = area / 2.0
@@ -56,53 +56,58 @@ pub fn polygon_centroid(coords : Array[(Double, Double)]) -> (Double, Double) {
     let mut mx = 0.0
     let mut my = 0.0
     for i in 0..<n {
-      mx += coords[i].0
-      my += coords[i].1
+      mx += coords[i].x()
+      my += coords[i].y()
     }
-    (mx / n.to_double(), my / n.to_double())
+    @alg.Pt2::new(mx / n.to_double(), my / n.to_double())
   } else {
-    (cx / (6.0 * area), cy / (6.0 * area))
+    @alg.Pt2::new(cx / (6.0 * area), cy / (6.0 * area))
   }
 }
 
 ///|
 /// 判断点是否在边的内侧（假设逆时针多边形，内侧在左边）
+/// 引入容差避免边界点重复（N4 修复）
 fn is_inside(
-  point : (Double, Double),
-  edge_start : (Double, Double),
-  edge_end : (Double, Double),
+  point : @alg.Pt2,
+  edge_start : @alg.Pt2,
+  edge_end : @alg.Pt2,
 ) -> Bool {
-  let cross = (edge_end.0 - edge_start.0) * (point.1 - edge_start.1) -
-    (edge_end.1 - edge_start.1) * (point.0 - edge_start.0)
-  cross >= 0.0
+  let cross = (edge_end.x() - edge_start.x()) * (point.y() - edge_start.y()) -
+    (edge_end.y() - edge_start.y()) * (point.x() - edge_start.x())
+  cross >= -@util.EPS
 }
 
 ///|
-/// 计算两条线段的交点
+/// 计算两条线段的交点，平行时返回 None（N4 修复：不再静默返回端点）
 fn line_intersect(
-  p1 : (Double, Double),
-  p2 : (Double, Double),
-  p3 : (Double, Double),
-  p4 : (Double, Double),
-) -> (Double, Double) {
-  let denom = (p1.0 - p2.0) * (p3.1 - p4.1) - (p1.1 - p2.1) * (p3.0 - p4.0)
+  p1 : @alg.Pt2,
+  p2 : @alg.Pt2,
+  p3 : @alg.Pt2,
+  p4 : @alg.Pt2,
+) -> @alg.Pt2? {
+  let denom = (p1.x() - p2.x()) * (p3.y() - p4.y()) -
+    (p1.y() - p2.y()) * (p3.x() - p4.x())
   if @util.dbl_approx_zero(denom, @util.EPS) {
-    return p1
+    return None
   }
-  let t = ((p1.0 - p3.0) * (p3.1 - p4.1) - (p1.1 - p3.1) * (p3.0 - p4.0)) /
+  let t = (
+      (p1.x() - p3.x()) * (p3.y() - p4.y()) -
+      (p1.y() - p3.y()) * (p3.x() - p4.x())
+    ) /
     denom
-  let x = p1.0 + t * (p2.0 - p1.0)
-  let y = p1.1 + t * (p2.1 - p1.1)
-  (x, y)
+  let x = p1.x() + t * (p2.x() - p1.x())
+  let y = p1.y() + t * (p2.y() - p1.y())
+  Some(@alg.Pt2::new(x, y))
 }
 
 ///|
 /// Sutherland-Hodgman 多边形裁剪：用凸多边形 clip 裁剪 subject
 /// subject 可以是任意多边形，clip 必须是凸多边形（逆时针）
 pub fn clip_polygon(
-  subject : Array[(Double, Double)],
-  clip : Array[(Double, Double)],
-) -> Array[(Double, Double)] {
+  subject : Array[@alg.Pt2],
+  clip : Array[@alg.Pt2],
+) -> Array[@alg.Pt2] {
   let clip_n = clip.length()
   if clip_n < 3 {
     return []
@@ -122,27 +127,33 @@ pub fn clip_polygon(
 ///|
 /// 用单条边裁剪多边形
 fn clip_against_edge(
-  polygon : Array[(Double, Double)],
-  edge_start : (Double, Double),
-  edge_end : (Double, Double),
-) -> Array[(Double, Double)] {
+  polygon : Array[@alg.Pt2],
+  edge_start : @alg.Pt2,
+  edge_end : @alg.Pt2,
+) -> Array[@alg.Pt2] {
   let n = polygon.length()
   if n == 0 {
     return []
   }
-  let result : Array[(Double, Double)] = []
+  let result : Array[@alg.Pt2] = []
   for i in 0..<n {
     let current = polygon[i]
     let prev = polygon[(i - 1 + n) % n]
     let current_inside = is_inside(current, edge_start, edge_end)
     let prev_inside = is_inside(prev, edge_start, edge_end)
     if current_inside {
-      if not(prev_inside) {
-        result.push(line_intersect(prev, current, edge_start, edge_end))
+      if !prev_inside {
+        match line_intersect(prev, current, edge_start, edge_end) {
+          Some(pt) => result.push(pt)
+          None => ()
+        }
       }
       result.push(current)
     } else if prev_inside {
-      result.push(line_intersect(prev, current, edge_start, edge_end))
+      match line_intersect(prev, current, edge_start, edge_end) {
+        Some(pt) => result.push(pt)
+        None => ()
+      }
     }
   }
   result
@@ -151,9 +162,9 @@ fn clip_against_edge(
 ///|
 /// 凸多边形交集（两个凸多边形都是逆时针）
 pub fn intersect_convex(
-  poly1 : Array[(Double, Double)],
-  poly2 : Array[(Double, Double)],
-) -> Array[(Double, Double)] {
+  poly1 : Array[@alg.Pt2],
+  poly2 : Array[@alg.Pt2],
+) -> Array[@alg.Pt2] {
   clip_polygon(poly1, poly2)
 }
 
@@ -164,7 +175,7 @@ pub struct Rect {
   min_y : Double
   max_x : Double
   max_y : Double
-}
+} derive(Debug)
 
 ///|
 pub fn Rect::new(
@@ -196,8 +207,11 @@ pub fn Rect::height(self : Rect) -> Double {
 
 ///|
 /// 矩形中心
-pub fn Rect::center(self : Rect) -> (Double, Double) {
-  ((self.min_x + self.max_x) / 2.0, (self.min_y + self.max_y) / 2.0)
+pub fn Rect::center(self : Rect) -> @alg.Pt2 {
+  @alg.Pt2::new(
+    (self.min_x + self.max_x) / 2.0,
+    (self.min_y + self.max_y) / 2.0,
+  )
 }
 
 ///|
@@ -235,36 +249,37 @@ pub fn Rect::intersects(self : Rect, other : Rect) -> Bool {
 
 ///|
 /// 判断点是否在矩形内
-pub fn Rect::contains(self : Rect, x : Double, y : Double) -> Bool {
-  x >= self.min_x && x <= self.max_x && y >= self.min_y && y <= self.max_y
+pub fn Rect::contains(self : Rect, p : @alg.Pt2) -> Bool {
+  p.x() >= self.min_x &&
+  p.x() <= self.max_x &&
+  p.y() >= self.min_y &&
+  p.y() <= self.max_y
 }
 
 ///|
 /// 矩形转为多边形顶点（逆时针）
-pub fn Rect::to_polygon(self : Rect) -> Array[(Double, Double)] {
+pub fn Rect::to_polygon(self : Rect) -> Array[@alg.Pt2] {
   [
-    (self.min_x, self.min_y),
-    (self.max_x, self.min_y),
-    (self.max_x, self.max_y),
-    (self.min_x, self.max_y),
+    @alg.Pt2::new(self.min_x, self.min_y),
+    @alg.Pt2::new(self.max_x, self.min_y),
+    @alg.Pt2::new(self.max_x, self.max_y),
+    @alg.Pt2::new(self.min_x, self.max_y),
   ]
 }
 
 ///|
 /// 判断多边形是否为逆时针方向
-pub fn is_counterclockwise(coords : Array[(Double, Double)]) -> Bool {
+pub fn is_counterclockwise(coords : Array[@alg.Pt2]) -> Bool {
   polygon_signed_area(coords) > 0.0
 }
 
 ///|
 /// 确保多边形为逆时针方向（如果不是则反转）
-pub fn ensure_counterclockwise(
-  coords : Array[(Double, Double)],
-) -> Array[(Double, Double)] {
+pub fn ensure_counterclockwise(coords : Array[@alg.Pt2]) -> Array[@alg.Pt2] {
   if is_counterclockwise(coords) {
     coords
   } else {
-    let result : Array[(Double, Double)] = []
+    let result : Array[@alg.Pt2] = []
     for i in 0..<coords.length() {
       result.push(coords[coords.length() - 1 - i])
     }
