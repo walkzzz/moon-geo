@@ -64,6 +64,11 @@ run_mutation "space/euclid3.mbt" "dx * dx + dy * dy + dz * dz" "dx * dx - dy * d
 run_mutation "space/space_map.mbt" "Euclid3::new(src.x(), src.y(), self.z_offset)" "Euclid3::new(src.y(), src.x(), self.z_offset)" "Embed2In3::map: swap x/y"
 run_mutation "space/space_map.mbt" "Euclid2::new(src.x(), src.y())" "Euclid2::new(src.y(), src.x())" "Project3To2::map: swap x/y"
 
+# === alg/line2.mbt 变异 ===
+run_mutation "alg/line2.mbt" "self.b * other.c - other.b * self.c" "self.b * other.c + other.b * self.c" "Line2::intersect x: - -> +"
+run_mutation "alg/line2.mbt" "other.a * self.c - self.a * other.c" "other.a * self.c + self.a * other.c" "Line2::intersect y: - -> +"
+run_mutation "alg/line2.mbt" "p1.x() * p2.y() - p2.x() * p1.y()" "p1.x() * p2.y() + p2.x() * p1.y()" "Line2::from_two_points c: - -> +"
+
 ms=$(python3 -c "print(f'{$killed/$total*100:.1f}')" 2>/dev/null || echo "N/A")
 echo ""
 echo "变异分数 MS = $killed/$total = $ms%"

@@ -48,8 +48,9 @@ util(-1) → atop(0) → space(1) → alg(2) → bv(3) → brep(4) → algo(5) �
 | `0.1.1.2` | util poly + atop 拓扑空间 Trait | ✅ |
 | `0.1.1.3` | space Space Trait + Euclid2 | ✅ |
 | `0.1.1.4` | space Euclid3 + SpaceMap | ✅ |
+| `0.1.1.5` | alg Geo Trait + Pt2/Pt3 + Line2 + 前瞻性审查完善 | ✅ |
 
-测试：110 通过 · CRAP：177 · 变异分数：100%
+测试：136 通过 · CRAP：183 · 变异分数：100%
 
 ## 构建与测试
 

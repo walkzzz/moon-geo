@@ -3,5 +3,6 @@
 
 import {
   "walkzzz/moon-geo/util",
+  "walkzzz/moon-geo/atop",
   "walkzzz/moon-geo/space",
 }
