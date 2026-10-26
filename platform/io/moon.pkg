@@ -8,4 +8,5 @@ import {
   "walkzzz/moon-geo/platform/crs",
   "walkzzz/moon-geo/platform/data",
   "walkzzz/moon-geo/platform/mesh",
+  "moonbitlang/core/float",
 }

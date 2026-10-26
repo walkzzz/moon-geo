@@ -231,3 +231,164 @@ fn count_substring(s : String, sub : String) -> Int32 {
   }
   count
 }
+
+///|
+fn approx_d(a : Double, b : Double, tol : Double) -> Bool {
+  (a - b).abs() < tol
+}
+
+///|
+fn safe_stl_binary_read(bytes : Bytes) -> @mesh.IndexedMesh? {
+  try {
+    let m = mesh_from_stl_binary(bytes)
+    Some(m)
+  } catch {
+    _ => None
+  }
+}
+
+///|
+test "binary STL 写基本网格" {
+  let m = @mesh.IndexedMesh::new()
+  let (m1, i0) = m.add_vertex(0.0, 0.0, 0.0)
+  let (m2, i1) = m1.add_vertex(1.0, 0.0, 0.0)
+  let (m3, i2) = m2.add_vertex(0.0, 1.0, 0.0)
+  let m4 = m3.add_triangle(i0, i1, i2)
+  let bytes = mesh_to_stl_binary(m4, "test")
+  // 80 头 + 4 数量 + 50 三角形 = 134
+  assert_eq(bytes.length(), 134)
+}
+
+///|
+test "binary STL 写多面片" {
+  let m = @mesh.IndexedMesh::new()
+  let (m1, i0) = m.add_vertex(0.0, 0.0, 0.0)
+  let (m2, i1) = m1.add_vertex(1.0, 0.0, 0.0)
+  let (m3, i2) = m2.add_vertex(0.0, 1.0, 0.0)
+  let (m4, i3) = m3.add_vertex(0.0, 0.0, 1.0)
+  let m5 = m4.add_triangle(i0, i1, i2).add_triangle(i0, i1, i3)
+  let bytes = mesh_to_stl_binary(m5, "test")
+  // 80 + 4 + 2*50 = 184
+  assert_eq(bytes.length(), 184)
+}
+
+///|
+test "binary STL 往返测试" {
+  let m = @mesh.IndexedMesh::new()
+  let (m1, i0) = m.add_vertex(1.0, 2.0, 3.0)
+  let (m2, i1) = m1.add_vertex(4.0, 5.0, 6.0)
+  let (m3, i2) = m2.add_vertex(7.0, 8.0, 9.0)
+  let m4 = m3.add_triangle(i0, i1, i2).add_normal(0.0, 0.0, 1.0)
+  let bytes = mesh_to_stl_binary(m4, "test")
+  match safe_stl_binary_read(bytes) {
+    Some(m5) => {
+      assert_eq(m5.triangle_count(), 1)
+      assert_eq(m5.vertex_count(), 3)
+      match m5.get_vertex(0) {
+        Some(v) => {
+          assert_true(approx_d(v.x(), 1.0, 1.0e-6))
+          assert_true(approx_d(v.y(), 2.0, 1.0e-6))
+          assert_true(approx_d(v.z(), 3.0, 1.0e-6))
+        }
+        None => assert_true(false)
+      }
+      match m5.get_vertex(1) {
+        Some(v) => {
+          assert_true(approx_d(v.x(), 4.0, 1.0e-6))
+          assert_true(approx_d(v.y(), 5.0, 1.0e-6))
+          assert_true(approx_d(v.z(), 6.0, 1.0e-6))
+        }
+        None => assert_true(false)
+      }
+      match m5.get_vertex(2) {
+        Some(v) => {
+          assert_true(approx_d(v.x(), 7.0, 1.0e-6))
+          assert_true(approx_d(v.y(), 8.0, 1.0e-6))
+          assert_true(approx_d(v.z(), 9.0, 1.0e-6))
+        }
+        None => assert_true(false)
+      }
+    }
+    None => assert_true(false)
+  }
+}
+
+///|
+test "binary STL 往返多面片" {
+  let m = @mesh.IndexedMesh::new()
+  let (m1, i0) = m.add_vertex(0.0, 0.0, 0.0)
+  let (m2, i1) = m1.add_vertex(1.0, 0.0, 0.0)
+  let (m3, i2) = m2.add_vertex(0.0, 1.0, 0.0)
+  let (m4, i3) = m3.add_vertex(0.0, 0.0, 1.0)
+  let m5 = m4.add_triangle(i0, i1, i2).add_triangle(i0, i1, i3)
+  let bytes = mesh_to_stl_binary(m5, "test")
+  match safe_stl_binary_read(bytes) {
+    Some(m6) => assert_eq(m6.triangle_count(), 2)
+    None => assert_true(false)
+  }
+}
+
+///|
+test "binary STL 负坐标往返" {
+  let m = @mesh.IndexedMesh::new()
+  let (m1, i0) = m.add_vertex(-1.5, -2.5, -3.5)
+  let (m2, i1) = m1.add_vertex(1.0, 0.0, 0.0)
+  let (m3, i2) = m2.add_vertex(0.0, 1.0, 0.0)
+  let m4 = m3.add_triangle(i0, i1, i2)
+  let bytes = mesh_to_stl_binary(m4, "test")
+  match safe_stl_binary_read(bytes) {
+    Some(m5) =>
+      match m5.get_vertex(0) {
+        Some(v) => {
+          assert_true(approx_d(v.x(), -1.5, 1.0e-6))
+          assert_true(approx_d(v.y(), -2.5, 1.0e-6))
+          assert_true(approx_d(v.z(), -3.5, 1.0e-6))
+        }
+        None => assert_true(false)
+      }
+    None => assert_true(false)
+  }
+}
+
+///|
+test "binary STL 过短报错" {
+  let bytes = Bytes::make(10, b'\x00')
+  match safe_stl_binary_read(bytes) {
+    Some(_) => assert_true(false)
+    None => assert_true(true)
+  }
+}
+
+///|
+test "binary STL 零面片报错" {
+  let bytes = Bytes::make(84, b'\x00')
+  match safe_stl_binary_read(bytes) {
+    Some(_) => assert_true(false)
+    None => assert_true(true)
+  }
+}
+
+///|
+test "binary STL 写空网格" {
+  let m = @mesh.IndexedMesh::new()
+  let bytes = mesh_to_stl_binary(m, "empty")
+  // 80 + 4 = 84 字节，零三角形
+  assert_eq(bytes.length(), 84)
+}
+
+///|
+test "binary STL ASCII 头部写入" {
+  let m = @mesh.IndexedMesh::new()
+  let (m1, i0) = m.add_vertex(0.0, 0.0, 0.0)
+  let (m2, i1) = m1.add_vertex(1.0, 0.0, 0.0)
+  let (m3, i2) = m2.add_vertex(0.0, 1.0, 0.0)
+  let m4 = m3.add_triangle(i0, i1, i2)
+  let bytes = mesh_to_stl_binary(m4, "MyModel")
+  // 头部前 7 字节应为 "MyModel"
+  let header = bytes.to_array()
+  let mut s = ""
+  for i in 0..<7 {
+    s += header[i].to_char().to_string()
+  }
+  assert_true(s.contains("MyModel"))
+}

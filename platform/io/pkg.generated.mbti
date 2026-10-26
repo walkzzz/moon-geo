@@ -32,7 +32,11 @@ pub fn layer_to_geojson(@data.Layer) -> String
 
 pub fn mesh_from_stl_ascii(String) -> @mesh.IndexedMesh raise @util.GeoError
 
+pub fn mesh_from_stl_binary(Bytes) -> @mesh.IndexedMesh raise @util.GeoError
+
 pub fn mesh_to_stl_ascii(@mesh.IndexedMesh, String) -> String
+
+pub fn mesh_to_stl_binary(@mesh.IndexedMesh, String) -> Bytes
 
 pub fn parse_json(String) -> JsonValue raise @util.GeoError
 
