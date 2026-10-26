@@ -1,0 +1,50 @@
+// Generated using `moon info`, DON'T EDIT IT
+package "walkzzz/moon-geo/platform/io"
+
+import {
+  "walkzzz/moon-geo/platform/data",
+  "walkzzz/moon-geo/util",
+}
+
+// Values
+pub fn dataset_to_geojson(@data.Dataset) -> String
+
+pub fn feature_from_geojson(String) -> @data.Feature raise @util.GeoError
+
+pub fn feature_to_geojson(@data.Feature) -> String
+
+pub fn geometry_to_geojson(@data.Geometry) -> String
+
+pub fn json_as_array(JsonValue) -> Array[JsonValue]?
+
+pub fn json_as_number(JsonValue) -> Double?
+
+pub fn json_as_object(JsonValue) -> Array[(String, JsonValue)]?
+
+pub fn json_as_string(JsonValue) -> String?
+
+pub fn json_get(JsonValue, String) -> JsonValue?
+
+pub fn layer_from_geojson(String, String) -> @data.Layer raise @util.GeoError
+
+pub fn layer_to_geojson(@data.Layer) -> String
+
+pub fn parse_json(String) -> JsonValue raise @util.GeoError
+
+// Errors
+
+// Types and methods
+type JsonParser
+
+pub enum JsonValue {
+  JsonObject(Array[(String, JsonValue)])
+  JsonArray(Array[JsonValue])
+  JsonString(String)
+  JsonNumber(Double)
+  JsonBool(Bool)
+  JsonNull
+}
+
+// Type aliases
+
+// Traits

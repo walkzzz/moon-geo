@@ -52,7 +52,7 @@ pub enum FieldType {
   Boolean
 } derive(Eq, @debug.Debug)
 
-pub enum FieldValue {
+pub(all) enum FieldValue {
   IntVal(Int32)
   DoubleVal(Double)
   StringVal(String)
@@ -66,7 +66,7 @@ pub fn FieldValue::as_string(Self) -> String?
 pub fn FieldValue::is_null(Self) -> Bool
 pub fn FieldValue::type_of(Self) -> FieldType
 
-pub enum Geometry {
+pub(all) enum Geometry {
   Point(Double, Double)
   PointZ(Double, Double, Double)
   LineString(Array[(Double, Double)])

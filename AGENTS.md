@@ -120,12 +120,13 @@
 - `0.1.2.6`（2027-08）：`algo/`（Sutherland-Hodgman 多边形裁剪 + 凸多边形交集 + 矩形布尔运算 + 多边形面积/质心）
 - `0.1.2.7`（2027-09）：`algo/`（Delaunay 三角剖分 Bowyer-Watson + 点/线缓冲区 + 重复顶点合并/方向修正）
 - `0.1.2.8`（2027-10）：`draw/`（Style 样式 + Canvas2 2D SVG 画布 + Canvas3 3D 线框透视投影 + 立方体/坐标轴绘制）
+- `0.1.2.9`（2027-11）：`platform/io`（GeoJSON 读写 + JSON 解析器 + CRS/属性携带 + 往返测试）
 
 **阶段一完成**。核心 Trait 已冻结。
 
-本月任务包（2027-11，`0.1.2.9`）：
-- `platform/io`：geojson（携带 CRS + 属性）GeoJSON 读写
-- 验收：规范符合测试
+本月任务包（2027-12，`0.1.2.10`）：
+- `platform/io`：stl（IndexedMesh 通道）STL 读写
+- 验收：模型往返测试
 
 后续月度任务见迭代详表。
 

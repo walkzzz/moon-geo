@@ -5,7 +5,7 @@
 
 ///|
 /// 几何类型（GeoJSON 风格）
-pub enum Geometry {
+pub(all) enum Geometry {
   Point(Double, Double)
   PointZ(Double, Double, Double)
   LineString(Array[(Double, Double)])

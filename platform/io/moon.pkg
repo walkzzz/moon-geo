@@ -1,0 +1,9 @@
+// platform/io 包：格式 I/O（P5 层）
+// 依赖：platform/data（Feature/Layer/Dataset）、platform/crs（Crs）、util（GeoError）
+// 时序铁律：数据模型 + CRS 已就绪，此处实现格式读写
+
+import {
+  "walkzzz/moon-geo/util",
+  "walkzzz/moon-geo/platform/crs",
+  "walkzzz/moon-geo/platform/data",
+}

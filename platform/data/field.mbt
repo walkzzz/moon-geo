@@ -13,7 +13,7 @@ pub enum FieldType {
 
 ///|
 /// 字段值
-pub enum FieldValue {
+pub(all) enum FieldValue {
   IntVal(Int32)
   DoubleVal(Double)
   StringVal(String)
