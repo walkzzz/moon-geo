@@ -57,6 +57,13 @@ run_mutation "util/poly.mbt" "r[i - 1] = self.coeffs[i] * k" "r[i - 1] = self.co
 run_mutation "util/poly.mbt" "r[i] = r[i] + other.coeffs[i]" "r[i] = r[i] - other.coeffs[i]" "Poly1::add: + -> -"
 run_mutation "util/poly.mbt" "result = result + prod" "result = result - prod" "PolyN::eval: + -> -"
 
+# === space/euclid3.mbt 变异 ===
+run_mutation "space/euclid3.mbt" "dx * dx + dy * dy + dz * dz" "dx * dx - dy * dy + dz * dz" "Euclid3::distance: + -> -"
+
+# === space/space_map.mbt 变异 ===
+run_mutation "space/space_map.mbt" "Euclid3::new(src.x(), src.y(), self.z_offset)" "Euclid3::new(src.y(), src.x(), self.z_offset)" "Embed2In3::map: swap x/y"
+run_mutation "space/space_map.mbt" "Euclid2::new(src.x(), src.y())" "Euclid2::new(src.y(), src.x())" "Project3To2::map: swap x/y"
+
 ms=$(python3 -c "print(f'{$killed/$total*100:.1f}')" 2>/dev/null || echo "N/A")
 echo ""
 echo "变异分数 MS = $killed/$total = $ms%"

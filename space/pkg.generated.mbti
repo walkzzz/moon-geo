@@ -10,6 +10,13 @@ import {
 // Errors
 
 // Types and methods
+pub struct Embed2In3 {
+  z_offset : Double
+}
+pub fn Embed2In3::map(Self, Euclid2) -> Euclid3
+pub fn Embed2In3::new() -> Self
+pub fn Embed2In3::with_z(Double) -> Self
+
 pub struct Euclid2 {
   x : Double
   y : Double
@@ -17,6 +24,22 @@ pub struct Euclid2 {
 pub fn Euclid2::new(Double, Double) -> Self
 pub fn Euclid2::x(Self) -> Double
 pub fn Euclid2::y(Self) -> Double
+
+pub struct Euclid3 {
+  x : Double
+  y : Double
+  z : Double
+}
+pub fn Euclid3::new(Double, Double, Double) -> Self
+pub fn Euclid3::x(Self) -> Double
+pub fn Euclid3::y(Self) -> Double
+pub fn Euclid3::z(Self) -> Double
+
+pub struct Project3To2 {
+  dummy : Unit
+}
+pub fn Project3To2::map(Self, Euclid3) -> Euclid2
+pub fn Project3To2::new() -> Self
 
 pub enum SpaceKind {
   Euclidean2
@@ -32,4 +55,11 @@ pub enum SpaceKind {
 // Traits
 pub trait Space : @atop.MetricSpace + @atop.Dim {
   fn space_kind(Self) -> SpaceKind
+}
+
+pub trait SpaceMap {
+  fn source_kind(Self) -> SpaceKind
+  fn target_kind(Self) -> SpaceKind
+  fn is_injective(Self) -> Bool
+  fn is_surjective(Self) -> Bool
 }

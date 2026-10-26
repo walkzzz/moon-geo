@@ -46,7 +46,7 @@
 | 02 | `0.1.1.1` | util vec2/vec3/mat3/mat4/quat | 向量矩阵四元数 | 线代基准通过 |
 | 03 | `0.1.1.2` | util poly + atop 拓扑空间 Trait | TopologicalSpace/Manifold/MetricSpace | Trait 设计评审 ✅ |
 | 04 | `0.1.1.3` | space Space Trait + Euclid2 + Dim | 空间核心抽象 + 2D 欧氏 | space 单测通过 ✅ |
-| 05 | `0.1.1.4` | space Euclid3 + SpaceMap Trait | 3D 欧氏 + 空间映射 | 跨空间映射测试 |
+| 05 | `0.1.1.4` | space Euclid3 + SpaceMap Trait | 3D 欧氏 + 空间映射 | 跨空间映射测试 ✅ |
 | 06 | `0.1.1.5` | alg Geo Trait + Pt2/Pt3 + Line2 | 图元核心抽象 + 点/直线 | Geo Trait 评审 |
 | 07 | `0.1.1.6` | alg Circle + Conic2 + discriminant | 圆/圆锥曲线/判别式 | 圆锥曲线分类测试 |
 | 08 | `0.1.1.7` | alg Plane3 + Sphere + Quad3 + power | 平面/球/二次曲面/幂定理 | 幂定理大一统测试 |

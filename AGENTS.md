@@ -102,10 +102,11 @@
 - `0.1.1.1`（2026-02）：`util/vec.mbt`（Vec2/Vec3）+ `util/mat.mbt`（Mat3/Mat4）+ `util/quat.mbt`（Quat）
 - `0.1.1.2`（2026-03）：`util/poly.mbt`（Poly1/PolyN）+ `atop/`（TopologicalSpace/MetricSpace/Manifold/Dim Trait）
 - `0.1.1.3`（2026-04）：`space/`（Space Trait + Euclid2 + SpaceKind）+ atop trait 改 `pub(open)` 允许跨包实现
+- `0.1.1.4`（2026-05）：`space/`（Euclid3 + SpaceMap Trait + Embed2In3 + Project3To2）+ 变异测试扩展至 space 包
 
-本月任务包（2026-05，`0.1.1.4`）：
-- `space/`：Euclid3 + SpaceMap Trait
-- 验收：3D 欧氏空间 + 跨空间映射测试
+本月任务包（2026-06，`0.1.1.5`）：
+- `alg/`：Geo Trait + Pt2/Pt3 + Line2
+- 验收：图元核心抽象 + 点/直线 + Geo Trait 评审
 
 后续月度任务见迭代详表。核心 Trait 在 2026-12（`0.1.1.11`）冻结。
 
