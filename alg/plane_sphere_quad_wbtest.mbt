@@ -192,6 +192,8 @@ test "Quad3 Geo trait" {
   let q = Quad3::new(1.0, 1.0, 1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, -1.0)
   assert_true(Geo::geo_dim(q) is GeoDim::Surface)
   assert_false(Geo::is_degenerate(q))
+  let d = Quad3::new(1.0, -1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0)
+  assert_true(Geo::is_degenerate(d))
 }
 
 ///|

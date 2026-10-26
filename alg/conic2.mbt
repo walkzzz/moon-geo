@@ -77,15 +77,37 @@ pub fn Conic2::discriminant(self : Conic2) -> Double {
 }
 
 ///|
+/// 3×3 伴随矩阵行列式（×4 避免除法精度损失）
+/// | a   b/2 d/2 |
+/// | b/2 c   e/2 |  4·det = 4acf - ae² - b²f + bde - cd²
+/// | d/2 e/2 f   |
+/// det = 0 时圆锥曲线退化（如两条直线、点、空集等）
+fn Conic2::conic_det(self : Conic2) -> Double {
+  let a = self.a
+  let b = self.b
+  let c = self.c
+  let d = self.d
+  let e = self.e
+  let f = self.f
+  4.0 * a * c * f - a * e * e - b * b * f + b * d * e - c * d * d
+}
+
+///|
 /// 分类圆锥曲线类型
+/// 先检查退化（3×3 行列式=0），再按判别式 Δ = b² - 4ac 分类
 pub fn Conic2::classify(self : Conic2) -> ConicType {
-  let disc = self.discriminant()
-  if @util.dbl_approx_eq(disc, 0.0, @util.EPS) {
-    Parabola
-  } else if disc < 0.0 {
-    Ellipse
+  let det = self.conic_det()
+  if @util.dbl_approx_eq(det, 0.0, @util.EPS) {
+    Degenerate
   } else {
-    Hyperbola
+    let disc = self.discriminant()
+    if @util.dbl_approx_eq(disc, 0.0, @util.EPS) {
+      Parabola
+    } else if disc < 0.0 {
+      Ellipse
+    } else {
+      Hyperbola
+    }
   }
 }
 
@@ -131,9 +153,7 @@ impl Geo for Conic2 with fn geo_dim(_) {
 
 ///|
 impl Geo for Conic2 with fn is_degenerate(self) {
-  @util.dbl_approx_eq(self.a, 0.0, @util.EPS) &&
-  @util.dbl_approx_eq(self.b, 0.0, @util.EPS) &&
-  @util.dbl_approx_eq(self.c, 0.0, @util.EPS)
+  @util.dbl_approx_eq(self.conic_det(), 0.0, @util.EPS)
 }
 
 ///|

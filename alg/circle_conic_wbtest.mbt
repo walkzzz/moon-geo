@@ -133,6 +133,8 @@ test "Conic2 classify" {
   assert_true(parabola.classify() is ConicType::Parabola)
   let hyperbola = Conic2::new(1.0, 0.0, -1.0, 0.0, 0.0, -1.0)
   assert_true(hyperbola.classify() is ConicType::Hyperbola)
+  let degenerate = Conic2::new(1.0, 0.0, -1.0, 0.0, 0.0, 0.0)
+  assert_true(degenerate.classify() is ConicType::Degenerate)
 }
 
 ///|
@@ -159,6 +161,8 @@ test "Conic2 Geo trait" {
   assert_false(Geo::is_degenerate(c))
   let d = Conic2::new(0.0, 0.0, 0.0, 1.0, 1.0, 1.0)
   assert_true(Geo::is_degenerate(d))
+  let e = Conic2::new(1.0, 0.0, -1.0, 0.0, 0.0, 0.0)
+  assert_true(Geo::is_degenerate(e))
 }
 
 ///|

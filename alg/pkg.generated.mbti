@@ -157,17 +157,6 @@ pub fn Quad3::geo_dim(Self) -> GeoDim
 pub fn Quad3::is_degenerate(Self) -> Bool
 pub fn Quad3::new(Double, Double, Double, Double, Double, Double, Double, Double, Double, Double) -> Self
 
-pub enum Quad3Type {
-  Ellipsoid
-  HyperboloidOneSheet
-  HyperboloidTwoSheets
-  EllipticParaboloid
-  HyperbolicParaboloid
-  EllipticCone
-  EllipticCylinder
-  Other
-}
-
 pub struct Sphere {
   cx : Double
   cy : Double

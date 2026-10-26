@@ -3,27 +3,6 @@
 // 一般式：a*x² + b*y² + c*z² + d*xy + e*xz + f*yz + g*x + h*y + i*z + j = 0
 
 ///|
-/// 二次曲面类型
-pub enum Quad3Type {
-  /// 椭球面
-  Ellipsoid
-  /// 单叶双曲面
-  HyperboloidOneSheet
-  /// 双叶双曲面
-  HyperboloidTwoSheets
-  /// 椭圆抛物面
-  EllipticParaboloid
-  /// 双曲抛物面
-  HyperbolicParaboloid
-  /// 椭圆锥面
-  EllipticCone
-  /// 椭圆柱面
-  EllipticCylinder
-  /// 其他/退化
-  Other
-}
-
-///|
 /// 三维二次曲面
 pub struct Quad3 {
   a : Double
@@ -100,18 +79,42 @@ pub fn Quad3::from_sphere(s : Sphere) -> Quad3 {
 }
 
 ///|
+/// 4×4 伴随矩阵行列式
+/// | a   d/2 e/2 g/2 |
+/// | d/2 b   f/2 h/2 |
+/// | e/2 f/2 c   i/2 |
+/// | g/2 h/2 i/2 j   |
+/// det = 0 时二次曲面退化
+fn Quad3::quad3_det(self : Quad3) -> Double {
+  let m = @util.Mat4::new(
+    self.a,
+    self.d / 2.0,
+    self.e / 2.0,
+    self.g / 2.0,
+    self.d / 2.0,
+    self.b,
+    self.f / 2.0,
+    self.h / 2.0,
+    self.e / 2.0,
+    self.f / 2.0,
+    self.c,
+    self.i / 2.0,
+    self.g / 2.0,
+    self.h / 2.0,
+    self.i / 2.0,
+    self.j,
+  )
+  m.det()
+}
+
+///|
 impl Geo for Quad3 with fn geo_dim(_) {
   GeoDim::Surface
 }
 
 ///|
 impl Geo for Quad3 with fn is_degenerate(self) {
-  @util.dbl_approx_eq(self.a, 0.0, @util.EPS) &&
-  @util.dbl_approx_eq(self.b, 0.0, @util.EPS) &&
-  @util.dbl_approx_eq(self.c, 0.0, @util.EPS) &&
-  @util.dbl_approx_eq(self.d, 0.0, @util.EPS) &&
-  @util.dbl_approx_eq(self.e, 0.0, @util.EPS) &&
-  @util.dbl_approx_eq(self.f, 0.0, @util.EPS)
+  @util.dbl_approx_eq(self.quad3_det(), 0.0, @util.EPS)
 }
 
 ///|
