@@ -51,7 +51,10 @@ fn skip_whitespace(p : JsonParser) -> JsonParser {
 
 ///|
 /// 解析一个值
-fn parse_value(p : JsonParser, depth : Int32) -> (JsonValue, Int32) raise @util.GeoError {
+fn parse_value(
+  p : JsonParser,
+  depth : Int32,
+) -> (JsonValue, Int32) raise @util.GeoError {
   if depth > 1000 {
     raise @util.GeoError::FormatError("JSON 递归深度超过 1000")
   }
@@ -81,7 +84,10 @@ fn parse_value(p : JsonParser, depth : Int32) -> (JsonValue, Int32) raise @util.
 
 ///|
 /// 解析对象
-fn parse_object(p : JsonParser, depth : Int32) -> (JsonValue, Int32) raise @util.GeoError {
+fn parse_object(
+  p : JsonParser,
+  depth : Int32,
+) -> (JsonValue, Int32) raise @util.GeoError {
   let mut pos = p.pos + 1
   let entries : Array[(String, JsonValue)] = []
   let p1 : JsonParser = { input: p.input, pos, }
@@ -136,7 +142,10 @@ fn parse_object(p : JsonParser, depth : Int32) -> (JsonValue, Int32) raise @util
 
 ///|
 /// 解析数组
-fn parse_array(p : JsonParser, depth : Int32) -> (JsonValue, Int32) raise @util.GeoError {
+fn parse_array(
+  p : JsonParser,
+  depth : Int32,
+) -> (JsonValue, Int32) raise @util.GeoError {
   let mut pos = p.pos + 1
   let values : Array[JsonValue] = []
   let p1 : JsonParser = { input: p.input, pos, }

@@ -836,7 +836,9 @@ test "GeoJSON GeometryCollection 往返" {
     @data.LineString([@alg.Pt2::new(0.0, 0.0), @alg.Pt2::new(3.0, 4.0)]),
   ])
   let json = geometry_to_geojson(original)
-  let feature_json = "{\"type\":\"Feature\",\"geometry\":" + json + ",\"properties\":{}}"
+  let feature_json = "{\"type\":\"Feature\",\"geometry\":" +
+    json +
+    ",\"properties\":{}}"
   match safe_feature(feature_json) {
     Some(f) =>
       match f.geometry() {

@@ -268,7 +268,9 @@ fn get_vtx(mesh : @mesh.IndexedMesh, i : Int32) -> @alg.Pt3 {
 
 ///|
 /// 解析 vertex 行
-fn parse_vertex_line(line : String) -> (Double, Double, Double) raise @util.GeoError {
+fn parse_vertex_line(
+  line : String,
+) -> (Double, Double, Double) raise @util.GeoError {
   let parts = split_whitespace(line)
   if parts.length() >= 4 {
     let x = local_parse_double(parts[1])
