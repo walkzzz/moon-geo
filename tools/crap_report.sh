@@ -14,6 +14,13 @@ func_list=""
 
 report() {
   local name="$1" comp="$2"
+  local method="${name#*::}"
+  if ! grep -rq "$name" --include="*.mbt" util/ atop/ space/ alg/ bv/ 2>/dev/null; then
+    if ! grep -rq "fn $method" --include="*.mbt" util/ atop/ space/ alg/ bv/ 2>/dev/null; then
+      echo "❌ 校验失败: 函数 $name 在源码中未找到（可能已重命名/删除）" >&2
+      exit 1
+    fi
+  fi
   local crap=$((comp * comp))
   total_crap=$((total_crap + crap))
   count=$((count + 1))

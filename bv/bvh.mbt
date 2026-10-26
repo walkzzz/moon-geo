@@ -28,11 +28,35 @@ pub fn BVHNode::build(leaves : Array[(Aabb3, Int32)]) -> BVHNode? {
     for i in 1..<leaves.length() {
       bbox = bbox.union(leaves[i].0)
     }
+    let ext_x = bbox.max_x() - bbox.min_x()
+    let ext_y = bbox.max_y() - bbox.min_y()
+    let ext_z = bbox.max_z() - bbox.min_z()
+    let axis = if ext_x >= ext_y && ext_x >= ext_z {
+      0
+    } else if ext_y >= ext_z {
+      1
+    } else {
+      2
+    }
     let sorted = leaves.copy()
     sorted.sort_by(fn(a, b) {
       let ca = a.0.center()
       let cb = b.0.center()
-      ca.x().compare(cb.x())
+      let va = if axis == 0 {
+        ca.x()
+      } else if axis == 1 {
+        ca.y()
+      } else {
+        ca.z()
+      }
+      let vb = if axis == 0 {
+        cb.x()
+      } else if axis == 1 {
+        cb.y()
+      } else {
+        cb.z()
+      }
+      va.compare(vb)
     })
     let mid = sorted.length() / 2
     let left_arr = []

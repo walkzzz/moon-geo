@@ -5,7 +5,11 @@
 ///|
 /// 直线与圆求交
 /// 返回交点数组（0/1/2 个点）
+/// 退化直线（a=b=0）返回空数组，不产生 NaN
 pub fn intersect_line_circle(line : Line2, circle : Circle) -> Array[Pt2] {
+  if line.is_degenerate() {
+    return []
+  }
   let result = []
   let a = line.a()
   let b = line.b()
@@ -66,6 +70,8 @@ pub fn intersect_line_circle(line : Line2, circle : Circle) -> Array[Pt2] {
 /// 两圆求交
 /// 利用幂定理：两圆方程相减得根轴（直线），再求直线与圆的交点
 /// 返回交点数组（0/1/2 个点）
+/// 同心圆返回空数组：半径相同（重合，无穷多交点）按"无离散交点"处理；
+/// 半径不同（无交点）亦返回空数组。调用方需自行区分同心场景。
 pub fn intersect_circle_circle(c1 : Circle, c2 : Circle) -> Array[Pt2] {
   let cx1 = c1.cx()
   let cy1 = c1.cy()

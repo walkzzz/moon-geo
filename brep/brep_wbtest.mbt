@@ -651,3 +651,73 @@ test "FREEZE: Geo Trait interface stability" {
   let _ = p3.geo_dim()
   let _ = p3.is_degenerate()
 }
+
+///|
+test "Solid tetrahedron face normals point outward" {
+  let v0 = @alg.Pt3::new(0.0, 0.0, 0.0)
+  let v1 = @alg.Pt3::new(1.0, 0.0, 0.0)
+  let v2 = @alg.Pt3::new(0.0, 1.0, 0.0)
+  let v3 = @alg.Pt3::new(0.0, 0.0, 1.0)
+  let mesh = Solid::tetrahedron(v0, v1, v2, v3).mesh()
+  let cx = 0.25
+  let cy = 0.25
+  let cz = 0.25
+  for fi in 0..<mesh.face_count() {
+    let hes = mesh.face_half_edges(fi)
+    let p0 = mesh.vertex(mesh.half_edge(hes[0]).origin()).pos()
+    let p1 = mesh.vertex(mesh.half_edge(hes[1]).origin()).pos()
+    let p2 = mesh.vertex(mesh.half_edge(hes[2]).origin()).pos()
+    let e1x = p1.x() - p0.x()
+    let e1y = p1.y() - p0.y()
+    let e1z = p1.z() - p0.z()
+    let e2x = p2.x() - p0.x()
+    let e2y = p2.y() - p0.y()
+    let e2z = p2.z() - p0.z()
+    let nx = e1y * e2z - e1z * e2y
+    let ny = e1z * e2x - e1x * e2z
+    let nz = e1x * e2y - e1y * e2x
+    let fcx = (p0.x() + p1.x() + p2.x()) / 3.0
+    let fcy = (p0.y() + p1.y() + p2.y()) / 3.0
+    let fcz = (p0.z() + p1.z() + p2.z()) / 3.0
+    let ox = fcx - cx
+    let oy = fcy - cy
+    let oz = fcz - cz
+    let dot = nx * ox + ny * oy + nz * oz
+    assert_true(dot > 0.0)
+  }
+}
+
+///|
+test "Solid tetrahedron face normals point outward (offset tetrahedron)" {
+  let v0 = @alg.Pt3::new(5.0, 5.0, 5.0)
+  let v1 = @alg.Pt3::new(6.0, 5.0, 5.0)
+  let v2 = @alg.Pt3::new(5.0, 6.0, 5.0)
+  let v3 = @alg.Pt3::new(5.0, 5.0, 6.0)
+  let mesh = Solid::tetrahedron(v0, v1, v2, v3).mesh()
+  let cx = 5.25
+  let cy = 5.25
+  let cz = 5.25
+  for fi in 0..<mesh.face_count() {
+    let hes = mesh.face_half_edges(fi)
+    let p0 = mesh.vertex(mesh.half_edge(hes[0]).origin()).pos()
+    let p1 = mesh.vertex(mesh.half_edge(hes[1]).origin()).pos()
+    let p2 = mesh.vertex(mesh.half_edge(hes[2]).origin()).pos()
+    let e1x = p1.x() - p0.x()
+    let e1y = p1.y() - p0.y()
+    let e1z = p1.z() - p0.z()
+    let e2x = p2.x() - p0.x()
+    let e2y = p2.y() - p0.y()
+    let e2z = p2.z() - p0.z()
+    let nx = e1y * e2z - e1z * e2y
+    let ny = e1z * e2x - e1x * e2z
+    let nz = e1x * e2y - e1y * e2x
+    let fcx = (p0.x() + p1.x() + p2.x()) / 3.0
+    let fcy = (p0.y() + p1.y() + p2.y()) / 3.0
+    let fcz = (p0.z() + p1.z() + p2.z()) / 3.0
+    let ox = fcx - cx
+    let oy = fcy - cy
+    let oz = fcz - cz
+    let dot = nx * ox + ny * oy + nz * oz
+    assert_true(dot > 0.0)
+  }
+}

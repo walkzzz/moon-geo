@@ -215,3 +215,27 @@ test "E2E: line-circle intersect then verify on both" {
     assert_true(circle.contains(pts[i]))
   }
 }
+
+///|
+test "intersect_line_circle degenerate line returns empty" {
+  let line = Line2::new(0.0, 0.0, 5.0)
+  let circle = Circle::new(0.0, 0.0, 5.0)
+  let pts = intersect_line_circle(line, circle)
+  assert_eq(pts.length(), 0)
+}
+
+///|
+test "intersect_circle_circle coincident returns empty" {
+  let c1 = Circle::new(0.0, 0.0, 5.0)
+  let c2 = Circle::new(0.0, 0.0, 5.0)
+  let pts = intersect_circle_circle(c1, c2)
+  assert_eq(pts.length(), 0)
+}
+
+///|
+test "intersect_circle_circle concentric different radius returns empty" {
+  let c1 = Circle::new(0.0, 0.0, 5.0)
+  let c2 = Circle::new(0.0, 0.0, 3.0)
+  let pts = intersect_circle_circle(c1, c2)
+  assert_eq(pts.length(), 0)
+}

@@ -15,6 +15,11 @@ run_mutation() {
   total=$((total+1))
   cp "$file" "$file.bak"
   python3 -c "import sys; p,o,n=sys.argv[1:4]; c=open(p,encoding='utf-8').read(); open(p,'w',encoding='utf-8').write(c.replace(o,n,1))" "$file" "$old" "$new"
+  if diff -q "$file" "$file.bak" > /dev/null 2>&1; then
+    echo "❌ NO-OP: $desc (replace 未匹配，变异未注入——源码可能已变更)" >&2
+    mv "$file.bak" "$file"
+    exit 1
+  fi
   moon test > /dev/null 2>&1
   local code=$?
   mv "$file.bak" "$file"

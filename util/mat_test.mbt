@@ -163,3 +163,35 @@ test "Mat4 get" {
   assert_true(@util.dbl_approx_eq(m.get(1, 2), 7.0, @util.EPS))
   assert_true(@util.dbl_approx_eq(m.get(3, 3), 16.0, @util.EPS))
 }
+
+///|
+test "Mat4 inv large scale diagonal (relative threshold)" {
+  let m = @util.Mat4::new(
+    1.0e8, 0.0, 0.0, 0.0, 0.0, 1.0e6, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0,
+    1.0,
+  )
+  let inv = m.inv()
+  let prod = m.mul_mat(inv)
+  assert_true(prod.approx_eq(@util.Mat4::identity(), 1.0e-6))
+}
+
+///|
+test "Mat4 inv UTM-style mixed scale" {
+  let t = @util.Mat4::translation(500000.0, 6000000.0, 100.0)
+  let inv = t.inv()
+  let prod = t.mul_mat(inv)
+  assert_true(prod.approx_eq(@util.Mat4::identity(), @util.EPS))
+}
+
+///|
+test "Mat4 inv near-singular detected by relative threshold" {
+  // 行范数 ~4，相对阈值 ~4e-8；主元 1e-9 < 4e-8 应判奇异
+  let m = @util.Mat4::new(
+    1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0,
+  )
+  try m.inv() catch {
+    _ => ()
+  } noraise {
+    _ => fail("expected singular detection")
+  }
+}

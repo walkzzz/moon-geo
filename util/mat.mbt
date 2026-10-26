@@ -284,6 +284,8 @@ pub fn Mat4::det(self : Mat4) -> Double {
 
 ///|
 /// 逆矩阵（Gauss-Jordan 消元，部分选主元）
+/// 奇异判定采用相对阈值 |pivot| <= EPS * pivot_row_norm（ADR-003 混合公差哲学）
+/// pivot_row_norm 为当前主元所在行的 L1 范数，避免全局尺度对量级跨度的可逆矩阵误判
 pub fn Mat4::inv(self : Mat4) -> Mat4 raise MatError {
   let m = self.m
   let aug = Array::make(32, 0.0)
@@ -300,7 +302,11 @@ pub fn Mat4::inv(self : Mat4) -> Mat4 raise MatError {
         pivot = row
       }
     }
-    if dbl_approx_zero(aug[pivot * 8 + col], EPS) {
+    let mut pivot_row_norm = 0.0
+    for j in 0..<8 {
+      pivot_row_norm = pivot_row_norm + dbl_abs(aug[pivot * 8 + j])
+    }
+    if dbl_abs(aug[pivot * 8 + col]) <= EPS * pivot_row_norm {
       raise MatError::Singular
     }
     if pivot != col {

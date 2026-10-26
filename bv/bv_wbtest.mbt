@@ -236,3 +236,47 @@ test "FREEZE: Bv Trait interface stability" {
   let _ = sphere_bv.bv_volume()
   let _ = sphere_bv.bv_is_empty()
 }
+
+///|
+test "BVH longest axis split (y-axis elongated)" {
+  let leaves = [
+    (Aabb3::new(0.0, 0.0, 0.0, 1.0, 1.0, 1.0), 0),
+    (Aabb3::new(0.0, 10.0, 0.0, 1.0, 11.0, 1.0), 1),
+    (Aabb3::new(0.0, 20.0, 0.0, 1.0, 21.0, 1.0), 2),
+    (Aabb3::new(0.0, 30.0, 0.0, 1.0, 31.0, 1.0), 3),
+  ]
+  match BVHNode::build(leaves) {
+    Some(root) => {
+      let query = Aabb3::new(0.0, 0.0, 0.0, 1.0, 15.0, 1.0)
+      let result = []
+      root.query_intersect(query, result)
+      assert_true(result.contains(0))
+      assert_true(result.contains(1))
+      assert_false(result.contains(2))
+      assert_false(result.contains(3))
+    }
+    None => assert_true(false)
+  }
+}
+
+///|
+test "BVH longest axis split (z-axis elongated)" {
+  let leaves = [
+    (Aabb3::new(0.0, 0.0, 0.0, 1.0, 1.0, 1.0), 0),
+    (Aabb3::new(0.0, 0.0, 10.0, 1.0, 1.0, 11.0), 1),
+    (Aabb3::new(0.0, 0.0, 20.0, 1.0, 1.0, 21.0), 2),
+    (Aabb3::new(0.0, 0.0, 30.0, 1.0, 1.0, 31.0), 3),
+  ]
+  match BVHNode::build(leaves) {
+    Some(root) => {
+      let query = Aabb3::new(0.0, 0.0, 0.0, 1.0, 1.0, 15.0)
+      let result = []
+      root.query_intersect(query, result)
+      assert_true(result.contains(0))
+      assert_true(result.contains(1))
+      assert_false(result.contains(2))
+      assert_false(result.contains(3))
+    }
+    None => assert_true(false)
+  }
+}
