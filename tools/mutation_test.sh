@@ -69,6 +69,12 @@ run_mutation "alg/line2.mbt" "self.b * other.c - other.b * self.c" "self.b * oth
 run_mutation "alg/line2.mbt" "other.a * self.c - self.a * other.c" "other.a * self.c + self.a * other.c" "Line2::intersect y: - -> +"
 run_mutation "alg/line2.mbt" "p1.x() * p2.y() - p2.x() * p1.y()" "p1.x() * p2.y() + p2.x() * p1.y()" "Line2::from_two_points c: - -> +"
 
+# === alg/circle.mbt 变异 ===
+run_mutation "alg/circle.mbt" "3.14159265358979323846 * self.r * self.r" "3.14159265358979323846 * self.r + self.r" "Circle::area: * -> +"
+
+# === alg/conic2.mbt 变异 ===
+run_mutation "alg/conic2.mbt" "self.b * self.b - 4.0 * self.a * self.c" "self.b * self.b + 4.0 * self.a * self.c" "Conic2::discriminant: - -> +"
+
 ms=$(python3 -c "print(f'{$killed/$total*100:.1f}')" 2>/dev/null || echo "N/A")
 echo ""
 echo "变异分数 MS = $killed/$total = $ms%"

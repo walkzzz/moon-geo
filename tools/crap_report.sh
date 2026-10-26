@@ -3,7 +3,7 @@
 # CRAP(m) = comp^2 + comp * (1 - cov), cov=1.0 → CRAP = comp^2
 cd "$(dirname "$0")/.." || exit 1
 
-echo "=== CRAP 指标报告 (util + atop + space + alg, 0.1.1.5) ==="
+echo "=== CRAP 指标报告 (util + atop + space + alg, 0.1.1.6) ==="
 echo "公式: CRAP = comp^2 (cov=1.0, 测试全绿)"
 echo "注: 静态表，收尾时需 diff 本表函数列表 vs 实际 pub fn 列表（moon info）以同步"
 echo ""
@@ -47,6 +47,8 @@ report "Mat4::det" 1; report "Mat4::inv" 6
 # space.mbt（Euclid2/3::distance comp=1，SpaceMap impl comp=1，均不列出）
 # alg/line2.mbt
 report "Line2::distance_to_point" 2; report "Line2::intersect" 2; report "Line2::is_degenerate" 2
+# alg/circle.mbt + alg/conic2.mbt
+report "Circle::from_three_points" 2; report "Conic2::classify" 2; report "Conic2::is_degenerate" 3
 
 echo ""
 echo "总函数数: $count (仅列出 comp>1 的函数)"

@@ -10,6 +10,51 @@ import {
 // Errors
 
 // Types and methods
+pub struct Circle {
+  cx : Double
+  cy : Double
+  r : Double
+}
+pub fn Circle::area(Self) -> Double
+pub fn Circle::center(Self) -> Pt2
+pub fn Circle::circumference(Self) -> Double
+pub fn Circle::contains(Self, Pt2) -> Bool
+pub fn Circle::contains_interior(Self, Pt2) -> Bool
+pub fn Circle::cx(Self) -> Double
+pub fn Circle::cy(Self) -> Double
+pub fn Circle::distance_to_point(Self, Pt2) -> Double
+pub fn Circle::from_three_points(Pt2, Pt2, Pt2) -> Self
+pub fn Circle::new(Double, Double, Double) -> Self
+pub fn Circle::r(Self) -> Double
+
+pub struct Conic2 {
+  a : Double
+  b : Double
+  c : Double
+  d : Double
+  e : Double
+  f : Double
+}
+pub fn Conic2::a(Self) -> Double
+pub fn Conic2::b(Self) -> Double
+pub fn Conic2::c(Self) -> Double
+pub fn Conic2::classify(Self) -> ConicType
+pub fn Conic2::contains(Self, Pt2) -> Bool
+pub fn Conic2::d(Self) -> Double
+pub fn Conic2::discriminant(Self) -> Double
+pub fn Conic2::e(Self) -> Double
+pub fn Conic2::eval(Self, Pt2) -> Double
+pub fn Conic2::f(Self) -> Double
+pub fn Conic2::from_circle(Circle) -> Self
+pub fn Conic2::new(Double, Double, Double, Double, Double, Double) -> Self
+
+pub enum ConicType {
+  Ellipse
+  Parabola
+  Hyperbola
+  Degenerate
+}
+
 pub enum GeoDim {
   Point
   Curve
