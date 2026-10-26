@@ -1,0 +1,254 @@
+// 半边数据结构（Half-Edge Data Structure）
+// 第4层 brep，依赖 alg
+// 用于表示流形表面的拓扑关系
+// 参考：CGAL Polyhedron, OpenMesh HalfEdge
+// 索引用 Int 索引代替指针，-1 表示无效/边界
+
+///|
+/// 顶点
+pub struct Vtx {
+  pos : @alg.Pt3
+  he : Int32 // 从该顶点出发的半边索引，-1 表示无
+}
+
+///|
+pub fn Vtx::pos(self : Vtx) -> @alg.Pt3 {
+  self.pos
+}
+
+///|
+pub fn Vtx::he(self : Vtx) -> Int32 {
+  self.he
+}
+
+///|
+/// 半边
+pub struct HEdge {
+  origin : Int32 // 起始顶点索引
+  twin : Int32 // 对偶半边索引
+  next : Int32 // 同面下一条半边索引
+  face : Int32 // 所属面索引，-1 表示边界
+}
+
+///|
+pub fn HEdge::origin(self : HEdge) -> Int32 {
+  self.origin
+}
+
+///|
+pub fn HEdge::twin(self : HEdge) -> Int32 {
+  self.twin
+}
+
+///|
+pub fn HEdge::next(self : HEdge) -> Int32 {
+  self.next
+}
+
+///|
+pub fn HEdge::face(self : HEdge) -> Int32 {
+  self.face
+}
+
+///|
+/// 面
+pub struct Face {
+  he : Int32 // 边界起始半边索引
+}
+
+///|
+pub fn Face::he(self : Face) -> Int32 {
+  self.he
+}
+
+///|
+/// 半边网格
+pub struct HEMesh {
+  vertices : Array[Vtx]
+  half_edges : Array[HEdge]
+  faces : Array[Face]
+}
+
+///|
+pub fn HEMesh::vertex_count(self : HEMesh) -> Int32 {
+  self.vertices.length()
+}
+
+///|
+pub fn HEMesh::half_edge_count(self : HEMesh) -> Int32 {
+  self.half_edges.length()
+}
+
+///|
+pub fn HEMesh::edge_count(self : HEMesh) -> Int32 {
+  self.half_edges.length() / 2
+}
+
+///|
+pub fn HEMesh::face_count(self : HEMesh) -> Int32 {
+  self.faces.length()
+}
+
+///|
+pub fn HEMesh::vertex(self : HEMesh, i : Int32) -> Vtx {
+  self.vertices[i]
+}
+
+///|
+pub fn HEMesh::half_edge(self : HEMesh, i : Int32) -> HEdge {
+  self.half_edges[i]
+}
+
+///|
+pub fn HEMesh::face(self : HEMesh, i : Int32) -> Face {
+  self.faces[i]
+}
+
+///|
+/// 绕面的半边环
+pub fn HEMesh::face_half_edges(self : HEMesh, face_idx : Int32) -> Array[Int32] {
+  let result = []
+  let start = self.faces[face_idx].he
+  let mut current = start
+  let mut first = true
+  while first || current != start {
+    result.push(current)
+    current = self.half_edges[current].next
+    first = false
+  }
+  result
+}
+
+///|
+/// 绕顶点的半边环（通过 twin.next 旋转）
+pub fn HEMesh::vertex_half_edges(
+  self : HEMesh,
+  vtx_idx : Int32,
+) -> Array[Int32] {
+  let result = []
+  let start = self.vertices[vtx_idx].he
+  if start < 0 {
+    return result
+  }
+  let mut current = start
+  let mut first = true
+  while first || current != start {
+    result.push(current)
+    let twin_idx = self.half_edges[current].twin
+    current = self.half_edges[twin_idx].next
+    first = false
+  }
+  result
+}
+
+///|
+/// 顶点的邻居顶点索引
+pub fn HEMesh::vertex_neighbors(self : HEMesh, vtx_idx : Int32) -> Array[Int32] {
+  let half_edges = self.vertex_half_edges(vtx_idx)
+  let result = []
+  let mut i = 0
+  while i < half_edges.length() {
+    let he_idx = half_edges[i]
+    let he = self.half_edges[he_idx]
+    let twin = self.half_edges[he.twin]
+    result.push(twin.origin)
+    i += 1
+  }
+  result
+}
+
+///|
+/// 是否闭合（所有半边都属于某个面，无边界）
+pub fn HEMesh::is_closed(self : HEMesh) -> Bool {
+  let mut i = 0
+  while i < self.half_edges.length() {
+    if self.half_edges[i].face < 0 {
+      return false
+    }
+    i += 1
+  }
+  true
+}
+
+///|
+/// 从三角形构造单面网格
+/// 顶点顺序 p0 → p1 → p2（逆时针为正面）
+pub fn HEMesh::from_triangle(
+  p0 : @alg.Pt3,
+  p1 : @alg.Pt3,
+  p2 : @alg.Pt3,
+) -> HEMesh {
+  let vertices = [{ pos: p0, he: 0, }, { pos: p1, he: 2, }, { pos: p2, he: 4, }]
+  // 面 0: he0→he2→he4（逆时针）
+  // 边界外环: he1→he5→he3（顺时针）
+  let half_edges = [
+    { origin: 0, twin: 1, next: 2, face: 0, }, // 0: v0→v1
+    { origin: 1, twin: 0, next: 5, face: -1, }, // 1: v1→v0 (边界)
+    { origin: 1, twin: 3, next: 4, face: 0, }, // 2: v1→v2
+    { origin: 2, twin: 2, next: 1, face: -1, }, // 3: v2→v1 (边界)
+    { origin: 2, twin: 5, next: 0, face: 0, }, // 4: v2→v0
+    { origin: 0, twin: 4, next: 3, face: -1, }, // 5: v0→v2 (边界)
+  ]
+  let faces = [{ he: 0, }]
+  { vertices, half_edges, faces, }
+}
+
+///|
+/// 从两个共享边的三角形构造网格
+/// 三角形 1: p0→p1→p2，三角形 2: p1→p3→p2（共享边 p1-p2）
+pub fn HEMesh::from_two_triangles(
+  p0 : @alg.Pt3,
+  p1 : @alg.Pt3,
+  p2 : @alg.Pt3,
+  p3 : @alg.Pt3,
+) -> HEMesh {
+  let vertices = [
+    { pos: p0, he: 0, },
+    { pos: p1, he: 2, },
+    { pos: p2, he: 4, },
+    { pos: p3, he: 8, },
+  ]
+  // 面 0: he0→he2→he4（p0→p1→p2）
+  // 面 1: he6→he8→he3（p1→p3→p2）
+  // 共享边: he2(v1→v2) twin=he3(v2→v1)
+  // 边界外环: he1→he5→he9→he7
+  let half_edges = [
+    { origin: 0, twin: 1, next: 2, face: 0, }, // 0: v0→v1
+    { origin: 1, twin: 0, next: 5, face: -1, }, // 1: v1→v0 (边界)
+    { origin: 1, twin: 3, next: 4, face: 0, }, // 2: v1→v2 (共享边)
+    { origin: 2, twin: 2, next: 6, face: 1, }, // 3: v2→v1 (共享边)
+    { origin: 2, twin: 5, next: 0, face: 0, }, // 4: v2→v0
+    { origin: 0, twin: 4, next: 9, face: -1, }, // 5: v0→v2 (边界)
+    { origin: 1, twin: 7, next: 8, face: 1, }, // 6: v1→v3
+    { origin: 3, twin: 6, next: 1, face: -1, }, // 7: v3→v1 (边界)
+    { origin: 3, twin: 9, next: 3, face: 1, }, // 8: v3→v2
+    { origin: 2, twin: 8, next: 7, face: -1, }, // 9: v2→v3 (边界)
+  ]
+  let faces = [{ he: 0, }, { he: 6, }]
+  { vertices, half_edges, faces, }
+}
+
+///|
+impl Topo for HEMesh with fn topo_dim(_) {
+  TopoDim::Face
+}
+
+///|
+impl Topo for HEMesh with fn topo_is_closed(self) {
+  self.is_closed()
+}
+
+///|
+impl Topo for HEMesh with fn topo_is_manifold(self) {
+  let mut i = 0
+  while i < self.vertices.length() {
+    if self.vertices[i].he < 0 {
+      return false
+    }
+    i += 1
+  }
+  true
+}
+
+///|
+pub extend HEMesh with Topo::{topo_dim, topo_is_closed, topo_is_manifold}

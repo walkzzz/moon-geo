@@ -1,0 +1,72 @@
+// Generated using `moon info`, DON'T EDIT IT
+package "walkzzz/moon-geo/brep"
+
+import {
+  "walkzzz/moon-geo/alg",
+}
+
+// Values
+
+// Errors
+
+// Types and methods
+pub struct Face {
+  he : Int32
+}
+pub fn Face::he(Self) -> Int32
+
+pub struct HEMesh {
+  vertices : Array[Vtx]
+  half_edges : Array[HEdge]
+  faces : Array[Face]
+}
+pub fn HEMesh::edge_count(Self) -> Int32
+pub fn HEMesh::face(Self, Int32) -> Face
+pub fn HEMesh::face_count(Self) -> Int32
+pub fn HEMesh::face_half_edges(Self, Int32) -> Array[Int32]
+pub fn HEMesh::from_triangle(@alg.Pt3, @alg.Pt3, @alg.Pt3) -> Self
+pub fn HEMesh::from_two_triangles(@alg.Pt3, @alg.Pt3, @alg.Pt3, @alg.Pt3) -> Self
+pub fn HEMesh::half_edge(Self, Int32) -> HEdge
+pub fn HEMesh::half_edge_count(Self) -> Int32
+pub fn HEMesh::is_closed(Self) -> Bool
+pub fn HEMesh::topo_dim(Self) -> TopoDim
+pub fn HEMesh::topo_is_closed(Self) -> Bool
+pub fn HEMesh::topo_is_manifold(Self) -> Bool
+pub fn HEMesh::vertex(Self, Int32) -> Vtx
+pub fn HEMesh::vertex_count(Self) -> Int32
+pub fn HEMesh::vertex_half_edges(Self, Int32) -> Array[Int32]
+pub fn HEMesh::vertex_neighbors(Self, Int32) -> Array[Int32]
+
+pub struct HEdge {
+  origin : Int32
+  twin : Int32
+  next : Int32
+  face : Int32
+}
+pub fn HEdge::face(Self) -> Int32
+pub fn HEdge::next(Self) -> Int32
+pub fn HEdge::origin(Self) -> Int32
+pub fn HEdge::twin(Self) -> Int32
+
+pub enum TopoDim {
+  Vertex
+  Edge
+  Face
+  Cell
+}
+
+pub struct Vtx {
+  pos : @alg.Pt3
+  he : Int32
+}
+pub fn Vtx::he(Self) -> Int32
+pub fn Vtx::pos(Self) -> @alg.Pt3
+
+// Type aliases
+
+// Traits
+pub(open) trait Topo {
+  fn topo_dim(Self) -> TopoDim
+  fn topo_is_closed(Self) -> Bool
+  fn topo_is_manifold(Self) -> Bool
+}

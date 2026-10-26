@@ -1,0 +1,6 @@
+// brep 包：边界表示层（第4层）
+// 依赖：alg（Pt3 顶点坐标）
+
+import {
+  "walkzzz/moon-geo/alg",
+}
