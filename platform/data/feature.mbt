@@ -1,26 +1,26 @@
 // 要素模型：Geometry + Feature
-// P4 层 platform/data，依赖 util（GeoError）、crs（Crs + transform_coord）
-// Geometry 对应 GeoJSON 几何类型
+// P4 层 platform/data，依赖 util（GeoError）、crs（Crs + transform_coord）、alg（Pt2/Pt3）
+// Geometry 对应 GeoJSON 几何类型，坐标用 @alg.Pt2/Pt3 而非裸元组
 // Feature = Geometry + Attributes + CRS
 
 ///|
 /// 几何类型（GeoJSON 风格）
 pub(all) enum Geometry {
-  Point(Double, Double)
-  PointZ(Double, Double, Double)
-  LineString(Array[(Double, Double)])
-  Polygon(Array[(Double, Double)], Array[Array[(Double, Double)]])
-  MultiPoint(Array[(Double, Double)])
-  MultiLineString(Array[Array[(Double, Double)]])
-  MultiPolygon(Array[(Array[(Double, Double)], Array[Array[(Double, Double)]])])
+  Point(@alg.Pt2)
+  PointZ(@alg.Pt3)
+  LineString(Array[@alg.Pt2])
+  Polygon(Array[@alg.Pt2], Array[Array[@alg.Pt2]])
+  MultiPoint(Array[@alg.Pt2])
+  MultiLineString(Array[Array[@alg.Pt2]])
+  MultiPolygon(Array[(Array[@alg.Pt2], Array[Array[@alg.Pt2]])])
 }
 
 ///|
 /// 几何类型名称
 pub fn Geometry::type_name(g : Geometry) -> String {
   match g {
-    Point(_, _) => "Point"
-    PointZ(_, _, _) => "PointZ"
+    Point(_) => "Point"
+    PointZ(_) => "PointZ"
     LineString(_) => "LineString"
     Polygon(_, _) => "Polygon"
     MultiPoint(_) => "MultiPoint"
@@ -33,8 +33,8 @@ pub fn Geometry::type_name(g : Geometry) -> String {
 /// 获取几何的坐标数量
 pub fn Geometry::coord_count(g : Geometry) -> Int32 {
   match g {
-    Point(_, _) => 1
-    PointZ(_, _, _) => 1
+    Point(_) => 1
+    PointZ(_) => 1
     LineString(coords) => coords.length()
     Polygon(exterior, interiors) => {
       let count = exterior.length()
@@ -176,52 +176,50 @@ fn transform_geometry(
   to : @crs.Crs,
 ) -> Geometry raise @util.GeoError {
   match geom {
-    Point(x, y) => {
-      let (nx, ny) = @crs.transform_coord((x, y), from, to)
-      Point(nx, ny)
+    Point(p) => {
+      let (nx, ny) = @crs.transform_coord((p.x(), p.y()), from, to)
+      Point(@alg.Pt2::new(nx, ny))
     }
-    PointZ(x, y, z) => {
-      let (nx, ny) = @crs.transform_coord((x, y), from, to)
-      PointZ(nx, ny, z)
+    PointZ(p) => {
+      let (nx, ny) = @crs.transform_coord((p.x(), p.y()), from, to)
+      PointZ(@alg.Pt3::new(nx, ny, p.z()))
     }
     LineString(coords) => {
-      let new_coords : Array[(Double, Double)] = []
-      for (x, y) in coords {
-        let (nx, ny) = @crs.transform_coord((x, y), from, to)
-        new_coords.push((nx, ny))
+      let new_coords : Array[@alg.Pt2] = []
+      for p in coords {
+        let (nx, ny) = @crs.transform_coord((p.x(), p.y()), from, to)
+        new_coords.push(@alg.Pt2::new(nx, ny))
       }
       LineString(new_coords)
     }
     Polygon(exterior, interiors) => {
       let new_ext = transform_ring(exterior, from, to)
-      let new_ints : Array[Array[(Double, Double)]] = []
+      let new_ints : Array[Array[@alg.Pt2]] = []
       for ring in interiors {
         new_ints.push(transform_ring(ring, from, to))
       }
       Polygon(new_ext, new_ints)
     }
     MultiPoint(coords) => {
-      let new_coords : Array[(Double, Double)] = []
-      for (x, y) in coords {
-        let (nx, ny) = @crs.transform_coord((x, y), from, to)
-        new_coords.push((nx, ny))
+      let new_coords : Array[@alg.Pt2] = []
+      for p in coords {
+        let (nx, ny) = @crs.transform_coord((p.x(), p.y()), from, to)
+        new_coords.push(@alg.Pt2::new(nx, ny))
       }
       MultiPoint(new_coords)
     }
     MultiLineString(lines) => {
-      let new_lines : Array[Array[(Double, Double)]] = []
+      let new_lines : Array[Array[@alg.Pt2]] = []
       for line in lines {
         new_lines.push(transform_ring(line, from, to))
       }
       MultiLineString(new_lines)
     }
     MultiPolygon(polygons) => {
-      let new_polys : Array[
-        (Array[(Double, Double)], Array[Array[(Double, Double)]]),
-      ] = []
+      let new_polys : Array[(Array[@alg.Pt2], Array[Array[@alg.Pt2]])] = []
       for (ext, ints) in polygons {
         let new_ext = transform_ring(ext, from, to)
-        let new_ints : Array[Array[(Double, Double)]] = []
+        let new_ints : Array[Array[@alg.Pt2]] = []
         for ring in ints {
           new_ints.push(transform_ring(ring, from, to))
         }
@@ -235,14 +233,14 @@ fn transform_geometry(
 ///|
 /// 变换坐标环
 fn transform_ring(
-  ring : Array[(Double, Double)],
+  ring : Array[@alg.Pt2],
   from : @crs.Crs,
   to : @crs.Crs,
-) -> Array[(Double, Double)] raise @util.GeoError {
-  let result : Array[(Double, Double)] = []
-  for (x, y) in ring {
-    let (nx, ny) = @crs.transform_coord((x, y), from, to)
-    result.push((nx, ny))
+) -> Array[@alg.Pt2] raise @util.GeoError {
+  let result : Array[@alg.Pt2] = []
+  for p in ring {
+    let (nx, ny) = @crs.transform_coord((p.x(), p.y()), from, to)
+    result.push(@alg.Pt2::new(nx, ny))
   }
   result
 }

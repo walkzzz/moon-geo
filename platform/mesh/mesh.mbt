@@ -1,19 +1,7 @@
 // 索引网格
 // platform/mesh，P2 层
-// IndexedMesh = vertices + indices + normals
-
-///|
-/// 3D 顶点（Double 三元组）
-pub struct Vertex3 {
-  x : Double
-  y : Double
-  z : Double
-}
-
-///|
-pub fn Vertex3::new(x : Double, y : Double, z : Double) -> Vertex3 {
-  { x, y, z, }
-}
+// IndexedMesh = vertices(@alg.Pt3) + indices(Triangle) + normals(@alg.Pt3)
+// 顶点和法向均用核心类型 @alg.Pt3，不再自建 Vertex3/Normal3
 
 ///|
 /// 三角面片索引
@@ -29,24 +17,11 @@ pub fn Triangle::new(v0 : Int32, v1 : Int32, v2 : Int32) -> Triangle {
 }
 
 ///|
-/// 法向量
-pub struct Normal3 {
-  x : Double
-  y : Double
-  z : Double
-}
-
-///|
-pub fn Normal3::new(x : Double, y : Double, z : Double) -> Normal3 {
-  { x, y, z, }
-}
-
-///|
 /// 索引网格
 pub struct IndexedMesh {
-  vertices : Array[Vertex3]
+  vertices : Array[@alg.Pt3]
   triangles : Array[Triangle]
-  normals : Array[Normal3]
+  normals : Array[@alg.Pt3]
 }
 
 ///|
@@ -63,9 +38,9 @@ pub fn IndexedMesh::add_vertex(
   y : Double,
   z : Double,
 ) -> (IndexedMesh, Int32) {
-  let new_verts = copy_vertices(self.vertices)
+  let new_verts = copy_pts3(self.vertices)
   let idx = new_verts.length()
-  new_verts.push(Vertex3::new(x, y, z))
+  new_verts.push(@alg.Pt3::new(x, y, z))
   (
     { vertices: new_verts, triangles: self.triangles, normals: self.normals, },
     idx,
@@ -93,8 +68,8 @@ pub fn IndexedMesh::add_normal(
   y : Double,
   z : Double,
 ) -> IndexedMesh {
-  let new_norms = copy_normals(self.normals)
-  new_norms.push(Normal3::new(x, y, z))
+  let new_norms = copy_pts3(self.normals)
+  new_norms.push(@alg.Pt3::new(x, y, z))
   { vertices: self.vertices, triangles: self.triangles, normals: new_norms, }
 }
 
@@ -118,7 +93,7 @@ pub fn IndexedMesh::normal_count(self : IndexedMesh) -> Int32 {
 
 ///|
 /// 获取顶点
-pub fn IndexedMesh::get_vertex(self : IndexedMesh, i : Int32) -> Vertex3? {
+pub fn IndexedMesh::get_vertex(self : IndexedMesh, i : Int32) -> @alg.Pt3? {
   if i < 0 || i >= self.vertices.length() {
     None
   } else {
@@ -138,7 +113,7 @@ pub fn IndexedMesh::get_triangle(self : IndexedMesh, i : Int32) -> Triangle? {
 
 ///|
 /// 获取法向量
-pub fn IndexedMesh::get_normal(self : IndexedMesh, i : Int32) -> Normal3? {
+pub fn IndexedMesh::get_normal(self : IndexedMesh, i : Int32) -> @alg.Pt3? {
   if i < 0 || i >= self.normals.length() {
     None
   } else {
@@ -148,28 +123,28 @@ pub fn IndexedMesh::get_normal(self : IndexedMesh, i : Int32) -> Normal3? {
 
 ///|
 /// 计算面片法向量（叉积法）
-pub fn compute_normal(v0 : Vertex3, v1 : Vertex3, v2 : Vertex3) -> Normal3 {
-  let ex = v1.x - v0.x
-  let ey = v1.y - v0.y
-  let ez = v1.z - v0.z
-  let fx = v2.x - v0.x
-  let fy = v2.y - v0.y
-  let fz = v2.z - v0.z
+pub fn compute_normal(v0 : @alg.Pt3, v1 : @alg.Pt3, v2 : @alg.Pt3) -> @alg.Pt3 {
+  let ex = v1.x() - v0.x()
+  let ey = v1.y() - v0.y()
+  let ez = v1.z() - v0.z()
+  let fx = v2.x() - v0.x()
+  let fy = v2.y() - v0.y()
+  let fz = v2.z() - v0.z()
   let nx = ey * fz - ez * fy
   let ny = ez * fx - ex * fz
   let nz = ex * fy - ey * fx
   let len = (nx * nx + ny * ny + nz * nz).sqrt()
   if len < 1.0e-12 {
-    Normal3::new(0.0, 0.0, 1.0)
+    @alg.Pt3::new(0.0, 0.0, 1.0)
   } else {
-    Normal3::new(nx / len, ny / len, nz / len)
+    @alg.Pt3::new(nx / len, ny / len, nz / len)
   }
 }
 
 ///|
 /// 重算法向量（为每个面片计算法向量）
 pub fn IndexedMesh::recompute_normals(self : IndexedMesh) -> IndexedMesh {
-  let new_norms : Array[Normal3] = []
+  let new_norms : Array[@alg.Pt3] = []
   for tri in self.triangles {
     match
       (
@@ -181,17 +156,17 @@ pub fn IndexedMesh::recompute_normals(self : IndexedMesh) -> IndexedMesh {
         let n = compute_normal(v0, v1, v2)
         new_norms.push(n)
       }
-      _ => new_norms.push(Normal3::new(0.0, 0.0, 1.0))
+      _ => new_norms.push(@alg.Pt3::new(0.0, 0.0, 1.0))
     }
   }
   { vertices: self.vertices, triangles: self.triangles, normals: new_norms, }
 }
 
 ///|
-fn copy_vertices(vertices : Array[Vertex3]) -> Array[Vertex3] {
-  let result : Array[Vertex3] = []
-  for v in vertices {
-    result.push(v)
+fn copy_pts3(pts : Array[@alg.Pt3]) -> Array[@alg.Pt3] {
+  let result : Array[@alg.Pt3] = []
+  for p in pts {
+    result.push(p)
   }
   result
 }
@@ -201,15 +176,6 @@ fn copy_triangles(triangles : Array[Triangle]) -> Array[Triangle] {
   let result : Array[Triangle] = []
   for t in triangles {
     result.push(t)
-  }
-  result
-}
-
-///|
-fn copy_normals(normals : Array[Normal3]) -> Array[Normal3] {
-  let result : Array[Normal3] = []
-  for n in normals {
-    result.push(n)
   }
   result
 }

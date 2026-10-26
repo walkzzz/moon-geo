@@ -1,4 +1,5 @@
 // STL 读写测试
+// 顶点/法向用 @alg.Pt3，通过 x()/y()/z() 访问
 
 ///|
 fn safe_stl_read(stl : String) -> @mesh.IndexedMesh? {
@@ -72,9 +73,9 @@ test "STL 读顶点坐标" {
     Some(m) =>
       match m.get_vertex(0) {
         Some(v) => {
-          assert_true(approx(v.x, 1.0, 0.001))
-          assert_true(approx(v.y, 2.0, 0.001))
-          assert_true(approx(v.z, 3.0, 0.001))
+          assert_true(approx(v.x(), 1.0, 0.001))
+          assert_true(approx(v.y(), 2.0, 0.001))
+          assert_true(approx(v.z(), 3.0, 0.001))
         }
         None => assert_true(false)
       }
@@ -98,7 +99,7 @@ test "STL 读法向量" {
     Some(m) => {
       assert_eq(m.normal_count(), 1)
       match m.get_normal(0) {
-        Some(n) => assert_true(approx(n.z, 1.0, 0.001))
+        Some(n) => assert_true(approx(n.z(), 1.0, 0.001))
         None => assert_true(false)
       }
     }
@@ -119,11 +120,11 @@ test "STL 往返测试" {
       assert_eq(m5.triangle_count(), 1)
       assert_eq(m5.vertex_count(), 3)
       match m5.get_vertex(0) {
-        Some(v) => assert_true(approx(v.x, 0.0, 0.001))
+        Some(v) => assert_true(approx(v.x(), 0.0, 0.001))
         None => assert_true(false)
       }
       match m5.get_vertex(1) {
-        Some(v) => assert_true(approx(v.x, 1.0, 0.001))
+        Some(v) => assert_true(approx(v.x(), 1.0, 0.001))
         None => assert_true(false)
       }
     }
@@ -174,7 +175,7 @@ test "STL 浮点坐标" {
   match safe_stl_read(stl) {
     Some(m) =>
       match m.get_vertex(0) {
-        Some(v) => assert_true(approx(v.x, 1.5, 0.001))
+        Some(v) => assert_true(approx(v.x(), 1.5, 0.001))
         None => assert_true(false)
       }
     None => assert_true(false)
@@ -188,9 +189,9 @@ test "STL 负坐标" {
     Some(m) =>
       match m.get_vertex(0) {
         Some(v) => {
-          assert_true(approx(v.x, -1.0, 0.001))
-          assert_true(approx(v.y, -2.0, 0.001))
-          assert_true(approx(v.z, -3.0, 0.001))
+          assert_true(approx(v.x(), -1.0, 0.001))
+          assert_true(approx(v.y(), -2.0, 0.001))
+          assert_true(approx(v.z(), -3.0, 0.001))
         }
         None => assert_true(false)
       }

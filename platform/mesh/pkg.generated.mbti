@@ -1,35 +1,32 @@
 // Generated using `moon info`, DON'T EDIT IT
 package "walkzzz/moon-geo/platform/mesh"
 
+import {
+  "walkzzz/moon-geo/alg",
+}
+
 // Values
-pub fn compute_normal(Vertex3, Vertex3, Vertex3) -> Normal3
+pub fn compute_normal(@alg.Pt3, @alg.Pt3, @alg.Pt3) -> @alg.Pt3
 
 // Errors
 
 // Types and methods
 pub struct IndexedMesh {
-  vertices : Array[Vertex3]
+  vertices : Array[@alg.Pt3]
   triangles : Array[Triangle]
-  normals : Array[Normal3]
+  normals : Array[@alg.Pt3]
 }
 pub fn IndexedMesh::add_normal(Self, Double, Double, Double) -> Self
 pub fn IndexedMesh::add_triangle(Self, Int32, Int32, Int32) -> Self
 pub fn IndexedMesh::add_vertex(Self, Double, Double, Double) -> (Self, Int32)
-pub fn IndexedMesh::get_normal(Self, Int32) -> Normal3?
+pub fn IndexedMesh::get_normal(Self, Int32) -> @alg.Pt3?
 pub fn IndexedMesh::get_triangle(Self, Int32) -> Triangle?
-pub fn IndexedMesh::get_vertex(Self, Int32) -> Vertex3?
+pub fn IndexedMesh::get_vertex(Self, Int32) -> @alg.Pt3?
 pub fn IndexedMesh::new() -> Self
 pub fn IndexedMesh::normal_count(Self) -> Int32
 pub fn IndexedMesh::recompute_normals(Self) -> Self
 pub fn IndexedMesh::triangle_count(Self) -> Int32
 pub fn IndexedMesh::vertex_count(Self) -> Int32
-
-pub struct Normal3 {
-  x : Double
-  y : Double
-  z : Double
-}
-pub fn Normal3::new(Double, Double, Double) -> Self
 
 pub struct Triangle {
   v0 : Int32
@@ -37,13 +34,6 @@ pub struct Triangle {
   v2 : Int32
 }
 pub fn Triangle::new(Int32, Int32, Int32) -> Self
-
-pub struct Vertex3 {
-  x : Double
-  y : Double
-  z : Double
-}
-pub fn Vertex3::new(Double, Double, Double) -> Self
 
 // Type aliases
 

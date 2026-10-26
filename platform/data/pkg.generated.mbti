@@ -3,6 +3,7 @@ package "walkzzz/moon-geo/platform/data"
 
 import {
   "moonbitlang/core/debug",
+  "walkzzz/moon-geo/alg",
   "walkzzz/moon-geo/platform/crs",
   "walkzzz/moon-geo/util",
 }
@@ -67,13 +68,13 @@ pub fn FieldValue::is_null(Self) -> Bool
 pub fn FieldValue::type_of(Self) -> FieldType
 
 pub(all) enum Geometry {
-  Point(Double, Double)
-  PointZ(Double, Double, Double)
-  LineString(Array[(Double, Double)])
-  Polygon(Array[(Double, Double)], Array[Array[(Double, Double)]])
-  MultiPoint(Array[(Double, Double)])
-  MultiLineString(Array[Array[(Double, Double)]])
-  MultiPolygon(Array[(Array[(Double, Double)], Array[Array[(Double, Double)]])])
+  Point(@alg.Pt2)
+  PointZ(@alg.Pt3)
+  LineString(Array[@alg.Pt2])
+  Polygon(Array[@alg.Pt2], Array[Array[@alg.Pt2]])
+  MultiPoint(Array[@alg.Pt2])
+  MultiLineString(Array[Array[@alg.Pt2]])
+  MultiPolygon(Array[(Array[@alg.Pt2], Array[Array[@alg.Pt2]])])
 }
 pub fn Geometry::coord_count(Self) -> Int32
 pub fn Geometry::type_name(Self) -> String

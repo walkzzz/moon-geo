@@ -1,4 +1,5 @@
 // platform/mesh 白盒测试
+// 顶点/法向用 @alg.Pt3，通过 x()/y()/z() 访问
 
 ///|
 fn approx(a : Double, b : Double, tol : Double) -> Bool {
@@ -21,9 +22,9 @@ test "IndexedMesh::add_vertex" {
   assert_eq(idx, 0)
   match m2.get_vertex(0) {
     Some(v) => {
-      assert_true(approx(v.x, 1.0, 0.000001))
-      assert_true(approx(v.y, 2.0, 0.000001))
-      assert_true(approx(v.z, 3.0, 0.000001))
+      assert_true(approx(v.x(), 1.0, 0.000001))
+      assert_true(approx(v.y(), 2.0, 0.000001))
+      assert_true(approx(v.z(), 3.0, 0.000001))
     }
     None => assert_true(false)
   }
@@ -52,7 +53,7 @@ test "IndexedMesh::add_normal" {
   let m = IndexedMesh::new().add_normal(0.0, 0.0, 1.0)
   assert_eq(m.normal_count(), 1)
   match m.get_normal(0) {
-    Some(n) => assert_true(approx(n.z, 1.0, 0.000001))
+    Some(n) => assert_true(approx(n.z(), 1.0, 0.000001))
     None => assert_true(false)
   }
 }
@@ -67,31 +68,31 @@ test "IndexedMesh 不可变性" {
 
 ///|
 test "compute_normal XY平面" {
-  let v0 = Vertex3::new(0.0, 0.0, 0.0)
-  let v1 = Vertex3::new(1.0, 0.0, 0.0)
-  let v2 = Vertex3::new(0.0, 1.0, 0.0)
+  let v0 = @alg.Pt3::new(0.0, 0.0, 0.0)
+  let v1 = @alg.Pt3::new(1.0, 0.0, 0.0)
+  let v2 = @alg.Pt3::new(0.0, 1.0, 0.0)
   let n = compute_normal(v0, v1, v2)
-  assert_true(approx(n.x, 0.0, 0.001))
-  assert_true(approx(n.y, 0.0, 0.001))
-  assert_true(approx(n.z, 1.0, 0.001))
+  assert_true(approx(n.x(), 0.0, 0.001))
+  assert_true(approx(n.y(), 0.0, 0.001))
+  assert_true(approx(n.z(), 1.0, 0.001))
 }
 
 ///|
 test "compute_normal XZ平面" {
-  let v0 = Vertex3::new(0.0, 0.0, 0.0)
-  let v1 = Vertex3::new(1.0, 0.0, 0.0)
-  let v2 = Vertex3::new(0.0, 0.0, 1.0)
+  let v0 = @alg.Pt3::new(0.0, 0.0, 0.0)
+  let v1 = @alg.Pt3::new(1.0, 0.0, 0.0)
+  let v2 = @alg.Pt3::new(0.0, 0.0, 1.0)
   let n = compute_normal(v0, v1, v2)
-  assert_true(approx(n.y, -1.0, 0.001))
+  assert_true(approx(n.y(), -1.0, 0.001))
 }
 
 ///|
 test "compute_normal 单位长度" {
-  let v0 = Vertex3::new(0.0, 0.0, 0.0)
-  let v1 = Vertex3::new(1.0, 1.0, 0.0)
-  let v2 = Vertex3::new(0.0, 1.0, 1.0)
+  let v0 = @alg.Pt3::new(0.0, 0.0, 0.0)
+  let v1 = @alg.Pt3::new(1.0, 1.0, 0.0)
+  let v2 = @alg.Pt3::new(0.0, 1.0, 1.0)
   let n = compute_normal(v0, v1, v2)
-  let len = (n.x * n.x + n.y * n.y + n.z * n.z).sqrt()
+  let len = (n.x() * n.x() + n.y() * n.y() + n.z() * n.z()).sqrt()
   assert_true(approx(len, 1.0, 0.001))
 }
 
@@ -105,7 +106,7 @@ test "IndexedMesh::recompute_normals" {
   let m5 = m4.recompute_normals()
   assert_eq(m5.normal_count(), 1)
   match m5.get_normal(0) {
-    Some(n) => assert_true(approx(n.z, 1.0, 0.001))
+    Some(n) => assert_true(approx(n.z(), 1.0, 0.001))
     None => assert_true(false)
   }
 }
@@ -131,14 +132,6 @@ test "IndexedMesh 越界访问" {
 }
 
 ///|
-test "Vertex3::new" {
-  let v = Vertex3::new(1.0, 2.0, 3.0)
-  assert_true(approx(v.x, 1.0, 0.000001))
-  assert_true(approx(v.y, 2.0, 0.000001))
-  assert_true(approx(v.z, 3.0, 0.000001))
-}
-
-///|
 test "Triangle::new" {
   let t = Triangle::new(0, 1, 2)
   assert_eq(t.v0, 0)
@@ -147,7 +140,9 @@ test "Triangle::new" {
 }
 
 ///|
-test "Normal3::new" {
-  let n = Normal3::new(0.0, 0.0, 1.0)
-  assert_true(approx(n.z, 1.0, 0.000001))
+test "Pt3 顶点构造" {
+  let v = @alg.Pt3::new(1.0, 2.0, 3.0)
+  assert_true(approx(v.x(), 1.0, 0.000001))
+  assert_true(approx(v.y(), 2.0, 0.000001))
+  assert_true(approx(v.z(), 3.0, 0.000001))
 }

@@ -1,6 +1,7 @@
 // GeoJSON 序列化
 // platform/io，将 Feature/Layer/Dataset 转为 GeoJSON 字符串
 // 遵循 RFC 7946，CRS 通过 crs 字段携带（虽已废弃但广泛使用）
+// Geometry 坐标用 @alg.Pt2/Pt3，序列化时提取 x()/y()/z()
 
 ///|
 /// 将 Feature 序列化为 GeoJSON 字符串
@@ -86,10 +87,10 @@ fn geometry_to_geojson_opt(geom : @data.Geometry?) -> String {
 /// Geometry 转 GeoJSON 字符串
 pub fn geometry_to_geojson(geom : @data.Geometry) -> String {
   match geom {
-    @data.Point(x, y) =>
-      "{\"type\":\"Point\",\"coordinates\":" + coord_to_json(x, y) + "}"
-    @data.PointZ(x, y, z) =>
-      "{\"type\":\"Point\",\"coordinates\":[\{x},\{y},\{z}]}"
+    @data.Point(p) =>
+      "{\"type\":\"Point\",\"coordinates\":" + coord_to_json(p.x(), p.y()) + "}"
+    @data.PointZ(p) =>
+      "{\"type\":\"Point\",\"coordinates\":[\{p.x()},\{p.y()},\{p.z()}]}"
     @data.LineString(coords) =>
       "{\"type\":\"LineString\",\"coordinates\":" +
       coords_array_to_json(coords) +
@@ -147,15 +148,15 @@ fn coord_to_json(x : Double, y : Double) -> String {
 
 ///|
 /// 坐标数组转 JSON
-fn coords_array_to_json(coords : Array[(Double, Double)]) -> String {
+fn coords_array_to_json(coords : Array[@alg.Pt2]) -> String {
   let mut s = "["
   let n = coords.length()
   for i in 0..<n {
-    let (x, y) = coords[i]
+    let p = coords[i]
     if i > 0 {
       s += ","
     }
-    s += coord_to_json(x, y)
+    s += coord_to_json(p.x(), p.y())
   }
   s += "]"
   s

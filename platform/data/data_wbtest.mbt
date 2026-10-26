@@ -1,5 +1,6 @@
 // platform/data 白盒测试
 // 测试 FieldValue、Geometry、Feature、Layer、Dataset
+// Geometry 坐标用 @alg.Pt2/Pt3
 
 ///|
 test "field value type_of" {
@@ -60,8 +61,8 @@ test "field type match" {
 
 ///|
 test "geometry type_name" {
-  assert_eq(Point(1.0, 2.0).type_name(), "Point")
-  assert_eq(PointZ(1.0, 2.0, 3.0).type_name(), "PointZ")
+  assert_eq(Point(@alg.Pt2::new(1.0, 2.0)).type_name(), "Point")
+  assert_eq(PointZ(@alg.Pt3::new(1.0, 2.0, 3.0)).type_name(), "PointZ")
   assert_eq(LineString([]).type_name(), "LineString")
   assert_eq(Polygon([], []).type_name(), "Polygon")
   assert_eq(MultiPoint([]).type_name(), "MultiPoint")
@@ -69,10 +70,20 @@ test "geometry type_name" {
 
 ///|
 test "geometry coord_count" {
-  assert_eq(Point(1.0, 2.0).coord_count(), 1)
-  assert_eq(PointZ(1.0, 2.0, 3.0).coord_count(), 1)
-  assert_eq(LineString([(1.0, 2.0), (3.0, 4.0)]).coord_count(), 2)
-  assert_eq(MultiPoint([(1.0, 2.0), (3.0, 4.0), (5.0, 6.0)]).coord_count(), 3)
+  assert_eq(Point(@alg.Pt2::new(1.0, 2.0)).coord_count(), 1)
+  assert_eq(PointZ(@alg.Pt3::new(1.0, 2.0, 3.0)).coord_count(), 1)
+  assert_eq(
+    LineString([@alg.Pt2::new(1.0, 2.0), @alg.Pt2::new(3.0, 4.0)]).coord_count(),
+    2,
+  )
+  assert_eq(
+    MultiPoint([
+      @alg.Pt2::new(1.0, 2.0),
+      @alg.Pt2::new(3.0, 4.0),
+      @alg.Pt2::new(5.0, 6.0),
+    ]).coord_count(),
+    3,
+  )
 }
 
 ///|
@@ -86,7 +97,7 @@ test "feature basic" {
 ///|
 test "feature with geometry" {
   let crs = @crs.wgs84_geographic()
-  let f = Feature::new(crs).with_geometry(Point(116.4, 39.9))
+  let f = Feature::new(crs).with_geometry(Point(@alg.Pt2::new(116.4, 39.9)))
   assert_true(f.has_geometry())
   assert_true(f.geometry() is Some(_))
 }
@@ -95,7 +106,7 @@ test "feature with geometry" {
 test "feature set get attributes" {
   let crs = @crs.wgs84_geographic()
   let f = Feature::new(crs)
-    .with_geometry(Point(116.4, 39.9))
+    .with_geometry(Point(@alg.Pt2::new(116.4, 39.9)))
     .set("name", StringVal("Beijing"))
     .set("population", IntVal(21540000))
     .set("area", DoubleVal(16410.0))
@@ -126,14 +137,14 @@ test "feature transform crs geographic to utm" {
   let geo_crs = @crs.wgs84_geographic()
   let utm_crs = @crs.wgs84_utm(50, true)
   let f = Feature::new(geo_crs)
-    .with_geometry(Point(116.4, 39.9))
+    .with_geometry(Point(@alg.Pt2::new(116.4, 39.9)))
     .set("name", StringVal("Beijing"))
   let f2 = f.transform_crs(utm_crs)
   assert_true(f2.crs().epsg is Some(32650))
   match f2.geometry() {
-    Some(Point(x, y)) => {
-      assert_true(x > 400000.0 && x < 600000.0)
-      assert_true(y > 4000000.0 && y < 5000000.0)
+    Some(Point(p)) => {
+      assert_true(p.x() > 400000.0 && p.x() < 600000.0)
+      assert_true(p.y() > 4000000.0 && p.y() < 5000000.0)
     }
     _ => assert_true(false)
   }
@@ -143,12 +154,12 @@ test "feature transform crs geographic to utm" {
 ///|
 test "feature transform crs same crs identity" {
   let crs = @crs.wgs84_geographic()
-  let f = Feature::new(crs).with_geometry(Point(116.4, 39.9))
+  let f = Feature::new(crs).with_geometry(Point(@alg.Pt2::new(116.4, 39.9)))
   let f2 = f.transform_crs(crs)
   match (f2.geometry(), f.geometry()) {
-    (Some(Point(x1, y1)), Some(Point(x2, y2))) => {
-      assert_true(@util.dbl_approx_eq(x1, x2, 1.0e-10))
-      assert_true(@util.dbl_approx_eq(y1, y2, 1.0e-10))
+    (Some(Point(p1)), Some(Point(p2))) => {
+      assert_true(@util.dbl_approx_eq(p1.x(), p2.x(), 1.0e-10))
+      assert_true(@util.dbl_approx_eq(p1.y(), p2.y(), 1.0e-10))
     }
     _ => assert_true(false)
   }
@@ -159,7 +170,7 @@ test "feature transform crs linestring" {
   let geo_crs = @crs.wgs84_geographic()
   let utm_crs = @crs.wgs84_utm(50, true)
   let f = Feature::new(geo_crs).with_geometry(
-    LineString([(116.0, 39.0), (117.0, 40.0)]),
+    LineString([@alg.Pt2::new(116.0, 39.0), @alg.Pt2::new(117.0, 40.0)]),
   )
   let f2 = f.transform_crs(utm_crs)
   match f2.geometry() {
@@ -173,11 +184,11 @@ test "feature transform crs polygon" {
   let geo_crs = @crs.wgs84_geographic()
   let utm_crs = @crs.wgs84_utm(50, true)
   let exterior = [
-    (116.0, 39.0),
-    (117.0, 39.0),
-    (117.0, 40.0),
-    (116.0, 40.0),
-    (116.0, 39.0),
+    @alg.Pt2::new(116.0, 39.0),
+    @alg.Pt2::new(117.0, 39.0),
+    @alg.Pt2::new(117.0, 40.0),
+    @alg.Pt2::new(116.0, 40.0),
+    @alg.Pt2::new(116.0, 39.0),
   ]
   let f = Feature::new(geo_crs).with_geometry(Polygon(exterior, []))
   let f2 = f.transform_crs(utm_crs)
@@ -199,10 +210,10 @@ test "layer basic" {
 test "layer add features" {
   let crs = @crs.wgs84_geographic()
   let f1 = Feature::new(crs)
-    .with_geometry(Point(116.4, 39.9))
+    .with_geometry(Point(@alg.Pt2::new(116.4, 39.9)))
     .set("name", StringVal("Beijing"))
   let f2 = Feature::new(crs)
-    .with_geometry(Point(121.4, 31.2))
+    .with_geometry(Point(@alg.Pt2::new(121.4, 31.2)))
     .set("name", StringVal("Shanghai"))
   let layer = Layer::new("cities", crs).add_feature(f1).add_feature(f2)
   assert_eq(layer.feature_count(), 2)
@@ -239,7 +250,7 @@ test "layer filter" {
 test "layer transform crs" {
   let geo_crs = @crs.wgs84_geographic()
   let utm_crs = @crs.wgs84_utm(50, true)
-  let f = Feature::new(geo_crs).with_geometry(Point(116.4, 39.9))
+  let f = Feature::new(geo_crs).with_geometry(Point(@alg.Pt2::new(116.4, 39.9)))
   let layer = Layer::new("test", geo_crs).add_feature(f)
   let layer2 = layer.transform_crs(utm_crs)
   assert_eq(layer2.feature_count(), 1)
@@ -317,10 +328,12 @@ test "feature immutability" {
 test "feature pointz transform" {
   let geo_crs = @crs.wgs84_geographic()
   let utm_crs = @crs.wgs84_utm(50, true)
-  let f = Feature::new(geo_crs).with_geometry(PointZ(116.4, 39.9, 50.0))
+  let f = Feature::new(geo_crs).with_geometry(
+    PointZ(@alg.Pt3::new(116.4, 39.9, 50.0)),
+  )
   let f2 = f.transform_crs(utm_crs)
   match f2.geometry() {
-    Some(PointZ(_, _, z)) => assert_true(@util.dbl_approx_eq(z, 50.0, 1.0e-10))
+    Some(PointZ(p)) => assert_true(@util.dbl_approx_eq(p.z(), 50.0, 1.0e-10))
     _ => assert_true(false)
   }
 }
@@ -337,15 +350,20 @@ test "feature no geometry transform" {
 
 ///|
 test "geometry multipoint coord_count" {
-  let g = MultiPoint([(1.0, 2.0), (3.0, 4.0), (5.0, 6.0), (7.0, 8.0)])
+  let g = MultiPoint([
+    @alg.Pt2::new(1.0, 2.0),
+    @alg.Pt2::new(3.0, 4.0),
+    @alg.Pt2::new(5.0, 6.0),
+    @alg.Pt2::new(7.0, 8.0),
+  ])
   assert_eq(g.coord_count(), 4)
 }
 
 ///|
 test "geometry multilinestring coord_count" {
   let g = MultiLineString([
-    [(1.0, 2.0), (3.0, 4.0)],
-    [(5.0, 6.0), (7.0, 8.0), (9.0, 10.0)],
+    [@alg.Pt2::new(1.0, 2.0), @alg.Pt2::new(3.0, 4.0)],
+    [@alg.Pt2::new(5.0, 6.0), @alg.Pt2::new(7.0, 8.0), @alg.Pt2::new(9.0, 10.0)],
   ])
   assert_eq(g.coord_count(), 5)
 }
@@ -353,13 +371,19 @@ test "geometry multilinestring coord_count" {
 ///|
 test "geometry polygon coord_count" {
   let exterior = [
-    (0.0, 0.0),
-    (10.0, 0.0),
-    (10.0, 10.0),
-    (0.0, 10.0),
-    (0.0, 0.0),
+    @alg.Pt2::new(0.0, 0.0),
+    @alg.Pt2::new(10.0, 0.0),
+    @alg.Pt2::new(10.0, 10.0),
+    @alg.Pt2::new(0.0, 10.0),
+    @alg.Pt2::new(0.0, 0.0),
   ]
-  let hole = [(2.0, 2.0), (8.0, 2.0), (8.0, 8.0), (2.0, 8.0), (2.0, 2.0)]
+  let hole = [
+    @alg.Pt2::new(2.0, 2.0),
+    @alg.Pt2::new(8.0, 2.0),
+    @alg.Pt2::new(8.0, 8.0),
+    @alg.Pt2::new(2.0, 8.0),
+    @alg.Pt2::new(2.0, 2.0),
+  ]
   let g = Polygon(exterior, [hole])
   assert_eq(g.coord_count(), 10)
 }

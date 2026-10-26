@@ -1,5 +1,6 @@
 // platform/io 白盒测试
 // 覆盖 JSON 解析器 + GeoJSON 读写 + 往返测试
+// Geometry 坐标用 @alg.Pt2/Pt3
 
 ///|
 /// 浮点近似比较
@@ -194,7 +195,7 @@ test "json_get 查找键" {
 test "GeoJSON 写 Point Feature" {
   let crs = @crs.wgs84_geographic()
   let f = @data.Feature::new(crs)
-    .with_geometry(@data.Point(116.0, 39.0))
+    .with_geometry(@data.Point(@alg.Pt2::new(116.0, 39.0)))
     .set("name", @data.StringVal("北京"))
   let json = feature_to_geojson(f)
   assert_true(json.contains("\"type\":\"Feature\""))
@@ -208,7 +209,11 @@ test "GeoJSON 写 Point Feature" {
 test "GeoJSON 写 LineString Feature" {
   let crs = @crs.wgs84_geographic()
   let f = @data.Feature::new(crs).with_geometry(
-    @data.LineString([(0.0, 0.0), (1.0, 1.0), (2.0, 0.0)]),
+    @data.LineString([
+      @alg.Pt2::new(0.0, 0.0),
+      @alg.Pt2::new(1.0, 1.0),
+      @alg.Pt2::new(2.0, 0.0),
+    ]),
   )
   let json = feature_to_geojson(f)
   assert_true(json.contains("\"type\":\"LineString\""))
@@ -219,11 +224,11 @@ test "GeoJSON 写 LineString Feature" {
 test "GeoJSON 写 Polygon Feature" {
   let crs = @crs.wgs84_geographic()
   let exterior = [
-    (0.0, 0.0),
-    (10.0, 0.0),
-    (10.0, 10.0),
-    (0.0, 10.0),
-    (0.0, 0.0),
+    @alg.Pt2::new(0.0, 0.0),
+    @alg.Pt2::new(10.0, 0.0),
+    @alg.Pt2::new(10.0, 10.0),
+    @alg.Pt2::new(0.0, 10.0),
+    @alg.Pt2::new(0.0, 0.0),
   ]
   let f = @data.Feature::new(crs).with_geometry(@data.Polygon(exterior, []))
   let json = feature_to_geojson(f)
@@ -234,7 +239,7 @@ test "GeoJSON 写 Polygon Feature" {
 test "GeoJSON 写 MultiPoint" {
   let crs = @crs.wgs84_geographic()
   let f = @data.Feature::new(crs).with_geometry(
-    @data.MultiPoint([(0.0, 0.0), (1.0, 1.0)]),
+    @data.MultiPoint([@alg.Pt2::new(0.0, 0.0), @alg.Pt2::new(1.0, 1.0)]),
   )
   let json = feature_to_geojson(f)
   assert_true(json.contains("\"type\":\"MultiPoint\""))
@@ -244,7 +249,7 @@ test "GeoJSON 写 MultiPoint" {
 test "GeoJSON 写带属性" {
   let crs = @crs.wgs84_geographic()
   let f = @data.Feature::new(crs)
-    .with_geometry(@data.Point(0.0, 0.0))
+    .with_geometry(@data.Point(@alg.Pt2::new(0.0, 0.0)))
     .set("id", @data.IntVal(42))
     .set("score", @data.DoubleVal(3.14))
     .set("active", @data.BoolVal(true))
@@ -259,7 +264,9 @@ test "GeoJSON 写带属性" {
 ///|
 test "GeoJSON 写 CRS" {
   let crs = @crs.wgs84_geographic()
-  let f = @data.Feature::new(crs).with_geometry(@data.Point(0.0, 0.0))
+  let f = @data.Feature::new(crs).with_geometry(
+    @data.Point(@alg.Pt2::new(0.0, 0.0)),
+  )
   let json = feature_to_geojson(f)
   assert_true(json.contains("EPSG"))
   assert_true(json.contains("4326"))
@@ -269,10 +276,10 @@ test "GeoJSON 写 CRS" {
 test "GeoJSON 写 Layer" {
   let crs = @crs.wgs84_geographic()
   let f1 = @data.Feature::new(crs)
-    .with_geometry(@data.Point(0.0, 0.0))
+    .with_geometry(@data.Point(@alg.Pt2::new(0.0, 0.0)))
     .set("name", @data.StringVal("p1"))
   let f2 = @data.Feature::new(crs)
-    .with_geometry(@data.Point(1.0, 1.0))
+    .with_geometry(@data.Point(@alg.Pt2::new(1.0, 1.0)))
     .set("name", @data.StringVal("p2"))
   let layer = @data.Layer::new("test", crs).add_feature(f1).add_feature(f2)
   let json = layer_to_geojson(layer)
@@ -285,7 +292,9 @@ test "GeoJSON 写 Layer" {
 ///|
 test "GeoJSON 写 Dataset" {
   let crs = @crs.wgs84_geographic()
-  let f = @data.Feature::new(crs).with_geometry(@data.Point(0.0, 0.0))
+  let f = @data.Feature::new(crs).with_geometry(
+    @data.Point(@alg.Pt2::new(0.0, 0.0)),
+  )
   let layer = @data.Layer::new("l1", crs).add_feature(f)
   let ds = @data.Dataset::new("ds1").add_layer(layer)
   let json = dataset_to_geojson(ds)
@@ -300,9 +309,9 @@ test "GeoJSON 读 Point" {
     Some(f) => {
       assert_true(f.has_geometry())
       match f.geometry() {
-        Some(@data.Point(x, y)) => {
-          assert_true(approx(x, 116.0, 0.001))
-          assert_true(approx(y, 39.0, 0.001))
+        Some(@data.Point(p)) => {
+          assert_true(approx(p.x(), 116.0, 0.001))
+          assert_true(approx(p.y(), 39.0, 0.001))
         }
         _ => assert_true(false)
       }
@@ -431,15 +440,15 @@ test "GeoJSON 读 CRS EPSG:3857" {
 test "GeoJSON 往返 Point" {
   let crs = @crs.wgs84_geographic()
   let f1 = @data.Feature::new(crs)
-    .with_geometry(@data.Point(116.0, 39.0))
+    .with_geometry(@data.Point(@alg.Pt2::new(116.0, 39.0)))
     .set("name", @data.StringVal("test"))
   let json = feature_to_geojson(f1)
   match safe_feature(json) {
     Some(f2) => {
       match f2.geometry() {
-        Some(@data.Point(x, y)) => {
-          assert_true(approx(x, 116.0, 0.001))
-          assert_true(approx(y, 39.0, 0.001))
+        Some(@data.Point(p)) => {
+          assert_true(approx(p.x(), 116.0, 0.001))
+          assert_true(approx(p.y(), 39.0, 0.001))
         }
         _ => assert_true(false)
       }
@@ -456,7 +465,11 @@ test "GeoJSON 往返 Point" {
 test "GeoJSON 往返 LineString" {
   let crs = @crs.wgs84_geographic()
   let f1 = @data.Feature::new(crs).with_geometry(
-    @data.LineString([(0.0, 0.0), (1.0, 1.0), (2.0, 0.0)]),
+    @data.LineString([
+      @alg.Pt2::new(0.0, 0.0),
+      @alg.Pt2::new(1.0, 1.0),
+      @alg.Pt2::new(2.0, 0.0),
+    ]),
   )
   let json = feature_to_geojson(f1)
   match safe_feature(json) {
@@ -464,10 +477,10 @@ test "GeoJSON 往返 LineString" {
       match f2.geometry() {
         Some(@data.LineString(coords)) => {
           assert_eq(coords.length(), 3)
-          let (x0, _) = coords[0]
-          assert_true(approx(x0, 0.0, 0.001))
-          let (x2, _) = coords[2]
-          assert_true(approx(x2, 2.0, 0.001))
+          let p0 = coords[0]
+          assert_true(approx(p0.x(), 0.0, 0.001))
+          let p2 = coords[2]
+          assert_true(approx(p2.x(), 2.0, 0.001))
         }
         _ => assert_true(false)
       }
@@ -478,7 +491,12 @@ test "GeoJSON 往返 LineString" {
 ///|
 test "GeoJSON 往返 Polygon" {
   let crs = @crs.wgs84_geographic()
-  let exterior = [(0.0, 0.0), (10.0, 0.0), (10.0, 10.0), (0.0, 0.0)]
+  let exterior = [
+    @alg.Pt2::new(0.0, 0.0),
+    @alg.Pt2::new(10.0, 0.0),
+    @alg.Pt2::new(10.0, 10.0),
+    @alg.Pt2::new(0.0, 0.0),
+  ]
   let f1 = @data.Feature::new(crs).with_geometry(@data.Polygon(exterior, []))
   let json = feature_to_geojson(f1)
   match safe_feature(json) {
@@ -494,8 +512,12 @@ test "GeoJSON 往返 Polygon" {
 ///|
 test "GeoJSON 往返 Layer" {
   let crs = @crs.wgs84_geographic()
-  let f1 = @data.Feature::new(crs).with_geometry(@data.Point(0.0, 0.0))
-  let f2 = @data.Feature::new(crs).with_geometry(@data.Point(1.0, 1.0))
+  let f1 = @data.Feature::new(crs).with_geometry(
+    @data.Point(@alg.Pt2::new(0.0, 0.0)),
+  )
+  let f2 = @data.Feature::new(crs).with_geometry(
+    @data.Point(@alg.Pt2::new(1.0, 1.0)),
+  )
   let layer1 = @data.Layer::new("test", crs).add_feature(f1).add_feature(f2)
   let json = layer_to_geojson(layer1)
   match safe_layer(json, "test") {
@@ -536,10 +558,10 @@ test "GeoJSON 读 PointZ" {
   match safe_feature(json) {
     Some(f) =>
       match f.geometry() {
-        Some(@data.PointZ(x, y, z)) => {
-          assert_true(approx(x, 1.0, 0.001))
-          assert_true(approx(y, 2.0, 0.001))
-          assert_true(approx(z, 3.0, 0.001))
+        Some(@data.PointZ(p)) => {
+          assert_true(approx(p.x(), 1.0, 0.001))
+          assert_true(approx(p.y(), 2.0, 0.001))
+          assert_true(approx(p.z(), 3.0, 0.001))
         }
         _ => assert_true(false)
       }
@@ -550,7 +572,9 @@ test "GeoJSON 读 PointZ" {
 ///|
 test "GeoJSON 写 PointZ" {
   let crs = @crs.wgs84_geographic()
-  let f = @data.Feature::new(crs).with_geometry(@data.PointZ(1.0, 2.0, 3.0))
+  let f = @data.Feature::new(crs).with_geometry(
+    @data.PointZ(@alg.Pt3::new(1.0, 2.0, 3.0)),
+  )
   let json = feature_to_geojson(f)
   assert_true(json.contains("\"type\":\"Point\""))
   assert_true(json.contains("3"))
@@ -560,7 +584,10 @@ test "GeoJSON 写 PointZ" {
 test "GeoJSON 写 MultiLineString" {
   let crs = @crs.wgs84_geographic()
   let f = @data.Feature::new(crs).with_geometry(
-    @data.MultiLineString([[(0.0, 0.0), (1.0, 1.0)], [(2.0, 2.0), (3.0, 3.0)]]),
+    @data.MultiLineString([
+      [@alg.Pt2::new(0.0, 0.0), @alg.Pt2::new(1.0, 1.0)],
+      [@alg.Pt2::new(2.0, 2.0), @alg.Pt2::new(3.0, 3.0)],
+    ]),
   )
   let json = feature_to_geojson(f)
   assert_true(json.contains("\"type\":\"MultiLineString\""))
@@ -570,7 +597,17 @@ test "GeoJSON 写 MultiLineString" {
 test "GeoJSON 写 MultiPolygon" {
   let crs = @crs.wgs84_geographic()
   let f = @data.Feature::new(crs).with_geometry(
-    @data.MultiPolygon([([(0.0, 0.0), (1.0, 0.0), (1.0, 1.0), (0.0, 0.0)], [])]),
+    @data.MultiPolygon([
+      (
+        [
+          @alg.Pt2::new(0.0, 0.0),
+          @alg.Pt2::new(1.0, 0.0),
+          @alg.Pt2::new(1.0, 1.0),
+          @alg.Pt2::new(0.0, 0.0),
+        ],
+        [],
+      ),
+    ]),
   )
   let json = feature_to_geojson(f)
   assert_true(json.contains("\"type\":\"MultiPolygon\""))
@@ -579,7 +616,9 @@ test "GeoJSON 写 MultiPolygon" {
 ///|
 test "GeoJSON 写空属性" {
   let crs = @crs.wgs84_geographic()
-  let f = @data.Feature::new(crs).with_geometry(@data.Point(0.0, 0.0))
+  let f = @data.Feature::new(crs).with_geometry(
+    @data.Point(@alg.Pt2::new(0.0, 0.0)),
+  )
   let json = feature_to_geojson(f)
   assert_true(json.contains("\"properties\":{}"))
 }
@@ -658,7 +697,7 @@ test "local_parse_double 科学记数法" {
 test "GeoJSON 往返带属性" {
   let crs = @crs.wgs84_geographic()
   let f1 = @data.Feature::new(crs)
-    .with_geometry(@data.Point(1.0, 2.0))
+    .with_geometry(@data.Point(@alg.Pt2::new(1.0, 2.0)))
     .set("id", @data.IntVal(100))
     .set("name", @data.StringVal("hello"))
     .set("flag", @data.BoolVal(true))
@@ -681,7 +720,9 @@ test "GeoJSON 往返带属性" {
 ///|
 test "GeoJSON CRS CGCS2000" {
   let crs = @crs.cgcs2000_geographic()
-  let f = @data.Feature::new(crs).with_geometry(@data.Point(0.0, 0.0))
+  let f = @data.Feature::new(crs).with_geometry(
+    @data.Point(@alg.Pt2::new(0.0, 0.0)),
+  )
   let json = feature_to_geojson(f)
   assert_true(json.contains("4490"))
 }

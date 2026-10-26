@@ -1,6 +1,7 @@
 // STL 格式读写
 // platform/io，将 IndexedMesh 转为 STL 字符串 / 从 STL 解析为 IndexedMesh
 // 支持 ASCII STL 格式
+// 顶点/法向用 @alg.Pt3，通过 x()/y()/z() 访问坐标
 
 ///|
 /// 将 IndexedMesh 序列化为 ASCII STL 字符串
@@ -13,17 +14,14 @@ pub fn mesh_to_stl_ascii(mesh : @mesh.IndexedMesh, name : String) -> String {
         let v0 = get_vtx(mesh, tri.v0)
         let v1 = get_vtx(mesh, tri.v1)
         let v2 = get_vtx(mesh, tri.v2)
-        let nx = 0.0
-        let ny = 0.0
-        let nz = 0.0
         match mesh.get_normal(i) {
-          Some(nrm) => s += "  facet normal \{nrm.x} \{nrm.y} \{nrm.z}\n"
-          None => s += "  facet normal \{nx} \{ny} \{nz}\n"
+          Some(nrm) => s += "  facet normal \{nrm.x()} \{nrm.y()} \{nrm.z()}\n"
+          None => s += "  facet normal 0.0 0.0 0.0\n"
         }
         s += "    outer loop\n"
-        s += "      vertex \{v0.0} \{v0.1} \{v0.2}\n"
-        s += "      vertex \{v1.0} \{v1.1} \{v1.2}\n"
-        s += "      vertex \{v2.0} \{v2.1} \{v2.2}\n"
+        s += "      vertex \{v0.x()} \{v0.y()} \{v0.z()}\n"
+        s += "      vertex \{v1.x()} \{v1.y()} \{v1.z()}\n"
+        s += "      vertex \{v2.x()} \{v2.y()} \{v2.z()}\n"
         s += "    endloop\n"
         s += "  endfacet\n"
       }
@@ -94,11 +92,11 @@ pub fn mesh_from_stl_ascii(
 }
 
 ///|
-/// 获取顶点坐标三元组
-fn get_vtx(mesh : @mesh.IndexedMesh, i : Int32) -> (Double, Double, Double) {
+/// 获取顶点坐标
+fn get_vtx(mesh : @mesh.IndexedMesh, i : Int32) -> @alg.Pt3 {
   match mesh.get_vertex(i) {
-    Some(v) => (v.x, v.y, v.z)
-    None => (0.0, 0.0, 0.0)
+    Some(v) => v
+    None => @alg.Pt3::new(0.0, 0.0, 0.0)
   }
 }
 

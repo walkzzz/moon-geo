@@ -1,6 +1,7 @@
 // GeoJSON 反序列化
 // platform/io，将 GeoJSON 字符串解析为 Feature/Layer/Dataset
 // 依赖 json_parser 解析 JSON，再映射到 data 模型
+// 解析出的坐标用 @alg.Pt2/Pt3 构造
 
 ///|
 /// 从 GeoJSON 字符串解析 Feature
@@ -166,9 +167,9 @@ fn parse_point(coords : JsonValue) -> @data.Geometry raise @util.GeoError {
       let y = get_number(arr[1])
       if arr.length() >= 3 {
         let z = get_number(arr[2])
-        @data.PointZ(x, y, z)
+        @data.PointZ(@alg.Pt3::new(x, y, z))
       } else {
-        @data.Point(x, y)
+        @data.Point(@alg.Pt2::new(x, y))
       }
     }
     _ => raise @util.GeoError::FormatError("Point coordinates 应为数组")
@@ -191,7 +192,7 @@ fn parse_polygon(coords : JsonValue) -> @data.Geometry raise @util.GeoError {
         raise @util.GeoError::FormatError("Polygon 至少需要一个环")
       }
       let exterior = parse_coord_array(rings[0])
-      let interiors : Array[Array[(Double, Double)]] = []
+      let interiors : Array[Array[@alg.Pt2]] = []
       let n = rings.length()
       for i in 1..<n {
         let ring = parse_coord_array(rings[i])
@@ -210,7 +211,7 @@ fn parse_multi_line_string(
 ) -> @data.Geometry raise @util.GeoError {
   match coords {
     JsonArray(lines) => {
-      let result : Array[Array[(Double, Double)]] = []
+      let result : Array[Array[@alg.Pt2]] = []
       for line_json in lines {
         let line = parse_coord_array(line_json)
         result.push(line)
@@ -231,9 +232,7 @@ fn parse_multi_polygon(
 ) -> @data.Geometry raise @util.GeoError {
   match coords {
     JsonArray(polygons) => {
-      let result : Array[
-        (Array[(Double, Double)], Array[Array[(Double, Double)]]),
-      ] = []
+      let result : Array[(Array[@alg.Pt2], Array[Array[@alg.Pt2]])] = []
       for poly_json in polygons {
         match poly_json {
           JsonArray(rings) => {
@@ -243,7 +242,7 @@ fn parse_multi_polygon(
               )
             }
             let exterior = parse_coord_array(rings[0])
-            let interiors : Array[Array[(Double, Double)]] = []
+            let interiors : Array[Array[@alg.Pt2]] = []
             let n = rings.length()
             for i in 1..<n {
               let ring = parse_coord_array(rings[i])
@@ -266,12 +265,10 @@ fn parse_multi_polygon(
 
 ///|
 /// 解析坐标数组 [[x1,y1], [x2,y2], ...]
-fn parse_coord_array(
-  v : JsonValue,
-) -> Array[(Double, Double)] raise @util.GeoError {
+fn parse_coord_array(v : JsonValue) -> Array[@alg.Pt2] raise @util.GeoError {
   match v {
     JsonArray(arr) => {
-      let result : Array[(Double, Double)] = []
+      let result : Array[@alg.Pt2] = []
       for coord in arr {
         match coord {
           JsonArray(xy) => {
@@ -282,7 +279,7 @@ fn parse_coord_array(
             }
             let x = get_number(xy[0])
             let y = get_number(xy[1])
-            result.push((x, y))
+            result.push(@alg.Pt2::new(x, y))
           }
           _ => raise @util.GeoError::FormatError("坐标应为数组")
         }

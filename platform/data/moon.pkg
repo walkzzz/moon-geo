@@ -1,9 +1,10 @@
 // platform/data 包：要素/图层/数据集模型（P4 层）
-// 依赖：util（GeoError）、crs（Crs 坐标参考系）
+// 依赖：util（GeoError）、crs（Crs 坐标参考系）、alg（Pt2/Pt3 核心点类型）
 // Feature = Geometry + Attributes + CRS
 // 时序铁律：先建数据模型 + CRS，再建格式 I/O
 
 import {
   "walkzzz/moon-geo/util",
+  "walkzzz/moon-geo/alg",
   "walkzzz/moon-geo/platform/crs",
 }
