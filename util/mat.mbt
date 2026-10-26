@@ -109,7 +109,7 @@ impl ApproxEq for Mat3 with fn approx_eq(self, other, tol) {
   let b = other.m
   let mut ok = true
   for i in 0..<9 {
-    if not(dbl_approx_eq(a[i], b[i], tol)) {
+    if !dbl_approx_eq(a[i], b[i], tol) {
       ok = false
     }
   }
@@ -121,7 +121,7 @@ impl ApproxEq for Mat3 with fn approx_zero(self, tol) {
   let m = self.m
   let mut ok = true
   for i in 0..<9 {
-    if not(dbl_approx_eq(m[i], 0.0, tol)) {
+    if !dbl_approx_eq(m[i], 0.0, tol) {
       ok = false
     }
   }
@@ -253,7 +253,7 @@ impl ApproxEq for Mat4 with fn approx_eq(self, other, tol) {
   let b = other.m
   let mut ok = true
   for i in 0..<16 {
-    if not(dbl_approx_eq(a[i], b[i], tol)) {
+    if !dbl_approx_eq(a[i], b[i], tol) {
       ok = false
     }
   }
@@ -265,7 +265,7 @@ impl ApproxEq for Mat4 with fn approx_zero(self, tol) {
   let m = self.m
   let mut ok = true
   for i in 0..<16 {
-    if not(dbl_approx_eq(m[i], 0.0, tol)) {
+    if !dbl_approx_eq(m[i], 0.0, tol) {
       ok = false
     }
   }

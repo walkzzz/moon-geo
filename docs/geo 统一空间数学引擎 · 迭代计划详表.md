@@ -44,7 +44,7 @@
 |----|------|--------|------|------|
 | 01 | `0.1.1.0` | 项目脚手架 + util num/cpx | 数值扩展、复数全量运算 | util 单测通过 |
 | 02 | `0.1.1.1` | util vec2/vec3/mat3/mat4/quat | 向量矩阵四元数 | 线代基准通过 |
-| 03 | `0.1.1.2` | util poly + atop 拓扑空间 Trait | TopologicalSpace/Manifold/MetricSpace | Trait 设计评审 |
+| 03 | `0.1.1.2` | util poly + atop 拓扑空间 Trait | TopologicalSpace/Manifold/MetricSpace | Trait 设计评审 ✅ |
 | 04 | `0.1.1.3` | space Space Trait + Euclid2 + Dim | 空间核心抽象 + 2D 欧氏 | space 单测通过 |
 | 05 | `0.1.1.4` | space Euclid3 + SpaceMap Trait | 3D 欧氏 + 空间映射 | 跨空间映射测试 |
 | 06 | `0.1.1.5` | alg Geo Trait + Pt2/Pt3 + Line2 | 图元核心抽象 + 点/直线 | Geo Trait 评审 |

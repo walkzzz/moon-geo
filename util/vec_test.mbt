@@ -25,6 +25,13 @@ test "Vec2 dot cross" {
 }
 
 ///|
+test "Vec2 cross nonzero" {
+  // (2,3) × (4,5) = 2*5 - 3*4 = -2（两项均非零，变异 ± 可检测）
+  let c = @util.Vec2::new(2.0, 3.0).cross(@util.Vec2::new(4.0, 5.0))
+  assert_true(@util.dbl_approx_eq(c, -2.0, @util.EPS))
+}
+
+///|
 test "Vec2 normalize" {
   let v = @util.Vec2::new(3.0, 4.0)
   let n = v.normalize()

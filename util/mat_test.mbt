@@ -17,6 +17,14 @@ test "Mat3 det" {
 }
 
 ///|
+test "Mat3 det nonzero offdiag" {
+  // [1 2 0; 3 4 5; 0 6 7] det = 1*(4*7-5*6) - 2*(3*7-5*0) + 0 = -2 - 42 = -44
+  // 非对角元素非零，变异 m[5]*m[7] 的 ± 可检测
+  let m = @util.Mat3::new(1.0, 2.0, 0.0, 3.0, 4.0, 5.0, 0.0, 6.0, 7.0)
+  assert_true(@util.dbl_approx_eq(m.det(), -44.0, @util.EPS))
+}
+
+///|
 test "Mat3 inv" {
   let m = @util.Mat3::new(2.0, 0.0, 0.0, 0.0, 4.0, 0.0, 0.0, 0.0, 8.0)
   let inv = m.inv()

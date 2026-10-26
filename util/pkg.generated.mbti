@@ -81,6 +81,44 @@ pub fn Mat4::to_repr(Self) -> @debug.Repr
 pub fn Mat4::translation(Double, Double, Double) -> Self
 pub fn Mat4::transpose(Self) -> Self
 
+pub(all) struct Poly1 {
+  coeffs : Array[Double]
+} derive(@debug.Debug)
+pub fn Poly1::add(Self, Self) -> Self
+pub fn Poly1::approx_eq(Self, Self, Double) -> Bool
+pub fn Poly1::approx_zero(Self, Double) -> Bool
+pub fn Poly1::constant(Double) -> Self
+pub fn Poly1::degree(Self) -> Int32
+pub fn Poly1::derivative(Self) -> Self
+pub fn Poly1::eval(Self, Double) -> Double
+pub fn Poly1::is_zero(Self) -> Bool
+pub fn Poly1::mul(Self, Self) -> Self
+pub fn Poly1::new(Array[Double]) -> Self
+pub fn Poly1::scale(Self, Double) -> Self
+pub fn Poly1::sub(Self, Self) -> Self
+pub fn Poly1::to_repr(Self) -> @debug.Repr
+pub fn Poly1::zero() -> Self
+
+pub(all) struct PolyN {
+  terms : Array[PolyTerm]
+} derive(@debug.Debug)
+pub fn PolyN::add(Self, Self) -> Self
+pub fn PolyN::approx_eq(Self, Self, Double) -> Bool
+pub fn PolyN::approx_zero(Self, Double) -> Bool
+pub fn PolyN::eval(Self, Array[Double]) -> Double
+pub fn PolyN::is_zero(Self) -> Bool
+pub fn PolyN::new(Array[PolyTerm]) -> Self
+pub fn PolyN::scale(Self, Double) -> Self
+pub fn PolyN::to_repr(Self) -> @debug.Repr
+pub fn PolyN::zero() -> Self
+
+pub(all) struct PolyTerm {
+  coeff : Double
+  exps : Array[Int32]
+} derive(@debug.Debug)
+pub fn PolyTerm::new(Double, Array[Int32]) -> Self
+pub fn PolyTerm::to_repr(Self) -> @debug.Repr
+
 pub(all) struct Quat {
   w : Double
   x : Double

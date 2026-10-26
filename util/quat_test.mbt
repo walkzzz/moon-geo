@@ -27,6 +27,19 @@ test "Quat mul identity" {
 }
 
 ///|
+test "Quat mul nonzero" {
+  // 两个非平凡四元数乘积，w 分量各项均非零，变异 ± 可检测
+  // q1=(1,2,3,4), q2=(5,6,7,8)
+  // w = 1*5 - 2*6 - 3*7 - 4*8 = 5-12-21-32 = -60
+  let q1 = @util.Quat::new(1.0, 2.0, 3.0, 4.0)
+  let q2 = @util.Quat::new(5.0, 6.0, 7.0, 8.0)
+  let p = q1.mul(q2)
+  assert_true(@util.dbl_approx_eq(p.w, -60.0, @util.EPS))
+  // x = 1*6 + 2*5 + 3*8 - 4*7 = 6+10+24-28 = 12
+  assert_true(@util.dbl_approx_eq(p.x, 12.0, @util.EPS))
+}
+
+///|
 test "Quat conjugate" {
   let q = @util.Quat::from_axis_angle(@util.Vec3::new(0.0, 0.0, 1.0), 0.5)
   let n = q.normalize()
