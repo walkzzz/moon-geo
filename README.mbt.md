@@ -64,8 +64,9 @@ util(-1) → atop(0) → space(1) → alg(2) → bv(3) → brep(4) → algo(5) �
 | `0.1.2.5` | space Raster2 栅格空间 + 矢栅转换 | ✅ |
 | `0.1.2.6` | algo boolean 布尔运算（交/并/差） | ✅ |
 | `0.1.2.7` | algo triangulate + buffer + 拓扑修复 | ✅ |
+| `0.1.2.8` | draw style + canvas2 + canvas3 | ✅ |
 
-测试：454 通过 · CRAP：490 · 变异分数：100%
+测试：505 通过 · CRAP：490 · 变异分数：100%
 
 > **核心 Trait 已冻结**（0.1.1.12）：Geo/Space/Bv/Topo 接口永久锁定，新增能力只扩展不修改。详见 [ADR-005](docs/adr/005-core-trait-freeze.md)
 

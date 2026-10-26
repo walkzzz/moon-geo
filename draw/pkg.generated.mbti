@@ -1,0 +1,100 @@
+// Generated using `moon info`, DON'T EDIT IT
+package "walkzzz/moon-geo/draw"
+
+// Values
+
+// Errors
+
+// Types and methods
+pub struct Canvas2 {
+  width : Double
+  height : Double
+  elements : Array[SvgElement]
+  background : String?
+}
+pub fn Canvas2::draw_circle(Self, Double, Double, Double, Style) -> Self
+pub fn Canvas2::draw_line(Self, Double, Double, Double, Double, Style) -> Self
+pub fn Canvas2::draw_polygon(Self, Array[(Double, Double)], Style) -> Self
+pub fn Canvas2::draw_polyline(Self, Array[(Double, Double)], Style) -> Self
+pub fn Canvas2::draw_rect(Self, Double, Double, Double, Double, Style) -> Self
+pub fn Canvas2::draw_text(Self, Double, Double, String, Style) -> Self
+pub fn Canvas2::element_count(Self) -> Int32
+pub fn Canvas2::new(Double, Double) -> Self
+pub fn Canvas2::to_svg(Self) -> String
+pub fn Canvas2::with_background(Self, String) -> Self
+
+pub struct Canvas3 {
+  elements : Array[WireElement]
+  view : View3
+}
+pub fn Canvas3::draw_axes(Self, Double) -> Self
+pub fn Canvas3::draw_cube(Self, Double, Double, Double, Double, Style) -> Self
+pub fn Canvas3::draw_line(Self, Point3, Point3, Style) -> Self
+pub fn Canvas3::draw_point(Self, Point3, Double, Style) -> Self
+pub fn Canvas3::element_count(Self) -> Int32
+pub fn Canvas3::new() -> Self
+pub fn Canvas3::project(Self, Point3, Double, Double) -> (Double, Double)
+pub fn Canvas3::to_svg(Self, Double, Double) -> String
+pub fn Canvas3::with_view(Self, View3) -> Self
+
+pub struct Point3 {
+  x : Double
+  y : Double
+  z : Double
+}
+pub fn Point3::new(Double, Double, Double) -> Self
+
+pub struct Style {
+  stroke : String?
+  fill : String?
+  stroke_width : Double
+  stroke_dasharray : String?
+  font_size : Double
+  font_family : String
+  opacity : Double
+}
+pub fn Style::default() -> Self
+pub fn Style::no_fill(Self) -> Self
+pub fn Style::no_stroke(Self) -> Self
+pub fn Style::to_svg_attrs(Self) -> String
+pub fn Style::with_dash(Self, String) -> Self
+pub fn Style::with_fill(Self, String) -> Self
+pub fn Style::with_opacity(Self, Double) -> Self
+pub fn Style::with_stroke(Self, String, Double) -> Self
+
+pub enum SvgElement {
+  Line(Double, Double, Double, Double, Style)
+  Rect(Double, Double, Double, Double, Style)
+  Circle(Double, Double, Double, Style)
+  Ellipse(Double, Double, Double, Double, Style)
+  Polygon(Array[(Double, Double)], Style)
+  Polyline(Array[(Double, Double)], Style)
+  Text(Double, Double, String, Style)
+  Group(Array[SvgElement], Style)
+}
+
+pub struct View3 {
+  eye_x : Double
+  eye_y : Double
+  eye_z : Double
+  target_x : Double
+  target_y : Double
+  target_z : Double
+  up_x : Double
+  up_y : Double
+  up_z : Double
+  fov : Double
+  aspect : Double
+  near : Double
+  far : Double
+}
+pub fn View3::default() -> Self
+
+pub enum WireElement {
+  Line3(Point3, Point3, Style)
+  Point3D(Point3, Double, Style)
+}
+
+// Type aliases
+
+// Traits
