@@ -13,6 +13,7 @@ pub(all) enum Geometry {
   MultiPoint(Array[@alg.Pt2])
   MultiLineString(Array[Array[@alg.Pt2]])
   MultiPolygon(Array[(Array[@alg.Pt2], Array[Array[@alg.Pt2]])])
+  GeometryCollection(Array[Geometry])
 }
 
 ///|
@@ -26,6 +27,7 @@ pub fn Geometry::type_name(g : Geometry) -> String {
     MultiPoint(_) => "MultiPoint"
     MultiLineString(_) => "MultiLineString"
     MultiPolygon(_) => "MultiPolygon"
+    GeometryCollection(_) => "GeometryCollection"
   }
 }
 
@@ -59,6 +61,13 @@ pub fn Geometry::coord_count(g : Geometry) -> Int32 {
         for ring in interiors {
           total += ring.length()
         }
+      }
+      total
+    }
+    GeometryCollection(geoms) => {
+      let mut total = 0
+      for g in geoms {
+        total += g.coord_count()
       }
       total
     }
@@ -226,6 +235,13 @@ fn transform_geometry(
         new_polys.push((new_ext, new_ints))
       }
       MultiPolygon(new_polys)
+    }
+    GeometryCollection(geoms) => {
+      let new_geoms : Array[Geometry] = []
+      for g in geoms {
+        new_geoms.push(transform_geometry(g, from, to))
+      }
+      GeometryCollection(new_geoms)
     }
   }
 }

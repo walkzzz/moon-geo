@@ -119,9 +119,19 @@ fn geometry_from_json(v : JsonValue) -> @data.Geometry raise @util.GeoError {
         None =>
           match type_str {
             "GeometryCollection" =>
-              raise @util.GeoError::Unsupported(
-                "GeometryCollection 暂不支持",
-              )
+              match json_get(v, "geometries") {
+                Some(JsonArray(geoms)) => {
+                  let result : Array[@data.Geometry] = []
+                  for geom_json in geoms {
+                    result.push(geometry_from_json(geom_json))
+                  }
+                  @data.GeometryCollection(result)
+                }
+                _ =>
+                  raise @util.GeoError::FormatError(
+                    "GeometryCollection 缺少 geometries 字段",
+                  )
+              }
             _ =>
               raise @util.GeoError::FormatError(
                 "几何缺少 coordinates 字段",

@@ -76,7 +76,7 @@ util(-1) → atop(0) → space(1) → alg(2) → bv(3) → brep(4) → algo(5) �
 | `0.1.2.10` | platform/mesh IndexedMesh + platform/io STL 读写 | ✅ |
 | `0.1.2.11` | 复射影大一统验证 + 阶段二收尾 | ✅ |
 
-测试：664 通过 · 基准：13 · CRAP：490 · 变异分数：100%
+测试：664 通过 · 基准：13 · CRAP：490（静态手维护表，非真实 CRAP） · 变异分数：100%（仅覆盖 util/space/alg）
 
 > **核心 Trait 冻结**（0.1.1.12）：Geo/Space/Bv/Topo 接口冻结至 1.0 发布前。0.x 阶段不承诺 API 冻结——接口可能调整，到 1.0 后锁定。详见 [ADR-005](docs/adr/005-core-trait-freeze.md)
 

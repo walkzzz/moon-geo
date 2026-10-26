@@ -5,7 +5,8 @@ cd "$(dirname "$0")/.." || exit 1
 
 echo "=== CRAP 指标报告 (util + atop + space + alg + bv, 0.1.2.11) ==="
 echo "公式: CRAP = comp^2 (cov=1.0, 测试全绿)"
-echo "注: 静态表，收尾时需 diff 本表函数列表 vs 实际 pub fn 列表（moon info）以同步"
+echo "注: 静态手维护表，非真实 CRAP——cov 假设 1.0，complexity 手填而非从代码测算"
+echo "    新增函数不进报告，函数改名后 grep guard 只查存在性不查复杂度"
 echo ""
 
 total_crap=0

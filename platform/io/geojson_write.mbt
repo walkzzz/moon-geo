@@ -137,6 +137,18 @@ pub fn geometry_to_geojson(geom : @data.Geometry) -> String {
       s += "]}"
       s
     }
+    @data.GeometryCollection(geoms) => {
+      let mut s = "{\"type\":\"GeometryCollection\",\"geometries\":["
+      let n = geoms.length()
+      for i in 0..<n {
+        if i > 0 {
+          s += ","
+        }
+        s += geometry_to_geojson(geoms[i])
+      }
+      s += "]}"
+      s
+    }
   }
 }
 

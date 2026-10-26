@@ -75,6 +75,7 @@ pub(all) enum Geometry {
   MultiPoint(Array[@alg.Pt2])
   MultiLineString(Array[Array[@alg.Pt2]])
   MultiPolygon(Array[(Array[@alg.Pt2], Array[Array[@alg.Pt2]])])
+  GeometryCollection(Array[Geometry])
 }
 pub fn Geometry::coord_count(Self) -> Int32
 pub fn Geometry::type_name(Self) -> String

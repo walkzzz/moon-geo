@@ -7,6 +7,8 @@ killed=0
 survived=0
 total=0
 echo "=== 变异测试报告 ==="
+echo "覆盖范围: util/space/alg（未覆盖 bv/brep/algo/platform）"
+echo "方法: 字符串替换（源码改空格即 NO-OP）"
 echo "变异体 | 状态"
 echo "-------|------"
 

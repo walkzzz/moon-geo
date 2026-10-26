@@ -24,7 +24,7 @@ struct JsonParser {
 /// 解析 JSON 字符串
 pub fn parse_json(input : String) -> JsonValue raise @util.GeoError {
   let p : JsonParser = { input, pos: 0, }
-  let (value, new_pos) = parse_value(p)
+  let (value, new_pos) = parse_value(p, 0)
   let p2 : JsonParser = { input: p.input, pos: new_pos, }
   let p3 = skip_whitespace(p2)
   if p3.pos < p3.input.length() {
@@ -51,15 +51,18 @@ fn skip_whitespace(p : JsonParser) -> JsonParser {
 
 ///|
 /// 解析一个值
-fn parse_value(p : JsonParser) -> (JsonValue, Int32) raise @util.GeoError {
+fn parse_value(p : JsonParser, depth : Int32) -> (JsonValue, Int32) raise @util.GeoError {
+  if depth > 1000 {
+    raise @util.GeoError::FormatError("JSON 递归深度超过 1000")
+  }
   let p = skip_whitespace(p)
   if p.pos >= p.input.length() {
     raise @util.GeoError::FormatError("JSON 意外结束")
   }
   let ch = p.input[p.pos]
   match ch {
-    '{' => parse_object(p)
-    '[' => parse_array(p)
+    '{' => parse_object(p, depth)
+    '[' => parse_array(p, depth)
     '"' => {
       let (s, pos) = parse_string(p)
       (JsonString(s), pos)
@@ -78,7 +81,7 @@ fn parse_value(p : JsonParser) -> (JsonValue, Int32) raise @util.GeoError {
 
 ///|
 /// 解析对象
-fn parse_object(p : JsonParser) -> (JsonValue, Int32) raise @util.GeoError {
+fn parse_object(p : JsonParser, depth : Int32) -> (JsonValue, Int32) raise @util.GeoError {
   let mut pos = p.pos + 1
   let entries : Array[(String, JsonValue)] = []
   let p1 : JsonParser = { input: p.input, pos, }
@@ -108,7 +111,7 @@ fn parse_object(p : JsonParser) -> (JsonValue, Int32) raise @util.GeoError {
     }
     pos += 1
     let p8 : JsonParser = { input: p.input, pos, }
-    let (value, pos3) = parse_value(p8)
+    let (value, pos3) = parse_value(p8, depth + 1)
     pos = pos3
     entries.push((key, value))
     let p9 : JsonParser = { input: p.input, pos, }
@@ -133,7 +136,7 @@ fn parse_object(p : JsonParser) -> (JsonValue, Int32) raise @util.GeoError {
 
 ///|
 /// 解析数组
-fn parse_array(p : JsonParser) -> (JsonValue, Int32) raise @util.GeoError {
+fn parse_array(p : JsonParser, depth : Int32) -> (JsonValue, Int32) raise @util.GeoError {
   let mut pos = p.pos + 1
   let values : Array[JsonValue] = []
   let p1 : JsonParser = { input: p.input, pos, }
@@ -144,7 +147,7 @@ fn parse_array(p : JsonParser) -> (JsonValue, Int32) raise @util.GeoError {
   }
   while true {
     let p3 : JsonParser = { input: p.input, pos, }
-    let (value, pos2) = parse_value(p3)
+    let (value, pos2) = parse_value(p3, depth + 1)
     pos = pos2
     values.push(value)
     let p4 : JsonParser = { input: p.input, pos, }

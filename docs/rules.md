@@ -89,7 +89,7 @@ README 以中文为主，关键术语保留英文。当前 `README.mbt.md` 为�
 | `0.1.2.10` | platform/mesh IndexedMesh + platform/io STL 读写 | ✅ |
 | `0.1.2.11` | 复射影大一统验证 + 阶段二收尾 | ✅ |
 
-测试：664 通过 · CRAP：490 · 变异分数：100%
+测试：664 通过 · CRAP：490（静态手维护表） · 变异分数：100%（仅覆盖 util/space/alg）
 
 ---
 
