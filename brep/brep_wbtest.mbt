@@ -786,3 +786,89 @@ test "HEMesh::from_triangles twin 对称性" {
     assert_eq(twin_he.twin(), i)
   }
 }
+
+///|
+fn safe_from_triangles(
+  pts : Array[@alg.Pt3],
+  tris : Array[(Int32, Int32, Int32)],
+) -> HEMesh? {
+  Some(HEMesh::from_triangles(pts, tris)) catch {
+    _ => None
+  }
+}
+
+///|
+test "from_triangles 负向：越界顶点索引" {
+  let pts : Array[@alg.Pt3] = [
+    @alg.Pt3::new(0.0, 0.0, 0.0),
+    @alg.Pt3::new(1.0, 0.0, 0.0),
+    @alg.Pt3::new(0.0, 1.0, 0.0),
+  ]
+  let tris : Array[(Int32, Int32, Int32)] = [(0, 1, 5)]
+  match safe_from_triangles(pts, tris) {
+    Some(_) => assert_true(false)
+    None => assert_true(true)
+  }
+}
+
+///|
+test "from_triangles 负向：负顶点索引" {
+  let pts : Array[@alg.Pt3] = [
+    @alg.Pt3::new(0.0, 0.0, 0.0),
+    @alg.Pt3::new(1.0, 0.0, 0.0),
+    @alg.Pt3::new(0.0, 1.0, 0.0),
+  ]
+  let tris : Array[(Int32, Int32, Int32)] = [(-1, 1, 2)]
+  match safe_from_triangles(pts, tris) {
+    Some(_) => assert_true(false)
+    None => assert_true(true)
+  }
+}
+
+///|
+test "from_triangles 负向：非流形输入（3三角形共享边）" {
+  let pts : Array[@alg.Pt3] = [
+    @alg.Pt3::new(0.0, 0.0, 0.0),
+    @alg.Pt3::new(1.0, 0.0, 0.0),
+    @alg.Pt3::new(0.5, 1.0, 0.0),
+    @alg.Pt3::new(0.5, -1.0, 0.0),
+  ]
+  // 3 个三角形共享边 0→1
+  let tris : Array[(Int32, Int32, Int32)] = [(0, 1, 2), (1, 0, 3), (0, 1, 3)]
+  match safe_from_triangles(pts, tris) {
+    Some(_) => assert_true(false)
+    None => assert_true(true)
+  }
+}
+
+///|
+test "from_triangles 负向：空输入" {
+  let pts : Array[@alg.Pt3] = []
+  let tris : Array[(Int32, Int32, Int32)] = []
+  match safe_from_triangles(pts, tris) {
+    Some(mesh) => {
+      assert_eq(mesh.vertex_count(), 0)
+      assert_eq(mesh.face_count(), 0)
+    }
+    None => assert_true(false)
+  }
+}
+
+///|
+test "from_triangles 负向：重复三角形产出独立网格" {
+  let pts : Array[@alg.Pt3] = [
+    @alg.Pt3::new(0.0, 0.0, 0.0),
+    @alg.Pt3::new(1.0, 0.0, 0.0),
+    @alg.Pt3::new(0.0, 1.0, 0.0),
+  ]
+  // 同一三角形重复两次 — 无反向半边，两三角形独立
+  let tris : Array[(Int32, Int32, Int32)] = [(0, 1, 2), (0, 1, 2)]
+  match safe_from_triangles(pts, tris) {
+    Some(mesh) => {
+      assert_eq(mesh.face_count(), 2)
+      // 6 面内 + 6 边界 = 12 半边
+      assert_eq(mesh.half_edge_count(), 12)
+    }
+    None => assert_true(false)
+  }
+}

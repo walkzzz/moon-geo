@@ -184,7 +184,10 @@ pub fn triangle_count(triangles : Array[(Int32, Int32, Int32)]) -> Int32 {
 /// Delaunay 三角剖分并产出 HEMesh 半边网格
 /// 将 2D 点提升到 3D（z=0），三角剖分后构造完整半边拓扑
 /// 这是 N1 类型贯通的关键：delaunay 不再只返回裸索引，而是产出 brep.HEMesh
-pub fn delaunay_to_hemesh(points : Array[@alg.Pt2]) -> @brep.HEMesh {
+/// raise GeoError — 透传 from_triangles 的越界/非流形错误
+pub fn delaunay_to_hemesh(
+  points : Array[@alg.Pt2],
+) -> @brep.HEMesh raise @util.GeoError {
   let triangles = delaunay(points)
   let pts3 : Array[@alg.Pt3] = []
   for p in points {

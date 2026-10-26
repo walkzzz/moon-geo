@@ -392,3 +392,59 @@ test "binary STL ASCII 头部写入" {
   }
   assert_true(s.contains("MyModel"))
 }
+
+///|
+test "binary STL 负向：截断字节流（< 84字节）" {
+  let bytes = Bytes::make(50, b'\x00')
+  match safe_stl_binary_read(bytes) {
+    Some(_) => assert_true(false)
+    None => assert_true(true)
+  }
+}
+
+///|
+test "binary STL 负向：声明面片数与字节数不匹配" {
+  let arr : Array[Byte] = []
+  for _ in 0..<80 {
+    arr.push(b'\x00')
+  }
+  arr.push(b'\x64')
+  arr.push(b'\x00')
+  arr.push(b'\x00')
+  arr.push(b'\x00')
+  let bytes = Bytes::from_iter(arr.iter())
+  match safe_stl_binary_read(bytes) {
+    Some(_) => assert_true(false)
+    None => assert_true(true)
+  }
+}
+
+///|
+test "binary STL 负向：空字节流" {
+  let arr : Array[Byte] = []
+  let bytes = Bytes::from_iter(arr.iter())
+  match safe_stl_binary_read(bytes) {
+    Some(_) => assert_true(false)
+    None => assert_true(true)
+  }
+}
+
+///|
+test "binary STL 负向：部分截断三角形数据" {
+  let arr : Array[Byte] = []
+  for _ in 0..<80 {
+    arr.push(b'\x00')
+  }
+  arr.push(b'\x02')
+  arr.push(b'\x00')
+  arr.push(b'\x00')
+  arr.push(b'\x00')
+  for _ in 0..<50 {
+    arr.push(b'\x00')
+  }
+  let bytes = Bytes::from_iter(arr.iter())
+  match safe_stl_binary_read(bytes) {
+    Some(_) => assert_true(false)
+    None => assert_true(true)
+  }
+}

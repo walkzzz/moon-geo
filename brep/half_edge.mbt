@@ -273,11 +273,31 @@ pub extend HEMesh with Topo::{
 /// 从三角形列表构造半边网格
 /// points: 顶点坐标数组；triangles: 三角形顶点索引三元组（逆时针）
 /// 自动匹配共享边、创建边界半边、设置 next 关系
+/// // reference impl, O(E²) twin matching, not for large meshes
+/// raise GeoError::OutOfBounds — 顶点索引越界
+/// raise GeoError::TopoInconsistent — 非流形输入（3+ 三角形共享同一边）
 pub fn HEMesh::from_triangles(
   points : Array[@alg.Pt3],
   triangles : Array[(Int32, Int32, Int32)],
-) -> HEMesh {
+) -> HEMesh raise @util.GeoError {
   let n_verts = points.length()
+  // P0: 越界校验
+  for tri_idx in 0..<triangles.length() {
+    let tri = triangles[tri_idx]
+    let v0 = tri.0
+    let v1 = tri.1
+    let v2 = tri.2
+    if v0 < 0 ||
+      v0 >= n_verts ||
+      v1 < 0 ||
+      v1 >= n_verts ||
+      v2 < 0 ||
+      v2 >= n_verts {
+      raise @util.GeoError::OutOfBounds(
+        "from_triangles: 三角形 \{tri_idx} 顶点索引越界 (\{v0},\{v1},\{v2}), n_verts=\{n_verts}",
+      )
+    }
+  }
   let vertices : Array[Vtx] = []
   for i in 0..<n_verts {
     vertices.push({ pos: points[i], he: -1, })
@@ -305,8 +325,26 @@ pub fn HEMesh::from_triangles(
       vertices[v2] = { ..vertices[v2], he: he_base + 2, }
     }
   }
-  // 匹配 twin：对每条面内半边找反向半边
+  // P2: 非流形检测 — 每条无向边最多 2 条半边
   let n_interior = half_edges.length()
+  for i in 0..<n_interior {
+    let v_start = half_edges[i].origin
+    let v_end = half_edges[half_edges[i].next].origin
+    let mut edge_count = 0
+    for j in 0..<n_interior {
+      let j_end = half_edges[half_edges[j].next].origin
+      if (half_edges[j].origin == v_start && j_end == v_end) ||
+        (half_edges[j].origin == v_end && j_end == v_start) {
+        edge_count += 1
+      }
+    }
+    if edge_count > 2 {
+      raise @util.GeoError::TopoInconsistent(
+        "from_triangles: 非流形输入 — 边 (\{v_start}—\{v_end}) 被 \{edge_count} 条半边共享（最多 2）",
+      )
+    }
+  }
+  // 匹配 twin：对每条面内半边找反向半边
   for i in 0..<n_interior {
     if half_edges[i].twin != -1 {
       continue

@@ -5,6 +5,7 @@ import {
   "moonbitlang/core/debug",
   "walkzzz/moon-geo/alg",
   "walkzzz/moon-geo/brep",
+  "walkzzz/moon-geo/util",
 }
 
 // Values
@@ -18,7 +19,7 @@ pub fn clip_polygon(Array[@alg.Pt2], Array[@alg.Pt2]) -> Array[@alg.Pt2]
 
 pub fn delaunay(Array[@alg.Pt2]) -> Array[(Int32, Int32, Int32)]
 
-pub fn delaunay_to_hemesh(Array[@alg.Pt2]) -> @brep.HEMesh
+pub fn delaunay_to_hemesh(Array[@alg.Pt2]) -> @brep.HEMesh raise @util.GeoError
 
 pub fn ensure_counterclockwise(Array[@alg.Pt2]) -> Array[@alg.Pt2]
 
