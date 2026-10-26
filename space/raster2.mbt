@@ -191,7 +191,9 @@ pub fn Raster2::cells_to_polygons(
 }
 
 ///|
-/// 栅格化多边形：返回多边形覆盖的像元索引列表
+/// 栅格化多边形：scanline fill 算法，返回多边形覆盖的像元索引列表
+/// 对每行 scanline（像元中心 y），计算多边形边交点，排序后成对填充
+/// 迭代前 clamp 范围到 [0,width)×[0,height)，避免越界性能炸弹
 pub fn Raster2::rasterize_polygon(
   self : Raster2,
   coords : Array[(Double, Double)],
@@ -200,20 +202,72 @@ pub fn Raster2::rasterize_polygon(
     return []
   }
   let ((min_x, max_y), (max_x, min_y)) = polygon_bounds(coords)
-  let (col_min, row_min) = self.world_to_cell(min_x, max_y)
-  let (col_max, row_max) = self.world_to_cell(max_x, min_y)
+  let (col_min_raw, row_min_raw) = self.world_to_cell(min_x, max_y)
+  let (col_max_raw, row_max_raw) = self.world_to_cell(max_x, min_y)
+  let col_min = if col_min_raw < 0 { 0 } else { col_min_raw }
+  let col_max = if col_max_raw >= self.width {
+    self.width - 1
+  } else {
+    col_max_raw
+  }
+  let row_min = if row_min_raw < 0 { 0 } else { row_min_raw }
+  let row_max = if row_max_raw >= self.height {
+    self.height - 1
+  } else {
+    row_max_raw
+  }
+  if col_min > col_max || row_min > row_max {
+    return []
+  }
   let result : Array[(Int32, Int32)] = []
+  let n = coords.length()
   for row in row_min..<=row_max {
-    for col in col_min..<=col_max {
-      if col >= 0 && col < self.width && row >= 0 && row < self.height {
-        let (cx, cy) = self.cell_center_to_world(col, row)
-        if point_in_polygon(cx, cy, coords) {
-          result.push((col, row))
-        }
+    let sy = self.origin_y - (row.to_double() + 0.5) * self.pixel_h
+    let xs : Array[Double] = []
+    let mut j = n - 1
+    for i in 0..<n {
+      let (xi, yi) = coords[i]
+      let (xj, yj) = coords[j]
+      if (yi <= sy && yj > sy) || (yj <= sy && yi > sy) {
+        let x_intersect = xi + (sy - yi) / (yj - yi) * (xj - xi)
+        xs.push(x_intersect)
       }
+      j = i
+    }
+    sort_doubles(xs)
+    let k = xs.length()
+    let mut idx = 0
+    while idx + 1 < k {
+      let x_start = xs[idx]
+      let x_end = xs[idx + 1]
+      let col_start = ((x_start - self.origin_x) / self.pixel_w)
+        .floor()
+        .to_int()
+      let col_end = ((x_end - self.origin_x) / self.pixel_w).floor().to_int()
+      let cs = if col_start < col_min { col_min } else { col_start }
+      let ce = if col_end > col_max { col_max } else { col_end }
+      for col in cs..<=ce {
+        result.push((col, row))
+      }
+      idx += 2
     }
   }
   result
+}
+
+///|
+/// 对 Double 数组进行插入排序
+fn sort_doubles(arr : Array[Double]) -> Unit {
+  let n = arr.length()
+  for i in 1..<n {
+    let key = arr[i]
+    let mut j = i - 1
+    while j >= 0 && arr[j] > key {
+      arr[j + 1] = arr[j]
+      j -= 1
+    }
+    arr[j + 1] = key
+  }
 }
 
 ///|
@@ -259,7 +313,7 @@ fn point_in_polygon(
     if (yi > py) != (yj > py) {
       let x_intersect = xi + (py - yi) / (yj - yi) * (xj - xi)
       if px < x_intersect {
-        inside = not(inside)
+        inside = !inside
       }
     }
     j = i

@@ -279,3 +279,26 @@ test "crs kind and datum" {
   let wm = web_mercator()
   assert_true(wm.kind is CrsKind::Projected)
 }
+
+///|
+test "utm 绝对精度锚点-中央经线赤道" {
+  let proj = UtmProjection::new(50, true)
+  let (e, n) = proj.forward(117.0, 0.0)
+  assert_true(@util.dbl_approx_eq(e, 500000.0, 1.0e-6))
+  assert_true(@util.dbl_approx_eq(n, 0.0, 1.0e-6))
+}
+
+///|
+test "utm 绝对精度锚点-南半球赤道" {
+  let proj = UtmProjection::new(50, false)
+  let (e, n) = proj.forward(117.0, 0.0)
+  assert_true(@util.dbl_approx_eq(e, 500000.0, 1.0e-6))
+  assert_true(@util.dbl_approx_eq(n, 10000000.0, 1.0e-6))
+}
+
+///|
+test "utm 绝对精度锚点-中央经线高纬" {
+  let proj = UtmProjection::new(31, true)
+  let (e, _) = proj.forward(3.0, 60.0)
+  assert_true(@util.dbl_approx_eq(e, 500000.0, 1.0e-6))
+}

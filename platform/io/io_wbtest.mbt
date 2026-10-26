@@ -741,3 +741,59 @@ test "GeoJSON 读 CRS CGCS2000" {
     None => assert_true(false)
   }
 }
+
+///|
+test "JSON 解析 \\uXXXX 转义" {
+  match safe_parse("\"\\u0041\\u0042\\u0043\"") {
+    Some(JsonString(s)) => assert_eq(s, "ABC")
+    _ => assert_true(false)
+  }
+}
+
+///|
+test "JSON 解析 \\uXXXX 中文" {
+  match safe_parse("\"\\u4e2d\\u6587\"") {
+    Some(JsonString(s)) => assert_eq(s, "中文")
+    _ => assert_true(false)
+  }
+}
+
+///|
+test "JSON 解析 \\b 和 \\f 转义" {
+  match safe_parse("\"a\\bb\\fc\"") {
+    Some(JsonString(s)) => assert_eq(s.length(), 5)
+    _ => assert_true(false)
+  }
+}
+
+///|
+test "JSON 解析错误-残缺数字只有负号" {
+  match safe_parse("-") {
+    Some(_) => assert_true(false)
+    None => assert_true(true)
+  }
+}
+
+///|
+test "JSON 解析错误-残缺小数" {
+  match safe_parse("1.") {
+    Some(_) => assert_true(false)
+    None => assert_true(true)
+  }
+}
+
+///|
+test "JSON 解析错误-残缺指数" {
+  match safe_parse("1e") {
+    Some(_) => assert_true(false)
+    None => assert_true(true)
+  }
+}
+
+///|
+test "JSON 解析错误-残缺 \\uXXXX" {
+  match safe_parse("\"\\u00\"") {
+    Some(_) => assert_true(false)
+    None => assert_true(true)
+  }
+}

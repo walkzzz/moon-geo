@@ -204,6 +204,42 @@ test "raster2 rasterize_polygon degenerate" {
 }
 
 ///|
+test "raster2 rasterize_polygon thin diagonal" {
+  let r = Raster2::new(0.0, 100.0, 10.0, 10.0, 10, 10)
+  let coords = [
+    (10.0, 90.0),
+    (90.0, 90.0),
+    (90.0, 10.0),
+    (10.0, 10.0),
+    (10.0, 90.0),
+  ]
+  let cells = r.rasterize_polygon(coords)
+  assert_true(cells.length() >= 16)
+  for (col, row) in cells {
+    assert_true(col >= 0 && col < 10)
+    assert_true(row >= 0 && row < 10)
+  }
+}
+
+///|
+test "raster2 rasterize_polygon out of bounds clamp" {
+  let r = Raster2::new(0.0, 100.0, 10.0, 10.0, 10, 10)
+  let coords = [
+    (-50.0, 150.0),
+    (150.0, 150.0),
+    (150.0, -50.0),
+    (-50.0, -50.0),
+    (-50.0, 150.0),
+  ]
+  let cells = r.rasterize_polygon(coords)
+  assert_eq(cells.length(), 100)
+  for (col, row) in cells {
+    assert_true(col >= 0 && col < 10)
+    assert_true(row >= 0 && row < 10)
+  }
+}
+
+///|
 test "raster2 negative origin" {
   let r = Raster2::new(-180.0, 90.0, 1.0, 1.0, 360, 180)
   let (x, y) = r.cell_to_world(180, 90)

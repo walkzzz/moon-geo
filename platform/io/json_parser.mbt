@@ -211,7 +211,15 @@ fn parse_string(p : JsonParser) -> (String, Int32) raise @util.GeoError {
         'n' => result += "\n"
         'r' => result += "\r"
         't' => result += "\t"
+        'b' => result += "\u{0008}"
+        'f' => result += "\u{000c}"
         '/' => result += "/"
+        'u' => {
+          pos += 1
+          let code = parse_hex4(p, pos)
+          pos += 3
+          result += Char::from_int(code).to_string()
+        }
         _ => result += p.input.substring(start=pos, end=pos + 1)
       }
       pos += 1
@@ -224,6 +232,51 @@ fn parse_string(p : JsonParser) -> (String, Int32) raise @util.GeoError {
 }
 
 ///|
+/// 解析 4 位十六进制转义（\uXXXX），返回 Unicode 码点
+fn parse_hex4(p : JsonParser, pos : Int32) -> Int32 raise @util.GeoError {
+  let n = p.input.length()
+  if pos + 4 > n {
+    raise @util.GeoError::FormatError("JSON \\uXXXX 转义不完整")
+  }
+  let mut result = 0
+  for i in 0..<4 {
+    let ch = p.input[pos + i]
+    let digit = match ch {
+      '0' => 0
+      '1' => 1
+      '2' => 2
+      '3' => 3
+      '4' => 4
+      '5' => 5
+      '6' => 6
+      '7' => 7
+      '8' => 8
+      '9' => 9
+      'a' => 10
+      'b' => 11
+      'c' => 12
+      'd' => 13
+      'e' => 14
+      'f' => 15
+      'A' => 10
+      'B' => 11
+      'C' => 12
+      'D' => 13
+      'E' => 14
+      'F' => 15
+      _ => -1
+    }
+    if digit < 0 {
+      raise @util.GeoError::FormatError(
+        "JSON \\uXXXX 含非法十六进制字符",
+      )
+    }
+    result = result * 16 + digit
+  }
+  result
+}
+
+///|
 /// 解析数字
 fn parse_number(p : JsonParser) -> (JsonValue, Int32) raise @util.GeoError {
   let start = p.pos
@@ -232,6 +285,7 @@ fn parse_number(p : JsonParser) -> (JsonValue, Int32) raise @util.GeoError {
   if pos < n && p.input[pos] == '-' {
     pos += 1
   }
+  let int_start = pos
   while pos < n {
     let ch = p.input[pos]
     if ch >= '0' && ch <= '9' {
@@ -240,8 +294,12 @@ fn parse_number(p : JsonParser) -> (JsonValue, Int32) raise @util.GeoError {
       break
     }
   }
+  if pos == int_start {
+    raise @util.GeoError::FormatError("JSON 数字缺少整数部分")
+  }
   if pos < n && p.input[pos] == '.' {
     pos += 1
+    let frac_start = pos
     while pos < n {
       let ch = p.input[pos]
       if ch >= '0' && ch <= '9' {
@@ -249,6 +307,9 @@ fn parse_number(p : JsonParser) -> (JsonValue, Int32) raise @util.GeoError {
       } else {
         break
       }
+    }
+    if pos == frac_start {
+      raise @util.GeoError::FormatError("JSON 数字缺少小数部分")
     }
   }
   if pos < n && (p.input[pos] == 'e' || p.input[pos] == 'E') {
@@ -256,6 +317,7 @@ fn parse_number(p : JsonParser) -> (JsonValue, Int32) raise @util.GeoError {
     if pos < n && (p.input[pos] == '+' || p.input[pos] == '-') {
       pos += 1
     }
+    let exp_start = pos
     while pos < n {
       let ch = p.input[pos]
       if ch >= '0' && ch <= '9' {
@@ -263,6 +325,9 @@ fn parse_number(p : JsonParser) -> (JsonValue, Int32) raise @util.GeoError {
       } else {
         break
       }
+    }
+    if pos == exp_start {
+      raise @util.GeoError::FormatError("JSON 数字缺少指数部分")
     }
   }
   let s = p.input.substring(start~, end=pos)

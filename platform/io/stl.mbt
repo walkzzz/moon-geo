@@ -6,7 +6,10 @@
 ///|
 /// 将 IndexedMesh 序列化为 ASCII STL 字符串
 pub fn mesh_to_stl_ascii(mesh : @mesh.IndexedMesh, name : String) -> String {
-  let mut s = "solid " + name + "\n"
+  let sb = StringBuilder::new()
+  sb.write_string("solid ")
+  sb.write_string(name)
+  sb.write_char('\n')
   let n = mesh.triangle_count()
   for i in 0..<n {
     match mesh.get_triangle(i) {
@@ -15,21 +18,24 @@ pub fn mesh_to_stl_ascii(mesh : @mesh.IndexedMesh, name : String) -> String {
         let v1 = get_vtx(mesh, tri.v1)
         let v2 = get_vtx(mesh, tri.v2)
         match mesh.get_normal(i) {
-          Some(nrm) => s += "  facet normal \{nrm.x()} \{nrm.y()} \{nrm.z()}\n"
-          None => s += "  facet normal 0.0 0.0 0.0\n"
+          Some(nrm) =>
+            sb.write_string("  facet normal \{nrm.x()} \{nrm.y()} \{nrm.z()}\n")
+          None => sb.write_string("  facet normal 0.0 0.0 0.0\n")
         }
-        s += "    outer loop\n"
-        s += "      vertex \{v0.x()} \{v0.y()} \{v0.z()}\n"
-        s += "      vertex \{v1.x()} \{v1.y()} \{v1.z()}\n"
-        s += "      vertex \{v2.x()} \{v2.y()} \{v2.z()}\n"
-        s += "    endloop\n"
-        s += "  endfacet\n"
+        sb.write_string("    outer loop\n")
+        sb.write_string("      vertex \{v0.x()} \{v0.y()} \{v0.z()}\n")
+        sb.write_string("      vertex \{v1.x()} \{v1.y()} \{v1.z()}\n")
+        sb.write_string("      vertex \{v2.x()} \{v2.y()} \{v2.z()}\n")
+        sb.write_string("    endloop\n")
+        sb.write_string("  endfacet\n")
       }
       None => ()
     }
   }
-  s += "endsolid " + name + "\n"
-  s
+  sb.write_string("endsolid ")
+  sb.write_string(name)
+  sb.write_char('\n')
+  sb.to_string()
 }
 
 ///|
