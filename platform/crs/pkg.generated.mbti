@@ -1,0 +1,87 @@
+// Generated using `moon info`, DON'T EDIT IT
+package "walkzzz/moon-geo/platform/crs"
+
+import {
+  "walkzzz/moon-geo/util",
+}
+
+// Values
+pub fn cgcs2000_ellipsoid() -> Ellipsoid
+
+pub fn cgcs2000_geographic() -> Crs
+
+pub fn crs_equivalent(Crs, Crs) -> Bool
+
+pub fn datum_ellipsoid(Datum) -> Ellipsoid
+
+pub fn epsg_code(Crs) -> Int32?
+
+pub fn epsg_lookup(Int32) -> Crs?
+
+pub fn transform_coord((Double, Double), Crs, Crs) -> (Double, Double) raise @util.GeoError
+
+pub fn utm_central_meridian(Int32) -> Double
+
+pub fn utm_zone_from_lon(Double) -> Int32
+
+pub fn web_mercator() -> Crs
+
+pub fn wgs84_ellipsoid() -> Ellipsoid
+
+pub fn wgs84_geographic() -> Crs
+
+pub fn wgs84_utm(Int32, Bool) -> Crs
+
+// Errors
+
+// Types and methods
+pub struct Crs {
+  kind : CrsKind
+  datum : Datum
+  projection : ProjectionMethod?
+  epsg : Int32?
+}
+
+pub enum CrsKind {
+  Geographic
+  Projected
+}
+
+pub enum Datum {
+  WGS84
+  CGCS2000
+}
+
+pub struct Ellipsoid {
+  a : Double
+  b : Double
+  f : Double
+  e_sq : Double
+  ep_sq : Double
+}
+
+pub enum ProjectionMethod {
+  Utm(Int32, Bool)
+  WebMercator
+}
+
+pub struct UtmProjection {
+  ellipsoid : Ellipsoid
+  zone : Int32
+  north : Bool
+}
+pub fn UtmProjection::forward(Self, Double, Double) -> (Double, Double) raise @util.GeoError
+pub fn UtmProjection::inverse(Self, Double, Double) -> (Double, Double) raise @util.GeoError
+pub fn UtmProjection::new(Int32, Bool) -> Self
+pub fn UtmProjection::with_ellipsoid(Ellipsoid, Int32, Bool) -> Self
+
+pub struct WebMercator {
+  dummy : Unit
+}
+pub fn WebMercator::forward(Self, Double, Double) -> (Double, Double) raise @util.GeoError
+pub fn WebMercator::inverse(Self, Double, Double) -> (Double, Double) raise @util.GeoError
+pub fn WebMercator::new() -> Self
+
+// Type aliases
+
+// Traits

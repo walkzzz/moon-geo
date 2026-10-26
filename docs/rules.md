@@ -79,8 +79,9 @@ README 中英文，默认中文。当前 `README.mbt.md` 为项目 README。
 | `0.1.2.0` | space Complex2 复空间 + 复平面几何 | ✅ |
 | `0.1.2.1` | space Proj3 射影空间 + 齐次坐标 + 无穷远点 | ✅ |
 | `0.1.2.2` | space StereoMap 球极投影 + 保圆性 | ✅ |
+| `0.1.2.3` | platform/crs CRS + WGS84/UTM/CGCS2000 + 投影变换 | ✅ |
 
-测试：325 通过 · CRAP：490 · 变异分数：100%
+测试：352 通过 · CRAP：490 · 变异分数：100%
 
 ---
 
