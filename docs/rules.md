@@ -74,8 +74,9 @@ README 中英文，默认中文。当前 `README.mbt.md` 为项目 README。
 | `0.1.1.8` | alg intersect + xform Transform | ✅ |
 | `0.1.1.9` | bv Bv Trait + Aabb2/Aabb3 + SphereBv + BVH | ✅ |
 | `0.1.1.10` | brep Topo Trait + HEMesh + HalfEdge | ✅ |
+| `0.1.1.11` | brep Shell/Solid + check + repair + BRep API | ✅ |
 
-测试：246 通过 · CRAP：490 · 变异分数：100%
+测试：272 通过 · CRAP：490 · 变异分数：100%
 
 ---
 

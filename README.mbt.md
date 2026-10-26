@@ -54,8 +54,9 @@ util(-1) → atop(0) → space(1) → alg(2) → bv(3) → brep(4) → algo(5) �
 | `0.1.1.8` | alg intersect + xform Transform | ✅ |
 | `0.1.1.9` | bv Bv Trait + Aabb2/Aabb3 + SphereBv + BVH | ✅ |
 | `0.1.1.10` | brep Topo Trait + HEMesh + HalfEdge | ✅ |
+| `0.1.1.11` | brep Shell/Solid + check + repair + BRep API | ✅ |
 
-测试：246 通过 · CRAP：490 · 变异分数：100%
+测试：272 通过 · CRAP：490 · 变异分数：100%
 
 > **阶段二增强**：GeoError 改为 `pub(all) suberror` + `raise`/`try-catch`；Geo/Space/Bv trait 改为 `pub(open)` + `pub extend` 点语法；添加 `&Geo` trait 对象运行时多态示例
 

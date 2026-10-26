@@ -109,11 +109,11 @@
 - `0.1.1.8`（2026-09）：`alg/`（intersect_line_circle + intersect_circle_circle + Transform2/3）
 - `0.1.1.9`（2026-10）：`bv/`（Bv Trait + Aabb2/Aabb3 + SphereBv + BVH）
 - `0.1.1.10`（2026-11）：`brep/`（Topo Trait + Vtx/HEdge/Face + HEMesh 半边数据结构）
+- `0.1.1.11`（2026-12）：`brep/`（Shell/Solid + check + repair + BRep 顶层 API + 四面体构造）
 
-本月任务包（2026-12，`0.1.1.11`）：
-- `brep/`：Face/Shell/Solid + check + repair + 顶层 API
-- **核心 Trait 冻结**：Geo/Space/Bv/Topo 接口锁定，新增能力只扩展不修改
-- 验收：完整 BRep + 检查修复 + 统一入口；圆幂/二次曲面大一统验证；冻结后全量回归
+本月任务包（2027-01，`0.1.1.12`）：
+- 核心 Trait 冻结：Geo/Space/Bv/Topo 接口锁定，新增能力只扩展不修改
+- 验收：冻结后全量回归 + 接口稳定性校验
 
 后续月度任务见迭代详表。
 

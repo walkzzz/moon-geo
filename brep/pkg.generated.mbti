@@ -10,6 +10,39 @@ import {
 // Errors
 
 // Types and methods
+pub struct BRep {
+  solid : Solid
+}
+pub fn BRep::check(Self) -> CheckResult
+pub fn BRep::edge_count(Self) -> Int32
+pub fn BRep::face_count(Self) -> Int32
+pub fn BRep::find_boundary_half_edges(Self) -> Array[Int32]
+pub fn BRep::find_coincident_vertices(Self, Double) -> Array[(Int32, Int32)]
+pub fn BRep::find_isolated_vertices(Self) -> Array[Int32]
+pub fn BRep::from_mesh(HEMesh) -> Self
+pub fn BRep::from_solid(Solid) -> Self
+pub fn BRep::is_closed(Self) -> Bool
+pub fn BRep::is_manifold(Self) -> Bool
+pub fn BRep::mesh(Self) -> HEMesh
+pub fn BRep::solid(Self) -> Solid
+pub fn BRep::tetrahedron(@alg.Pt3, @alg.Pt3, @alg.Pt3, @alg.Pt3) -> Self
+pub fn BRep::topo_dim(Self) -> TopoDim
+pub fn BRep::topo_is_closed(Self) -> Bool
+pub fn BRep::topo_is_manifold(Self) -> Bool
+pub fn BRep::vertex_count(Self) -> Int32
+
+pub struct CheckResult {
+  is_manifold : Bool
+  is_closed : Bool
+  is_oriented : Bool
+  is_connected : Bool
+}
+pub fn CheckResult::is_closed(Self) -> Bool
+pub fn CheckResult::is_connected(Self) -> Bool
+pub fn CheckResult::is_manifold(Self) -> Bool
+pub fn CheckResult::is_oriented(Self) -> Bool
+pub fn CheckResult::is_valid(Self) -> Bool
+
 pub struct Face {
   he : Int32
 }
@@ -20,15 +53,21 @@ pub struct HEMesh {
   half_edges : Array[HEdge]
   faces : Array[Face]
 }
+pub fn HEMesh::check(Self) -> CheckResult
 pub fn HEMesh::edge_count(Self) -> Int32
 pub fn HEMesh::face(Self, Int32) -> Face
 pub fn HEMesh::face_count(Self) -> Int32
 pub fn HEMesh::face_half_edges(Self, Int32) -> Array[Int32]
+pub fn HEMesh::find_boundary_half_edges(Self) -> Array[Int32]
+pub fn HEMesh::find_coincident_vertices(Self, Double) -> Array[(Int32, Int32)]
+pub fn HEMesh::find_isolated_vertices(Self) -> Array[Int32]
 pub fn HEMesh::from_triangle(@alg.Pt3, @alg.Pt3, @alg.Pt3) -> Self
 pub fn HEMesh::from_two_triangles(@alg.Pt3, @alg.Pt3, @alg.Pt3, @alg.Pt3) -> Self
 pub fn HEMesh::half_edge(Self, Int32) -> HEdge
 pub fn HEMesh::half_edge_count(Self) -> Int32
 pub fn HEMesh::is_closed(Self) -> Bool
+pub fn HEMesh::is_connected(Self) -> Bool
+pub fn HEMesh::is_oriented(Self) -> Bool
 pub fn HEMesh::topo_dim(Self) -> TopoDim
 pub fn HEMesh::topo_is_closed(Self) -> Bool
 pub fn HEMesh::topo_is_manifold(Self) -> Bool
@@ -47,6 +86,27 @@ pub fn HEdge::face(Self) -> Int32
 pub fn HEdge::next(Self) -> Int32
 pub fn HEdge::origin(Self) -> Int32
 pub fn HEdge::twin(Self) -> Int32
+
+pub struct Shell {
+  faces : Array[Int32]
+}
+pub fn Shell::face_count(Self) -> Int32
+pub fn Shell::faces(Self) -> Array[Int32]
+pub fn Shell::from_faces(Array[Int32]) -> Self
+
+pub struct Solid {
+  mesh : HEMesh
+  outer : Shell
+  inner : Array[Shell]
+}
+pub fn Solid::from_mesh(HEMesh) -> Self
+pub fn Solid::inner(Self) -> Array[Shell]
+pub fn Solid::mesh(Self) -> HEMesh
+pub fn Solid::outer(Self) -> Shell
+pub fn Solid::tetrahedron(@alg.Pt3, @alg.Pt3, @alg.Pt3, @alg.Pt3) -> Self
+pub fn Solid::topo_dim(Self) -> TopoDim
+pub fn Solid::topo_is_closed(Self) -> Bool
+pub fn Solid::topo_is_manifold(Self) -> Bool
 
 pub enum TopoDim {
   Vertex
