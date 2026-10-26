@@ -1,3 +1,4 @@
+///|
 test "convex_hull 公开API 正方形" {
   let pts = [
     @alg.Pt2::new(0.0, 0.0),

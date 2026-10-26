@@ -7,6 +7,14 @@ import {
 }
 
 // Values
+pub fn bounding_box(Array[@alg.Pt3]) -> (@alg.Pt3, @alg.Pt3) raise @util.GeoError
+
+pub fn centroid(Array[@alg.Pt3]) -> @alg.Pt3 raise @util.GeoError
+
+pub fn density(Array[@alg.Pt3]) -> Double raise @util.GeoError
+
+pub fn estimate_normals(Array[@alg.Pt3], Int32) -> Array[@alg.Pt3] raise @util.GeoError
+
 pub fn random_downsample(Array[@alg.Pt3], Double) -> Array[@alg.Pt3] raise @util.GeoError
 
 pub fn voxel_downsample(Array[@alg.Pt3], Double) -> Array[@alg.Pt3] raise @util.GeoError

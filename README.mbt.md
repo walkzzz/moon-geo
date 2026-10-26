@@ -78,8 +78,9 @@ util(-1) → atop(0) → space(1) → alg(2) → bv(3) → brep(4) → algo(5) �
 | `0.1.3.0` | 2D 凸包（Andrew's monotone chain O(n log n)） | ✅ |
 | `0.1.3.1` | convex_hull 黑盒测试 + 基准测试 | ✅ |
 | `0.1.3.2` | 点云降采样（网格 + 随机） | ✅ |
+| `0.1.3.3` | 点云统计信息（包围盒/质心/密度）+ 法向估计（KNN+PCA） | ✅ |
 
-测试：694 通过 · 基准：16 · CRAP：490（静态手维护表，非真实 CRAP） · 变异分数：100%（仅覆盖 util/space/alg）
+测试：702 通过 · 基准：16 · CRAP：490（静态手维护表，非真实 CRAP） · 变异分数：100%（仅覆盖 util/space/alg）
 
 > **核心 Trait 冻结**（0.1.1.12）：Geo/Space/Bv/Topo 接口冻结至 1.0 发布前。0.x 阶段不承诺 API 冻结——接口可能调整，到 1.0 后锁定。详见 [ADR-005](docs/adr/005-core-trait-freeze.md)
 

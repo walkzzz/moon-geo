@@ -1,3 +1,4 @@
+///|
 test "voxel_downsample 基本降采样" {
   let pts = [
     @alg.Pt3::new(0.0, 0.0, 0.0),
@@ -85,15 +86,13 @@ test "random_downsample ratio>1 raise" {
 
 ///|
 test "PointCloud 基本操作" {
-  let pts = [
-    @alg.Pt3::new(0.0, 0.0, 0.0),
-    @alg.Pt3::new(1.0, 1.0, 1.0),
-  ]
+  let pts = [@alg.Pt3::new(0.0, 0.0, 0.0), @alg.Pt3::new(1.0, 1.0, 1.0)]
   let cloud = PointCloud::new(pts)
   assert_eq(cloud.size(), 2)
   assert_eq(cloud.get_points().length(), 2)
 }
 
+///|
 fn approx(a : Double, b : Double, tol : Double) -> Bool {
   (a - b).abs() < tol
 }
