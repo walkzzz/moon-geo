@@ -2,6 +2,7 @@
 // 依赖：moonbitlang/core/debug（Cpx Debug 提升）、moonbitlang/core/math（三角函数）
 
 import {
+  "moonbitlang/core/bench",
   "moonbitlang/core/debug",
   "moonbitlang/core/math",
 }

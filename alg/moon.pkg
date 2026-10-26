@@ -4,5 +4,6 @@
 import {
   "walkzzz/moon-geo/util",
   "walkzzz/moon-geo/space",
+  "moonbitlang/core/bench",
   "moonbitlang/core/math",
 }
