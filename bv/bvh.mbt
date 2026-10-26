@@ -59,7 +59,7 @@ pub fn BVHNode::query_intersect(
   query : Aabb3,
   result : Array[Int32],
 ) -> Unit {
-  if not(self.bbox.intersect(query)) {
+  if !self.bbox.intersect(query) {
     return
   }
   match self.leaf_index {

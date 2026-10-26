@@ -38,8 +38,12 @@ pub fn Plane3::d(self : Plane3) -> Double {
 
 ///|
 /// 从三点构造平面
-/// 退化：三点共线时返回 a=b=c=0 的退化平面
-pub fn Plane3::from_three_points(p1 : Pt3, p2 : Pt3, p3 : Pt3) -> Plane3 {
+/// 退化：三点共线时返回 Err(GeoError::DegenerateInput)
+pub fn Plane3::from_three_points(
+  p1 : Pt3,
+  p2 : Pt3,
+  p3 : Pt3,
+) -> Result[Plane3, @util.GeoError] {
   let v1x = p2.x() - p1.x()
   let v1y = p2.y() - p1.y()
   let v1z = p2.z() - p1.z()
@@ -50,7 +54,19 @@ pub fn Plane3::from_three_points(p1 : Pt3, p2 : Pt3, p3 : Pt3) -> Plane3 {
   let b = v1z * v2x - v1x * v2z
   let c = v1x * v2y - v1y * v2x
   let d = -(a * p1.x() + b * p1.y() + c * p1.z())
-  { a, b, c, d, }
+  if @util.dbl_approx_eq(a, 0.0, @util.EPS) &&
+    @util.dbl_approx_eq(b, 0.0, @util.EPS) &&
+    @util.dbl_approx_eq(c, 0.0, @util.EPS) {
+    Err(
+      @util.GeoError::with_context(
+        @util.GeoErrorCode::DegenerateInput,
+        "Plane3::from_three_points: three points are collinear",
+        ["p1", "p2", "p3"],
+      ),
+    )
+  } else {
+    Ok({ a, b, c, d, })
+  }
 }
 
 ///|

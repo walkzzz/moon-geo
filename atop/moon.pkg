@@ -1,5 +1,5 @@
 // atop 包：代数拓扑内核层（第0层，终身冻结抽象）
-// 依赖：util（EPS、dbl_approx_eq）
+// 依赖：util（EPS、dbl_approx_eq，测试用）
 
 import {
   "walkzzz/moon-geo/util",

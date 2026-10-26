@@ -27,7 +27,7 @@ pub fn Circle::contains_interior(Self, Pt2) -> Bool
 pub fn Circle::cx(Self) -> Double
 pub fn Circle::cy(Self) -> Double
 pub fn Circle::distance_to_point(Self, Pt2) -> Double
-pub fn Circle::from_three_points(Pt2, Pt2, Pt2) -> Self
+pub fn Circle::from_three_points(Pt2, Pt2, Pt2) -> Result[Self, @util.GeoError]
 pub fn Circle::new(Double, Double, Double) -> Self
 pub fn Circle::power(Self, Pt2) -> Double
 pub fn Circle::r(Self) -> Double
@@ -79,7 +79,7 @@ pub fn Line2::c(Self) -> Double
 pub fn Line2::contains(Self, Pt2) -> Bool
 pub fn Line2::distance_to_point(Self, Pt2) -> Double
 pub fn Line2::eval(Self, Pt2) -> Double
-pub fn Line2::from_two_points(Pt2, Pt2) -> Self
+pub fn Line2::from_two_points(Pt2, Pt2) -> Result[Self, @util.GeoError]
 pub fn Line2::intersect(Self, Self) -> Pt2?
 pub fn Line2::is_parallel(Self, Self) -> Bool
 pub fn Line2::new(Double, Double, Double) -> Self
@@ -97,7 +97,7 @@ pub fn Plane3::contains(Self, Pt3) -> Bool
 pub fn Plane3::d(Self) -> Double
 pub fn Plane3::distance_to_point(Self, Pt3) -> Double
 pub fn Plane3::eval(Self, Pt3) -> Double
-pub fn Plane3::from_three_points(Pt3, Pt3, Pt3) -> Self
+pub fn Plane3::from_three_points(Pt3, Pt3, Pt3) -> Result[Self, @util.GeoError]
 pub fn Plane3::new(Double, Double, Double, Double) -> Self
 
 pub struct Pt2 {

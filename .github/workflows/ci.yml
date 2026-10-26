@@ -19,3 +19,9 @@ jobs:
         run: moon test
       - name: Format check
         run: moon fmt --check
+      - name: Interface drift check
+        run: moon info --check
+      - name: CRAP report
+        run: bash tools/crap_report.sh
+      - name: Mutation test
+        run: bash tools/mutation_test.sh

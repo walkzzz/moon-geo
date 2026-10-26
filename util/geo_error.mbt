@@ -5,7 +5,7 @@
 
 ///|
 /// 几何错误码
-pub enum GeoErrorCode {
+pub(all) enum GeoErrorCode {
   /// 退化输入（零长线段、零面积圆等）
   DegenerateInput
   /// 数值溢出

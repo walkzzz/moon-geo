@@ -1,5 +1,5 @@
 // space 包：空间抽象层（第1层）
-// 依赖：util（EPS、dbl_approx_eq）、atop（Dim/TopologicalSpace/MetricSpace/Manifold）
+// 依赖：util（EPS、dbl_approx_eq，测试用）、atop（Dim/TopologicalSpace/MetricSpace/Manifold）
 
 import {
   "walkzzz/moon-geo/util",

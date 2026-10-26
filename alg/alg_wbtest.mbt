@@ -93,10 +93,24 @@ test "Line2 construction" {
 test "Line2 from_two_points" {
   let p1 = Pt2::new(0.0, 0.0)
   let p2 = Pt2::new(1.0, 1.0)
-  let l = Line2::from_two_points(p1, p2)
-  assert_true(l.contains(Pt2::new(0.5, 0.5)))
-  assert_true(l.contains(Pt2::new(2.0, 2.0)))
-  assert_false(l.contains(Pt2::new(0.0, 1.0)))
+  match Line2::from_two_points(p1, p2) {
+    Ok(l) => {
+      assert_true(l.contains(Pt2::new(0.5, 0.5)))
+      assert_true(l.contains(Pt2::new(2.0, 2.0)))
+      assert_false(l.contains(Pt2::new(0.0, 1.0)))
+    }
+    Err(_) => assert_true(false)
+  }
+}
+
+///|
+test "Line2 from_two_points coincident degenerate" {
+  let p1 = Pt2::new(1.0, 2.0)
+  let p2 = Pt2::new(1.0 + 1.0e-12, 2.0)
+  match Line2::from_two_points(p1, p2) {
+    Ok(_) => assert_true(false)
+    Err(e) => assert_true(e.code is @util.GeoErrorCode::DegenerateInput)
+  }
 }
 
 ///|
@@ -146,14 +160,20 @@ test "Line2 intersect parallel" {
 
 ///|
 test "Line2 intersect diagonal" {
-  let l1 = Line2::from_two_points(Pt2::new(0.0, 0.0), Pt2::new(1.0, 1.0))
-  let l2 = Line2::from_two_points(Pt2::new(0.0, 1.0), Pt2::new(1.0, 0.0))
-  match l1.intersect(l2) {
-    Some(p) => {
-      assert_true(@util.dbl_approx_eq(p.x(), 0.5, @util.EPS))
-      assert_true(@util.dbl_approx_eq(p.y(), 0.5, @util.EPS))
-    }
-    None => assert_true(false)
+  match Line2::from_two_points(Pt2::new(0.0, 0.0), Pt2::new(1.0, 1.0)) {
+    Ok(l1) =>
+      match Line2::from_two_points(Pt2::new(0.0, 1.0), Pt2::new(1.0, 0.0)) {
+        Ok(l2) =>
+          match l1.intersect(l2) {
+            Some(p) => {
+              assert_true(@util.dbl_approx_eq(p.x(), 0.5, @util.EPS))
+              assert_true(@util.dbl_approx_eq(p.y(), 0.5, @util.EPS))
+            }
+            None => assert_true(false)
+          }
+        Err(_) => assert_true(false)
+      }
+    Err(_) => assert_true(false)
   }
 }
 
@@ -212,18 +232,24 @@ test "FAKE: Line2 field completeness" {
 test "E2E: two points -> line -> intersect -> verify" {
   let p1 = Pt2::new(1.0, 1.0)
   let p2 = Pt2::new(3.0, 3.0)
-  let l1 = Line2::from_two_points(p1, p2)
   let p3 = Pt2::new(1.0, 3.0)
   let p4 = Pt2::new(3.0, 1.0)
-  let l2 = Line2::from_two_points(p3, p4)
-  match l1.intersect(l2) {
-    Some(ip) => {
-      assert_true(l1.contains(ip))
-      assert_true(l2.contains(ip))
-      assert_true(@util.dbl_approx_eq(ip.x(), 2.0, @util.EPS))
-      assert_true(@util.dbl_approx_eq(ip.y(), 2.0, @util.EPS))
-    }
-    None => assert_true(false)
+  match Line2::from_two_points(p1, p2) {
+    Ok(l1) =>
+      match Line2::from_two_points(p3, p4) {
+        Ok(l2) =>
+          match l1.intersect(l2) {
+            Some(ip) => {
+              assert_true(l1.contains(ip))
+              assert_true(l2.contains(ip))
+              assert_true(@util.dbl_approx_eq(ip.x(), 2.0, @util.EPS))
+              assert_true(@util.dbl_approx_eq(ip.y(), 2.0, @util.EPS))
+            }
+            None => assert_true(false)
+          }
+        Err(_) => assert_true(false)
+      }
+    Err(_) => assert_true(false)
   }
 }
 

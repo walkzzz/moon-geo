@@ -71,8 +71,12 @@ pub fn Circle::distance_to_point(self : Circle, p : Pt2) -> Double {
 
 ///|
 /// 从三点构造圆（外接圆）
-/// 退化：三点共线时返回半径 0 的退化圆
-pub fn Circle::from_three_points(p1 : Pt2, p2 : Pt2, p3 : Pt2) -> Circle {
+/// 退化：三点共线时返回 Err(GeoError::DegenerateInput)
+pub fn Circle::from_three_points(
+  p1 : Pt2,
+  p2 : Pt2,
+  p3 : Pt2,
+) -> Result[Circle, @util.GeoError] {
   let ax = p1.x()
   let ay = p1.y()
   let bx = p2.x()
@@ -81,7 +85,13 @@ pub fn Circle::from_three_points(p1 : Pt2, p2 : Pt2, p3 : Pt2) -> Circle {
   let cy_ = p3.y()
   let d = 2.0 * (ax * (by - cy_) + bx * (cy_ - ay) + cx_ * (ay - by))
   if @util.dbl_approx_eq(d, 0.0, @util.EPS) {
-    Circle::new(ax, ay, 0.0)
+    Err(
+      @util.GeoError::with_context(
+        @util.GeoErrorCode::DegenerateInput,
+        "Circle::from_three_points: three points are collinear",
+        ["p1", "p2", "p3"],
+      ),
+    )
   } else {
     let ux = (
         (ax * ax + ay * ay) * (by - cy_) +
@@ -96,7 +106,7 @@ pub fn Circle::from_three_points(p1 : Pt2, p2 : Pt2, p3 : Pt2) -> Circle {
       ) /
       d
     let r = ((ux - ax) * (ux - ax) + (uy - ay) * (uy - ay)).sqrt()
-    Circle::new(ux, uy, r)
+    Ok(Circle::new(ux, uy, r))
   }
 }
 

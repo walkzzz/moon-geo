@@ -13,12 +13,27 @@ test "Plane3 from_three_points" {
   let p1 = Pt3::new(0.0, 0.0, 0.0)
   let p2 = Pt3::new(1.0, 0.0, 0.0)
   let p3 = Pt3::new(0.0, 1.0, 0.0)
-  let plane = Plane3::from_three_points(p1, p2, p3)
-  assert_true(plane.contains(p1))
-  assert_true(plane.contains(p2))
-  assert_true(plane.contains(p3))
-  assert_true(plane.contains(Pt3::new(0.5, 0.5, 0.0)))
-  assert_false(plane.contains(Pt3::new(0.0, 0.0, 1.0)))
+  match Plane3::from_three_points(p1, p2, p3) {
+    Ok(plane) => {
+      assert_true(plane.contains(p1))
+      assert_true(plane.contains(p2))
+      assert_true(plane.contains(p3))
+      assert_true(plane.contains(Pt3::new(0.5, 0.5, 0.0)))
+      assert_false(plane.contains(Pt3::new(0.0, 0.0, 1.0)))
+    }
+    Err(_) => assert_true(false)
+  }
+}
+
+///|
+test "Plane3 from_three_points collinear degenerate" {
+  let p1 = Pt3::new(0.0, 0.0, 0.0)
+  let p2 = Pt3::new(1.0, 1.0, 1.0)
+  let p3 = Pt3::new(2.0, 2.0, 2.0)
+  match Plane3::from_three_points(p1, p2, p3) {
+    Ok(_) => assert_true(false)
+    Err(e) => assert_true(e.code is @util.GeoErrorCode::DegenerateInput)
+  }
 }
 
 ///|

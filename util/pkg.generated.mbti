@@ -84,7 +84,7 @@ pub fn GeoError::new(GeoErrorCode, String) -> Self
 pub fn GeoError::with_context(GeoErrorCode, String, Array[String]) -> Self
 pub fn GeoError::with_suggestion(GeoErrorCode, String, String) -> Self
 
-pub enum GeoErrorCode {
+pub(all) enum GeoErrorCode {
   DegenerateInput
   NumericalOverflow
   NumericalUnderflow

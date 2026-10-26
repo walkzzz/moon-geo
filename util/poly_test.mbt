@@ -153,3 +153,23 @@ test "PolyN ApproxEq" {
   let c = @util.PolyN::new([@util.PolyTerm::new(3.0, [2, 1])])
   assert_false(a.approx_eq(c, 1.0e-8))
 }
+
+///|
+test "PolyN ApproxEq different exps" {
+  let a = @util.PolyN::new([@util.PolyTerm::new(2.0, [1, 0])])
+  let b = @util.PolyN::new([@util.PolyTerm::new(2.0, [0, 1])])
+  assert_false(a.approx_eq(b, 1.0e-8))
+}
+
+///|
+test "PolyN ApproxEq order independent" {
+  let a = @util.PolyN::new([
+    @util.PolyTerm::new(1.0, [1, 0]),
+    @util.PolyTerm::new(1.0, [0, 1]),
+  ])
+  let b = @util.PolyN::new([
+    @util.PolyTerm::new(1.0, [0, 1]),
+    @util.PolyTerm::new(1.0, [1, 0]),
+  ])
+  assert_true(a.approx_eq(b, 1.0e-8))
+}

@@ -282,15 +282,60 @@ pub fn PolyN::is_zero(self : PolyN) -> Bool {
 }
 
 ///|
+/// 比较两个指数数组的字典序（用于排序 PolyTerm）
+fn compare_exps(a : Array[Int32], b : Array[Int32]) -> Int32 {
+  let la = a.length()
+  let lb = b.length()
+  let n = if la < lb { la } else { lb }
+  for i in 0..<n {
+    if a[i] < b[i] {
+      return -1
+    }
+    if a[i] > b[i] {
+      return 1
+    }
+  }
+  la - lb
+}
+
+///|
+/// 两个指数数组是否相等
+fn exps_equal(a : Array[Int32], b : Array[Int32]) -> Bool {
+  if a.length() != b.length() {
+    return false
+  }
+  let mut ok = true
+  for i in 0..<a.length() {
+    if a[i] != b[i] {
+      ok = false
+    }
+  }
+  ok
+}
+
+///|
 impl ApproxEq for PolyN with fn approx_eq(self, other, tol) {
   let na = self.terms.length()
   let nb = other.terms.length()
   if na != nb {
     return false
   }
+  let sa = Array::make(na, PolyTerm::new(0.0, []))
+  for i in 0..<na {
+    sa[i] = self.terms[i]
+  }
+  let sb = Array::make(nb, PolyTerm::new(0.0, []))
+  for i in 0..<nb {
+    sb[i] = other.terms[i]
+  }
+  sa.sort_by(fn(t1, t2) { compare_exps(t1.exps, t2.exps) })
+  sb.sort_by(fn(t1, t2) { compare_exps(t1.exps, t2.exps) })
   let mut ok = true
   for i in 0..<na {
-    if !dbl_approx_eq(self.terms[i].coeff, other.terms[i].coeff, tol) {
+    if !exps_equal(sa[i].exps, sb[i].exps) {
+      ok = false
+    }
+    if !dbl_approx_eq(sa[i].coeff, sb[i].coeff, tol) {
       ok = false
     }
   }
