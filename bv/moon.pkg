@@ -1,0 +1,7 @@
+// bv 包：包围体与空间索引层（第3层）
+// 依赖：util（EPS、dbl_approx_eq）、alg（Pt2/Pt3）
+
+import {
+  "walkzzz/moon-geo/util",
+  "walkzzz/moon-geo/alg",
+}

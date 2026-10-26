@@ -21,12 +21,10 @@ test "intersect_line_circle offset center" {
   assert_eq(pts.length(), 2)
   let y0 = pts[0].y()
   let y1 = pts[1].y()
-  let has_8 = @util.dbl_approx_eq(y0, 8.0, @util.EPS) || @util.dbl_approx_eq(
-    y1, 8.0, @util.EPS,
-  )
-  let has_neg2 = @util.dbl_approx_eq(y0, -2.0, @util.EPS) || @util.dbl_approx_eq(
-    y1, -2.0, @util.EPS,
-  )
+  let has_8 = @util.dbl_approx_eq(y0, 8.0, @util.EPS) ||
+    @util.dbl_approx_eq(y1, 8.0, @util.EPS)
+  let has_neg2 = @util.dbl_approx_eq(y0, -2.0, @util.EPS) ||
+    @util.dbl_approx_eq(y1, -2.0, @util.EPS)
   assert_true(has_8)
   assert_true(has_neg2)
 }

@@ -107,10 +107,11 @@
 - `0.1.1.6`（2026-07）：`alg/`（Circle + Conic2 + discriminant + ConicType 分类）
 - `0.1.1.7`（2026-08）：`alg/`（Plane3 + Sphere + Quad3 + 幂定理 power/tangent_length）
 - `0.1.1.8`（2026-09）：`alg/`（intersect_line_circle + intersect_circle_circle + Transform2/3）
+- `0.1.1.9`（2026-10）：`bv/`（Bv Trait + Aabb2/Aabb3 + SphereBv + BVH）
 
-本月任务包（2026-10，`0.1.1.9`）：
-- `bv/`：Bv Trait + Aabb2/Aabb3 + SphereBv + BVH
-- 验收：包围体 + 层级树 + 碰撞加速测试
+本月任务包（2026-11，`0.1.1.10`）：
+- `brep/`：Topo Trait + Vtx/Edge/Loop + HalfEdge
+- 验收：拓扑核心 + 半边 + 邻接关系测试
 
 后续月度任务见迭代详表。核心 Trait 在 2026-12（`0.1.1.11`）冻结。
 

@@ -52,8 +52,9 @@ util(-1) → atop(0) → space(1) → alg(2) → bv(3) → brep(4) → algo(5) �
 | `0.1.1.6` | alg Circle + Conic2 + discriminant | ✅ |
 | `0.1.1.7` | alg Plane3 + Sphere + Quad3 + 幂定理 | ✅ |
 | `0.1.1.8` | alg intersect + xform Transform | ✅ |
+| `0.1.1.9` | bv Bv Trait + Aabb2/Aabb3 + SphereBv + BVH | ✅ |
 
-测试：203 通过 · CRAP：210 · 变异分数：100%
+测试：226 通过 · CRAP：210 · 变异分数：100%
 
 ## 构建与测试
 

@@ -1,0 +1,83 @@
+// Generated using `moon info`, DON'T EDIT IT
+package "walkzzz/moon-geo/bv"
+
+import {
+  "walkzzz/moon-geo/alg",
+}
+
+// Values
+
+// Errors
+
+// Types and methods
+pub struct Aabb2 {
+  min_x : Double
+  min_y : Double
+  max_x : Double
+  max_y : Double
+}
+pub fn Aabb2::center(Self) -> @alg.Pt2
+pub fn Aabb2::contains(Self, @alg.Pt2) -> Bool
+pub fn Aabb2::from_two_points(@alg.Pt2, @alg.Pt2) -> Self
+pub fn Aabb2::intersect(Self, Self) -> Bool
+pub fn Aabb2::max_x(Self) -> Double
+pub fn Aabb2::max_y(Self) -> Double
+pub fn Aabb2::min_x(Self) -> Double
+pub fn Aabb2::min_y(Self) -> Double
+pub fn Aabb2::new(Double, Double, Double, Double) -> Self
+pub fn Aabb2::union(Self, Self) -> Self
+
+pub struct Aabb3 {
+  min_x : Double
+  min_y : Double
+  min_z : Double
+  max_x : Double
+  max_y : Double
+  max_z : Double
+}
+pub fn Aabb3::center(Self) -> @alg.Pt3
+pub fn Aabb3::contains(Self, @alg.Pt3) -> Bool
+pub fn Aabb3::from_two_points(@alg.Pt3, @alg.Pt3) -> Self
+pub fn Aabb3::intersect(Self, Self) -> Bool
+pub fn Aabb3::max_x(Self) -> Double
+pub fn Aabb3::max_y(Self) -> Double
+pub fn Aabb3::max_z(Self) -> Double
+pub fn Aabb3::min_x(Self) -> Double
+pub fn Aabb3::min_y(Self) -> Double
+pub fn Aabb3::min_z(Self) -> Double
+pub fn Aabb3::new(Double, Double, Double, Double, Double, Double) -> Self
+pub fn Aabb3::union(Self, Self) -> Self
+
+pub struct BVHNode {
+  bbox : Aabb3
+  left : BVHNode?
+  right : BVHNode?
+  leaf_index : Int32?
+}
+pub fn BVHNode::bbox(Self) -> Aabb3
+pub fn BVHNode::build(Array[(Aabb3, Int32)]) -> Self?
+pub fn BVHNode::query_intersect(Self, Aabb3, Array[Int32]) -> Unit
+
+pub struct SphereBv {
+  cx : Double
+  cy : Double
+  cz : Double
+  r : Double
+}
+pub fn SphereBv::contains(Self, @alg.Pt3) -> Bool
+pub fn SphereBv::cx(Self) -> Double
+pub fn SphereBv::cy(Self) -> Double
+pub fn SphereBv::cz(Self) -> Double
+pub fn SphereBv::from_aabb(Aabb3) -> Self
+pub fn SphereBv::intersect(Self, Self) -> Bool
+pub fn SphereBv::new(Double, Double, Double, Double) -> Self
+pub fn SphereBv::r(Self) -> Double
+pub fn SphereBv::union(Self, Self) -> Self
+
+// Type aliases
+
+// Traits
+pub trait Bv {
+  fn bv_volume(Self) -> Double
+  fn bv_is_empty(Self) -> Bool
+}
