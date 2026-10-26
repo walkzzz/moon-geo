@@ -73,6 +73,7 @@ pub(all) struct Mat4 {
 pub fn Mat4::approx_eq(Self, Self, Double) -> Bool
 pub fn Mat4::approx_zero(Self, Double) -> Bool
 pub fn Mat4::det(Self) -> Double
+pub fn Mat4::get(Self, Int32, Int32) -> Double
 pub fn Mat4::identity() -> Self
 pub fn Mat4::inv(Self) -> Self raise MatError
 pub fn Mat4::mul_mat(Self, Self) -> Self

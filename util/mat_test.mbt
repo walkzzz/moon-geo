@@ -140,3 +140,26 @@ test "Mat4 inv singular raises" {
     _ => fail("expected inv to fail on singular matrix")
   }
 }
+
+///|
+test "Mat4 inv full nonzero matrix" {
+  // I+J 矩阵，全非零，det=5，充分触发 Gauss-Jordan 选主元
+  let m = @util.Mat4::new(
+    2.0, 1.0, 1.0, 1.0, 1.0, 2.0, 1.0, 1.0, 1.0, 1.0, 2.0, 1.0, 1.0, 1.0, 1.0, 2.0,
+  )
+  assert_true(@util.dbl_approx_eq(m.det(), 5.0, @util.EPS))
+  let inv = m.inv()
+  let prod = m.mul_mat(inv)
+  assert_true(prod.approx_eq(@util.Mat4::identity(), @util.EPS))
+}
+
+///|
+test "Mat4 get" {
+  let m = @util.Mat4::new(
+    1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0, 10.0, 11.0, 12.0, 13.0, 14.0, 15.0,
+    16.0,
+  )
+  assert_true(@util.dbl_approx_eq(m.get(0, 0), 1.0, @util.EPS))
+  assert_true(@util.dbl_approx_eq(m.get(1, 2), 7.0, @util.EPS))
+  assert_true(@util.dbl_approx_eq(m.get(3, 3), 16.0, @util.EPS))
+}

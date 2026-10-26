@@ -218,16 +218,42 @@ pub fn PolyN::eval(self : PolyN, xs : Array[Double]) -> Double {
 }
 
 ///|
-/// 加法（合并项列表）
+/// 加法（合并同类项：相同 exps 的项系数相加，规范化表示）
 pub fn PolyN::add(self : PolyN, other : PolyN) -> PolyN {
+  let r : Array[PolyTerm] = []
   let na = self.terms.length()
   let nb = other.terms.length()
-  let r = Array::make(na + nb, PolyTerm::new(0.0, []))
+  let all = Array::make(na + nb, PolyTerm::new(0.0, []))
   for i in 0..<na {
-    r[i] = self.terms[i]
+    all[i] = self.terms[i]
   }
   for i in 0..<nb {
-    r[na + i] = other.terms[i]
+    all[na + i] = other.terms[i]
+  }
+  for i in 0..<all.length() {
+    let t = all[i]
+    let mut found = -1
+    for j in 0..<r.length() {
+      if found < 0 {
+        let re = r[j].exps
+        if re.length() == t.exps.length() {
+          let mut same = true
+          for k in 0..<t.exps.length() {
+            if re[k] != t.exps[k] {
+              same = false
+            }
+          }
+          if same {
+            found = j
+          }
+        }
+      }
+    }
+    if found >= 0 {
+      r[found] = PolyTerm::new(r[found].coeff + t.coeff, r[found].exps)
+    } else {
+      r.push(t)
+    }
   }
   { terms: r, }
 }

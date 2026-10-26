@@ -13,6 +13,7 @@ pub(open) trait Dim {
 ///|
 /// 拓扑空间抽象：最普适的空间抽象
 /// Self = 点类型；邻域以中心和半径描述（度量诱导拓扑）
+/// 注：当前为度量诱导拓扑的特化（邻域 = 度量球），一般拓扑结构的开集族抽象留待远期
 pub(open) trait TopologicalSpace {
   /// 邻域判定：self 是否在 center 的 radius 邻域内
   fn is_in_neighborhood(self : Self, center : Self, radius : Double) -> Bool

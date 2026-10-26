@@ -3,8 +3,9 @@
 # CRAP(m) = comp^2 + comp * (1 - cov), cov=1.0 → CRAP = comp^2
 cd "$(dirname "$0")/.." || exit 1
 
-echo "=== CRAP 指标报告 (util + atop, 0.1.1.2) ==="
+echo "=== CRAP 指标报告 (util + atop + space, 0.1.1.3) ==="
 echo "公式: CRAP = comp^2 (cov=1.0, 测试全绿)"
+echo "注: 静态表，收尾时需 diff 本表函数列表 vs 实际 pub fn 列表（moon info）以同步"
 echo ""
 
 total_crap=0
@@ -39,7 +40,11 @@ report "Quat::normalize" 2; report "Quat::slerp" 4
 # poly.mbt
 report "Poly1::degree" 2; report "Poly1::eval" 2; report "Poly1::mul" 3
 report "Poly1::derivative" 2; report "Poly1::approx_eq" 2; report "Poly1::approx_zero" 2
-report "PolyN::is_zero" 2; report "PolyN::approx_eq" 3; report "PolyN::approx_zero" 2
+report "PolyN::is_zero" 2; report "PolyN::add" 5; report "PolyN::approx_eq" 3; report "PolyN::approx_zero" 2
+# mat.mbt Mat4 新增
+report "Mat4::det" 1; report "Mat4::inv" 6
+# atop.mbt（trait 方法 comp=1，in_metric_ball comp=1，均不列出）
+# space.mbt（Euclid2::distance comp=1，不列出）
 
 echo ""
 echo "总函数数: $count (仅列出 comp>1 的函数)"

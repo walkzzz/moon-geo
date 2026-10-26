@@ -1,5 +1,5 @@
 #!/bin/bash
-# 变异测试脚本：对 util/atop 包源码应用变异，运行 moon test 验证测试套件能否捕获
+# 变异测试脚本：对 util 包源码应用变异，运行 moon test 验证测试套件能否捕获
 # 变异分数 MS = killed / total × 100%
 cd "$(dirname "$0")/.." || exit 1
 

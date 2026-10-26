@@ -38,6 +38,11 @@ pub fn Mat3::get(self : Mat3, row : Int32, col : Int32) -> Double {
 }
 
 ///|
+pub fn Mat4::get(self : Mat4, row : Int32, col : Int32) -> Double {
+  self.m[row * 4 + col]
+}
+
+///|
 pub fn Mat3::det(self : Mat3) -> Double {
   let m = self.m
   m[0] * (m[4] * m[8] - m[5] * m[7]) -
