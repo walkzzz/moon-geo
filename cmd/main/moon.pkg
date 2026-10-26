@@ -1,5 +1,0 @@
-// import {
-//   "walkzzz/moon-geo" @lib,
-// }
-
-pkgtype(kind: "executable")

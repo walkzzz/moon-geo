@@ -21,7 +21,7 @@
 代码三级文档注释（包级、类型级、方法级）。所有 `pub fn` 必须有 `///` 注释。
 
 ### R4 — README 规范
-README 中英文，默认中文。当前 `README.mbt.md` 为项目 README。
+README 以中文为主，关键术语保留英文。当前 `README.mbt.md` 为项目 README。
 
 ### R5 — 迭代路线
 按 `docs/geo 统一空间数学引擎 · 迭代计划详表.md` 月度任务包推进，版本号 `0.x.y.z`。
