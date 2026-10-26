@@ -1,0 +1,7 @@
+// platform/mesh 包：索引网格模型（P2 层）
+// 依赖：util（GeoError）
+// IndexedMesh = 顶点 + 索引 + 法向
+
+import {
+  "walkzzz/moon-geo/util",
+}

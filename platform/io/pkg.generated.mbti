@@ -3,6 +3,7 @@ package "walkzzz/moon-geo/platform/io"
 
 import {
   "walkzzz/moon-geo/platform/data",
+  "walkzzz/moon-geo/platform/mesh",
   "walkzzz/moon-geo/util",
 }
 
@@ -28,6 +29,10 @@ pub fn json_get(JsonValue, String) -> JsonValue?
 pub fn layer_from_geojson(String, String) -> @data.Layer raise @util.GeoError
 
 pub fn layer_to_geojson(@data.Layer) -> String
+
+pub fn mesh_from_stl_ascii(String) -> @mesh.IndexedMesh raise @util.GeoError
+
+pub fn mesh_to_stl_ascii(@mesh.IndexedMesh, String) -> String
 
 pub fn parse_json(String) -> JsonValue raise @util.GeoError
 

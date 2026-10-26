@@ -6,4 +6,5 @@ import {
   "walkzzz/moon-geo/util",
   "walkzzz/moon-geo/platform/crs",
   "walkzzz/moon-geo/platform/data",
+  "walkzzz/moon-geo/platform/mesh",
 }
