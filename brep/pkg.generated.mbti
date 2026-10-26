@@ -64,6 +64,7 @@ pub fn HEMesh::find_boundary_half_edges(Self) -> Array[Int32]
 pub fn HEMesh::find_coincident_vertices(Self, Double) -> Array[(Int32, Int32)]
 pub fn HEMesh::find_isolated_vertices(Self) -> Array[Int32]
 pub fn HEMesh::from_triangle(@alg.Pt3, @alg.Pt3, @alg.Pt3) -> Self
+pub fn HEMesh::from_triangles(Array[@alg.Pt3], Array[(Int32, Int32, Int32)]) -> Self
 pub fn HEMesh::from_two_triangles(@alg.Pt3, @alg.Pt3, @alg.Pt3, @alg.Pt3) -> Self
 pub fn HEMesh::half_edge(Self, Int32) -> HEdge
 pub fn HEMesh::half_edge_count(Self) -> Int32

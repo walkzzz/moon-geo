@@ -721,3 +721,68 @@ test "Solid tetrahedron face normals point outward (offset tetrahedron)" {
     assert_true(dot > 0.0)
   }
 }
+
+///|
+test "HEMesh::from_triangles 单三角形" {
+  let pts : Array[@alg.Pt3] = [
+    @alg.Pt3::new(0.0, 0.0, 0.0),
+    @alg.Pt3::new(1.0, 0.0, 0.0),
+    @alg.Pt3::new(0.0, 1.0, 0.0),
+  ]
+  let tris : Array[(Int32, Int32, Int32)] = [(0, 1, 2)]
+  let mesh = HEMesh::from_triangles(pts, tris)
+  assert_eq(mesh.vertex_count(), 3)
+  assert_eq(mesh.face_count(), 1)
+  assert_eq(mesh.half_edge_count(), 6)
+}
+
+///|
+test "HEMesh::from_triangles 两三角形共享边" {
+  let pts : Array[@alg.Pt3] = [
+    @alg.Pt3::new(0.0, 0.0, 0.0),
+    @alg.Pt3::new(1.0, 0.0, 0.0),
+    @alg.Pt3::new(0.0, 1.0, 0.0),
+    @alg.Pt3::new(1.0, 1.0, 0.0),
+  ]
+  let tris : Array[(Int32, Int32, Int32)] = [(0, 1, 2), (1, 3, 2)]
+  let mesh = HEMesh::from_triangles(pts, tris)
+  assert_eq(mesh.vertex_count(), 4)
+  assert_eq(mesh.face_count(), 2)
+  assert_eq(mesh.half_edge_count(), 10)
+}
+
+///|
+test "HEMesh::from_triangles 三角形条带" {
+  let pts : Array[@alg.Pt3] = [
+    @alg.Pt3::new(0.0, 0.0, 0.0),
+    @alg.Pt3::new(1.0, 0.0, 0.0),
+    @alg.Pt3::new(2.0, 0.0, 0.0),
+    @alg.Pt3::new(0.5, 1.0, 0.0),
+    @alg.Pt3::new(1.5, 1.0, 0.0),
+  ]
+  let tris : Array[(Int32, Int32, Int32)] = [(0, 1, 3), (1, 4, 3), (1, 2, 4)]
+  let mesh = HEMesh::from_triangles(pts, tris)
+  assert_eq(mesh.vertex_count(), 5)
+  assert_eq(mesh.face_count(), 3)
+  assert_eq(mesh.half_edge_count(), 14)
+}
+
+///|
+test "HEMesh::from_triangles twin 对称性" {
+  let pts : Array[@alg.Pt3] = [
+    @alg.Pt3::new(0.0, 0.0, 0.0),
+    @alg.Pt3::new(1.0, 0.0, 0.0),
+    @alg.Pt3::new(0.0, 1.0, 0.0),
+    @alg.Pt3::new(1.0, 1.0, 0.0),
+  ]
+  let tris : Array[(Int32, Int32, Int32)] = [(0, 1, 2), (1, 3, 2)]
+  let mesh = HEMesh::from_triangles(pts, tris)
+  let n = mesh.half_edge_count()
+  for i in 0..<n {
+    let he = mesh.half_edge(i)
+    let twin = he.twin()
+    assert_true(twin >= 0 && twin < n)
+    let twin_he = mesh.half_edge(twin)
+    assert_eq(twin_he.twin(), i)
+  }
+}

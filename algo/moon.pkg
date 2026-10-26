@@ -1,8 +1,9 @@
 // algo 包：基础几何/GIS/高阶拓扑（第5层）
-// 依赖：alg（几何类型）、util（GeoError, EPS）、math（三角函数）
+// 依赖：alg（几何类型）、brep（HEMesh 半边网格）、util（GeoError, EPS）、math（三角函数）
 
 import {
   "walkzzz/moon-geo/util",
   "walkzzz/moon-geo/alg",
+  "walkzzz/moon-geo/brep",
   "moonbitlang/core/math",
 }

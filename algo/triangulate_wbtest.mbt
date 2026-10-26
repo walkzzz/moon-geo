@@ -307,3 +307,53 @@ test "delaunay random points" {
     assert_true(a != b && b != c && a != c)
   }
 }
+
+///|
+test "delaunay_to_hemesh 基本三角剖分" {
+  let pts : Array[@alg.Pt2] = [
+    @alg.Pt2::new(0.0, 0.0),
+    @alg.Pt2::new(1.0, 0.0),
+    @alg.Pt2::new(0.0, 1.0),
+    @alg.Pt2::new(1.0, 1.0),
+  ]
+  let mesh = delaunay_to_hemesh(pts)
+  assert_eq(mesh.vertex_count(), 4)
+  assert_true(mesh.face_count() >= 2)
+  for fi in 0..<mesh.face_count() {
+    let hes = mesh.face_half_edges(fi)
+    assert_eq(hes.length(), 3)
+  }
+}
+
+///|
+test "delaunay_to_hemesh twin 对称性" {
+  let pts : Array[@alg.Pt2] = [
+    @alg.Pt2::new(0.0, 0.0),
+    @alg.Pt2::new(2.0, 0.0),
+    @alg.Pt2::new(1.0, 2.0),
+    @alg.Pt2::new(3.0, 2.0),
+  ]
+  let mesh = delaunay_to_hemesh(pts)
+  let n = mesh.half_edge_count()
+  for i in 0..<n {
+    let he = mesh.half_edge(i)
+    let twin = he.twin()
+    assert_true(twin >= 0 && twin < n)
+    assert_eq(mesh.half_edge(twin).twin(), i)
+  }
+}
+
+///|
+test "delaunay_to_hemesh 顶点坐标保持" {
+  let pts : Array[@alg.Pt2] = [
+    @alg.Pt2::new(1.5, 2.5),
+    @alg.Pt2::new(4.0, 5.0),
+    @alg.Pt2::new(7.0, 8.0),
+  ]
+  let mesh = delaunay_to_hemesh(pts)
+  assert_eq(mesh.vertex_count(), 3)
+  let v0 = mesh.vertex(0).pos()
+  assert_true((v0.x() - 1.5).abs() < 1.0e-10)
+  assert_true((v0.y() - 2.5).abs() < 1.0e-10)
+  assert_true(v0.z().abs() < 1.0e-10)
+}

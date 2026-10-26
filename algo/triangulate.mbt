@@ -179,3 +179,16 @@ pub fn triangulation_total_area(
 pub fn triangle_count(triangles : Array[(Int32, Int32, Int32)]) -> Int32 {
   triangles.length()
 }
+
+///|
+/// Delaunay 三角剖分并产出 HEMesh 半边网格
+/// 将 2D 点提升到 3D（z=0），三角剖分后构造完整半边拓扑
+/// 这是 N1 类型贯通的关键：delaunay 不再只返回裸索引，而是产出 brep.HEMesh
+pub fn delaunay_to_hemesh(points : Array[@alg.Pt2]) -> @brep.HEMesh {
+  let triangles = delaunay(points)
+  let pts3 : Array[@alg.Pt3] = []
+  for p in points {
+    pts3.push(@alg.Pt3::new(p.x(), p.y(), 0.0))
+  }
+  @brep.HEMesh::from_triangles(pts3, triangles)
+}
