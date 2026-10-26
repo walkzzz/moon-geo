@@ -99,12 +99,12 @@ pub fn Cpx::neg(self : Cpx) -> Cpx {
 
 ///|
 impl ApproxEq for Cpx with fn approx_eq(self, other, tol) {
-  self.sub(other).norm() <= tol
+  dbl_approx_eq(self.re, other.re, tol) && dbl_approx_eq(self.im, other.im, tol)
 }
 
 ///|
 impl ApproxEq for Cpx with fn approx_zero(self, tol) {
-  self.norm() <= tol
+  dbl_approx_eq(self.re, 0.0, tol) && dbl_approx_eq(self.im, 0.0, tol)
 }
 
 ///|

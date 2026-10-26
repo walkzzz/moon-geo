@@ -78,3 +78,65 @@ test "Mat4 mul_mat identity" {
   let p = id.mul_mat(t)
   assert_true(p.approx_eq(t, @util.EPS))
 }
+
+///|
+test "Mat4 det identity" {
+  let id = @util.Mat4::identity()
+  assert_true(@util.dbl_approx_eq(id.det(), 1.0, @util.EPS))
+}
+
+///|
+test "Mat4 det diagonal" {
+  let m = @util.Mat4::new(
+    2.0, 0.0, 0.0, 0.0, 0.0, 3.0, 0.0, 0.0, 0.0, 0.0, 4.0, 0.0, 0.0, 0.0, 0.0, 5.0,
+  )
+  assert_true(@util.dbl_approx_eq(m.det(), 120.0, @util.EPS))
+}
+
+///|
+test "Mat4 det upper triangular" {
+  let m = @util.Mat4::new(
+    1.0, 2.0, 3.0, 4.0, 0.0, 1.0, 2.0, 3.0, 0.0, 0.0, 1.0, 2.0, 0.0, 0.0, 0.0, 1.0,
+  )
+  assert_true(@util.dbl_approx_eq(m.det(), 1.0, @util.EPS))
+}
+
+///|
+test "Mat4 det tridiagonal" {
+  let m = @util.Mat4::new(
+    2.0, 1.0, 0.0, 0.0, 1.0, 2.0, 1.0, 0.0, 0.0, 1.0, 2.0, 1.0, 0.0, 0.0, 1.0, 2.0,
+  )
+  assert_true(@util.dbl_approx_eq(m.det(), 5.0, @util.EPS))
+}
+
+///|
+test "Mat4 inv diagonal" {
+  let m = @util.Mat4::new(
+    2.0, 0.0, 0.0, 0.0, 0.0, 4.0, 0.0, 0.0, 0.0, 0.0, 8.0, 0.0, 0.0, 0.0, 0.0, 16.0,
+  )
+  let inv = m.inv()
+  let prod = m.mul_mat(inv)
+  assert_true(prod.approx_eq(@util.Mat4::identity(), @util.EPS))
+}
+
+///|
+test "Mat4 inv general" {
+  let m = @util.Mat4::new(
+    1.0, 2.0, 0.0, 0.0, 3.0, 4.0, 0.0, 0.0, 0.0, 0.0, 5.0, 0.0, 0.0, 0.0, 0.0, 6.0,
+  )
+  let inv = m.inv()
+  let prod = m.mul_mat(inv)
+  assert_true(prod.approx_eq(@util.Mat4::identity(), @util.EPS))
+}
+
+///|
+test "Mat4 inv singular raises" {
+  let m = @util.Mat4::new(
+    1.0, 2.0, 3.0, 4.0, 2.0, 4.0, 6.0, 8.0, 1.0, 1.0, 1.0, 1.0, 0.0, 1.0, 0.0, 1.0,
+  )
+  try m.inv() catch {
+    _ => ()
+  } noraise {
+    _ => fail("expected inv to fail on singular matrix")
+  }
+}

@@ -75,6 +75,34 @@ pub fn Vec2::perp(self : Vec2) -> Vec2 {
 }
 
 ///|
+/// 线性插值
+pub fn Vec2::lerp(self : Vec2, other : Vec2, t : Double) -> Vec2 {
+  { x: self.x + (other.x - self.x) * t, y: self.y + (other.y - self.y) * t, }
+}
+
+///|
+/// 夹角（弧度）
+pub fn Vec2::angle(self : Vec2, other : Vec2) -> Double {
+  let l = self.len() * other.len()
+  if dbl_approx_zero(l, EPS) {
+    0.0
+  } else {
+    @math.acos((self.dot(other) / l).clamp(min=-1.0, max=1.0))
+  }
+}
+
+///|
+/// 投影到 other
+pub fn Vec2::project(self : Vec2, other : Vec2) -> Vec2 {
+  let d = other.dot(other)
+  if dbl_approx_zero(d, EPS) {
+    Vec2::zero()
+  } else {
+    other.scale(self.dot(other) / d)
+  }
+}
+
+///|
 impl ApproxEq for Vec2 with fn approx_eq(self, other, tol) {
   dbl_approx_eq(self.x, other.x, tol) && dbl_approx_eq(self.y, other.y, tol)
 }
@@ -163,6 +191,38 @@ pub fn Vec3::scale(self : Vec3, s : Double) -> Vec3 {
 ///|
 pub fn Vec3::neg(self : Vec3) -> Vec3 {
   { x: -self.x, y: -self.y, z: -self.z, }
+}
+
+///|
+/// 线性插值
+pub fn Vec3::lerp(self : Vec3, other : Vec3, t : Double) -> Vec3 {
+  {
+    x: self.x + (other.x - self.x) * t,
+    y: self.y + (other.y - self.y) * t,
+    z: self.z + (other.z - self.z) * t,
+  }
+}
+
+///|
+/// 夹角（弧度）
+pub fn Vec3::angle(self : Vec3, other : Vec3) -> Double {
+  let l = self.len() * other.len()
+  if dbl_approx_zero(l, EPS) {
+    0.0
+  } else {
+    @math.acos((self.dot(other) / l).clamp(min=-1.0, max=1.0))
+  }
+}
+
+///|
+/// 投影到 other
+pub fn Vec3::project(self : Vec3, other : Vec3) -> Vec3 {
+  let d = other.dot(other)
+  if dbl_approx_zero(d, EPS) {
+    Vec3::zero()
+  } else {
+    other.scale(self.dot(other) / d)
+  }
 }
 
 ///|

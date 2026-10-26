@@ -37,6 +37,17 @@
 
 20 年内，将 geo 建设为**范畴化空间数学范式的定义者**：以范畴论为最底层抽象，统一全空间、全维度、全数域、全拓扑形态的几何计算，向下扎根数学公理且经形式化验证，向上支撑 CAD/GIS/仿真/机器人/AR-VR/数字孪生/量子计算等全行业空间计算需求，成为开源学术生态中空间数学的基础设施。
 
+### 0.1.1 双层定位：后端库 + 前端平台
+
+geo 采用**后端库 + 前端平台**双层架构，职责分离：
+
+| 层 | 名称 | 定位 | 对标 | 架构 |
+|----|------|------|------|------|
+| 后端 | 统一空间数学引擎 | 纯数学/几何/拓扑计算内核，不感知数据模型/CRS/I/O | CGAL / GEOS / Shapely | 九层洋葱（util→eco），终身稳定 |
+| 前端 | 数据处理平台 | 要素/图层/数据集 + CRS + 格式 I/O + 流式/LOD，调用后端内核算法 | GDAL / PostGIS / ArcGIS | platform/ 五层（crs/mesh/pcloud/data/io） |
+
+**分层原则**：后端九层处理纯数学空间的几何/拓扑/代数运算；前端平台层负责真实业务数据类型（点云/倾斜摄影/正射影像/栅格/矢量/CAD/3D 模型）的数据模型、坐标参考系、格式读写与大规模流式处理，将业务数据拆解为几何对象后委托后端内核计算，再将结果包装回业务数据模型。后端不依赖前端，前端依赖后端。
+
 ### 0.2 四纪元总览
 
 | 纪元 | 年份 | 月份 | 版本号区间 | 主题 | 愿景验收 |
@@ -113,6 +124,50 @@
 │  第-1层 基础工具层 util  数域 / 数值 / 矩阵 / 精度体系      │  数值基础
 └─────────────────────────────────────────────────────────┘
 ```
+
+> 以上九层为**后端库（统一空间数学引擎）**，终身稳定，不感知数据模型/CRS/I/O。
+
+#### 1.1.1 数据处理平台（前端）架构
+
+在九层后端内核之上，新增 `platform/` 前端数据处理平台，承载真实业务数据类型的数据模型、坐标参考系、格式 I/O 与大规模流式处理。前端依赖后端，后端不感知前端。
+
+```
+┌─────────────────────────────────────────────────────────┐
+│  P5  格式 I/O 层  io     LAS/GeoTIFF/shp/DXF/OBJ/GLTF/…   │  格式读写+流式
+└─────────────────────────────────────────────────────────┘
+                              ↑
+┌─────────────────────────────────────────────────────────┐
+│  P4  数据模型层  data   Feature/Layer/Dataset/Field       │  要素模型
+│                        RasterDataset/Tiled/Pyramid       │  栅格数据集
+│                        StreamingReader/LODTree           │  流式/外存
+└─────────────────────────────────────────────────────────┘
+                              ↑
+┌─────────────────────────────────────────────────────────┐
+│  P3  点云层    pcloud  PointCloud+属性通道 降采样/法向/    │  点云专用
+│                     地面滤波/RANSAC/ICP                   │
+└─────────────────────────────────────────────────────────┘
+                              ↑
+┌─────────────────────────────────────────────────────────┐
+│  P2  网格层    mesh    IndexedMesh(顶点+索引+法向+UV+材质) │  索引三角网
+│                     网格简化/法向重算                     │
+└─────────────────────────────────────────────────────────┘
+                              ↑
+┌─────────────────────────────────────────────────────────┐
+│  P1  坐标参考系 crs   CRS/EPSG/投影变换                    │  WGS84/UTM/CGCS2000
+└─────────────────────────────────────────────────────────┘
+                              ↑
+              （依赖后端九层内核：util/space/bv/brep/algo）
+```
+
+| 层 | 包名 | 职责 | 依赖 | 对应缺口 |
+|----|------|------|------|---------|
+| P1 | `platform/crs` | CRS 定义、EPSG 查询、投影变换（WGS84/UTM/CGCS2000/Mercator） | util, space | D |
+| P2 | `platform/mesh` | IndexedMesh（顶点+索引+法向+UV+材质引用）、网格简化、法向重算 | util, space, bv, brep | B, F |
+| P3 | `platform/pcloud` | PointCloud（点数组+属性通道）、降采样、法向估计、地面滤波、RANSAC、ICP | util, space, bv, mesh | 点云 |
+| P4 | `platform/data` | Feature/Layer/Dataset/Field、RasterDataset/Tiled/Pyramid、StreamingReader/LODTree | space, brep, mesh, pcloud, crs | A, C, E |
+| P5 | `platform/io` | 格式 I/O（LAS/LAZ/GeoTIFF/Shapefile/DXF/OBJ/GLTF/OSGB/3DTiles）+ 流式读写 | data, crs | I/O |
+
+**时序铁律**：I/O 格式读写不能先于其数据模型和 CRS。格式 I/O（P5）依赖数据模型（P4）与 CRS（P1），必须先建数据模型与 CRS，再建格式 I/O，否则读出的数据无坐标无属性，是废数据。
 
 ### 1.2 核心设计原则
 
@@ -233,11 +288,46 @@ geo/
 │   ├── stl.mbt               # STL三维模型读写
 │   └── obj.mbt               # OBJ模型读写（远期）
 │
-└── draw/                     # 可视化工具层
+├── draw/                     # 可视化工具层
+│   ├── mod.mbt
+│   ├── style.mbt             # 样式配置
+│   ├── canvas2.mbt           # 2D SVG画布
+│   └── canvas3.mbt           # 3D线框画布
+│
+└── platform/                 # ★ 前端：数据处理平台（依赖后端九层内核）
     ├── mod.mbt
-    ├── style.mbt             # 样式配置
-    ├── canvas2.mbt           # 2D SVG画布
-    └── canvas3.mbt           # 3D线框画布
+    ├── crs/                  # P1 坐标参考系/投影变换
+    │   ├── crs.mbt           # CRS 抽象 + WGS84/UTM/CGCS2000
+    │   ├── projection.mbt    # 投影变换（Mercator/UTM/兰伯特）
+    │   └── epsg.mbt          # EPSG 查询（常用子集，全量库远期）
+    ├── mesh/                 # P2 索引三角网 + 属性通道
+    │   ├── indexed_mesh.mbt  # IndexedMesh { vertices, indices, normals?, uvs?, materials? }
+    │   ├── simplify.mbt      # 网格简化（边折叠）
+    │   └── normal.mbt        # 法向重算/切空间
+    ├── pcloud/               # P3 点云数据结构 + 属性
+    │   ├── point_cloud.mbt   # PointCloud { points, attrs: AttributeArray }
+    │   ├── downsample.mbt    # 体素降采样/随机降采样
+    │   ├── normal_est.mbt    # 法向估计
+    │   ├── ground.mbt        # 地面点滤波（CSF/PMF）
+    │   ├── ransac.mbt        # RANSAC 平面拟合
+    │   └── icp.mbt           # ICP/NDT 配准
+    ├── data/                 # P4 要素/图层/数据集模型
+    │   ├── feature.mbt       # Feature = Geometry + Attributes + CRS
+    │   ├── layer.mbt         # Layer = Feature 集合 + 模式
+    │   ├── dataset.mbt       # Dataset = Layer 集合 + 元数据
+    │   ├── field.mbt         # 属性类型系统（Field/FieldType）
+    │   ├── raster_dataset.mbt # RasterDataset { bands, geo_transform, crs, nodata, tiling, pyramid }
+    │   ├── tiled.mbt         # 分块/金字塔
+    │   └── streaming.mbt     # StreamingReader/LODTree（外存/流式）
+    └── io/                   # P5 格式 I/O（依赖 data + crs）
+        ├── las.mbt           # LAS/LAZ 点云读写（流式）
+        ├── geotiff.mbt       # GeoTIFF 栅格读写（分块/金字塔/窗口流式）
+        ├── shapefile.mbt     # Shapefile（shp+shx+dbf+prj）
+        ├── dxf.mbt           # DXF（实体族/图层/样式）
+        ├── obj.mbt           # OBJ（索引网+属性）
+        ├── gltf.mbt          # GLTF（网格+材质+纹理+动画）
+        ├── osgb.mbt          # OSGB 倾斜摄影（远期）
+        └── tiles3d.mbt      # 3DTiles 瓦片（LOD/流式，远期）
 ```
 
 ------
@@ -766,7 +856,8 @@ let sphere_curve = StereoMap::map(&complex_circle)
 - 栅格空间基础 + 矢量栅格双向转换
 - 布尔运算（交/并/差）、网格剖分；缓冲区分析、拓扑修复增强
 - 2D/3D 基础可视化（SVG）；基础数据格式读写（GeoJSON、STL）
-- **里程碑**：复射影几何大一统验证完成；可用于复杂曲面建模与几何教学
+- **前端平台**：`platform/crs` CRS + 常用投影（WGS84/UTM/CGCS2000）提前落地；`platform/data` 要素模型（Feature=Geometry+Attributes+CRS）先于格式 I/O
+- **里程碑**：复射影几何大一统验证完成；可用于复杂曲面建模与几何教学；CRS + 要素模型就绪，为 2028 格式 I/O 铺路
 
 #### 5.1.3 阶段三·工程增强（2028-2029，Y3-Y4，`0.1.3.z`）
 
@@ -775,7 +866,8 @@ let sphere_curve = StereoMap::map(&complex_circle)
 - GIS 全量算法（矢量缓冲/叠加/网络/空间连接/九交；栅格坡度/坡向/曲率/视域/填挖方；矢栅互转）
 - CPU 多线程并行；批量处理；全量数据格式（Shapefile/DXF/GeoTIFF/OBJ/GLTF）
 - `domain::gis` 一站式 API
-- **里程碑**：拓扑修复成功率≥95%；百万要素查询≤10ms；GIS 偏差≤1e-6；并行提升≥5倍；支持≥12 种格式
+- **前端平台**：`platform/mesh` IndexedMesh + 属性通道（法向/UV/材质）；`platform/pcloud` 点云结构 + LAS I/O + 基础算法（降采样/法向/RANSAC/ICP）；`platform/data` RasterDataset + 分块/金字塔/流式窗口读取；`platform/io` 全格式 I/O 携带 CRS + 属性（不再读出裸几何）
+- **里程碑**：拓扑修复成功率≥95%；百万要素查询≤10ms；GIS 偏差≤1e-6；并行提升≥5倍；支持≥12 种格式；点云/倾斜摄影/正射影像/3D 模型端到端读写闭环
 
 #### 5.1.4 阶段四·高阶扩展（2030-2031 上半年，Y5-Y6，`0.1.4.z`）
 

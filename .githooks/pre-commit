@@ -1,3 +1,5 @@
 #!/bin/sh
 
-moon check
+moon check || exit 1
+moon test || exit 1
+moon fmt --check || exit 1

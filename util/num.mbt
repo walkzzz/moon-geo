@@ -17,7 +17,7 @@ pub trait ApproxEq {
 }
 
 ///|
-/// 数值通用扩展
+/// 数值通用扩展（工程便利接口，非代数抽象）
 pub trait NumExt {
   fn sq(self : Self) -> Self
   fn clamp(self : Self, min : Self, max : Self) -> Self
@@ -25,7 +25,7 @@ pub trait NumExt {
 }
 
 ///|
-/// 数域抽象：实数、复数统一接口
+/// 数域抽象：实数、复数统一接口（abs 返回 Double 为务实选择，纯范畴定义应返回 Self 的有序子域）
 pub trait Field: NumExt + ApproxEq {
   fn zero() -> Self
   fn one() -> Self

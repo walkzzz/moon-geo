@@ -1,7 +1,7 @@
 #!/bin/bash
 # CRAP 指标报告（纯 bash，无 python 依赖）
 # CRAP(m) = comp^2 + comp * (1 - cov), cov=1.0 → CRAP = comp^2
-cd "D:/codearts/moon-geo" || exit 1
+cd "$(dirname "$0")/.." || exit 1
 
 echo "=== CRAP 指标报告 (util + atop, 0.1.1.2) ==="
 echo "公式: CRAP = comp^2 (cov=1.0, 测试全绿)"

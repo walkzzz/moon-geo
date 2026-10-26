@@ -4,11 +4,13 @@
 
 ## 0. 项目定位
 
-- **一句话**：以复射影代数几何 + 代数拓扑为底层内核，覆盖全维度/全数域/全空间类型/全拓扑形态的通用空间数学引擎
+- **双层架构**：后端库（统一空间数学引擎）+ 前端（数据处理平台）
+  - **后端库**：以复射影代数几何 + 代数拓扑为底层内核，覆盖全维度/全数域/全空间类型/全拓扑形态的通用空间数学引擎（九层洋葱，终身稳定，不感知数据模型/CRS/I/O）——对标 CGAL / GEOS / Shapely
+  - **前端平台**：`platform/` 数据处理平台，承载要素/图层/数据集 + CRS + 格式 I/O + 流式/LOD，调用后端内核算法——对标 GDAL / PostGIS / ArcGIS
 - **性质**：开源社区战略 · 学术驱动（Apache-2.0），核心永久开源
 - **周期**：2026 → 2046（20年/240月），4 纪元 × 5 年，核心架构终身稳定
-- **竞品参照**：CGAL / OpenCASCADE / ArcGIS / GEOS / Shapely / Boost.Geometry / Lean4-Coq 几何库
-- **终极愿景**：范畴化空间数学范式的定义者
+- **竞品参照**：CGAL / OpenCASCADE / ArcGIS / GEOS / Shapely / Boost.Geometry / GDAL / Lean4-Coq 几何库
+- **终极愿景**：范畴化空间数学范式的定义者 + 空间数据处理基础设施
 
 ## 1. 九层单向依赖架构
 
@@ -29,6 +31,20 @@
 
 **依赖铁律**：禁止反向依赖、禁止同层环依赖、外部依赖经评审才引入。
 
+### 1.1 数据处理平台（前端）架构
+
+`platform/` 前端依赖后端九层内核，后端不感知前端。承载真实业务数据类型（点云/倾斜摄影/正射影像/栅格/矢量/CAD/3D 模型）的数据模型、CRS、格式 I/O 与大规模流式处理。
+
+| 层 | 包名 | 职责 | 依赖 | 对应缺口 |
+|----|------|------|------|---------|
+| P1 | `platform/crs` | CRS/EPSG/投影变换（WGS84/UTM/CGCS2000） | util, space | D |
+| P2 | `platform/mesh` | IndexedMesh（顶点+索引+法向+UV+材质）+ 网格简化/法向重算 | util, space, bv, brep | B, F |
+| P3 | `platform/pcloud` | PointCloud + 属性通道 + 降采样/法向/地面滤波/RANSAC/ICP | util, space, bv, mesh | 点云 |
+| P4 | `platform/data` | Feature/Layer/Dataset/Field + RasterDataset/Tiled/Pyramid + StreamingReader/LODTree | space, brep, mesh, pcloud, crs | A, C, E |
+| P5 | `platform/io` | 格式 I/O（LAS/GeoTIFF/shp/DXF/OBJ/GLTF/OSGB/3DTiles）+ 流式读写 | data, crs | I/O |
+
+**时序铁律**：I/O 格式读写（P5）不能先于其数据模型（P4）和 CRS（P1）。必须先建数据模型与 CRS，再建格式 I/O，否则读出的数据无坐标无属性，是废数据。
+
 ## 2. 核心设计原则
 
 1. **Trait 驱动**：每层用统一 Trait 定义行为，新增图元/空间类型只需实现 Trait，算法自动复用
@@ -38,6 +54,8 @@
 5. **不可变原则**：几何/拓扑对象默认不可变，修改操作返回新对象
 6. **公差原则**：所有几何比较使用近似相等，禁止直接 `==` 比较浮点数
 7. **错误处理**：可能失败的操作返回 `Result<T, GeoError>` 或 `raise GeoError`，禁止 panic
+8. **前后端分离**：后端九层处理纯数学空间的几何/拓扑/代数运算，不感知数据模型/CRS/I/O；前端 `platform/` 层承载数据模型/CRS/格式 I/O，将业务数据拆解为几何对象委托后端计算，再包装回业务数据模型
+9. **时序铁律**：I/O 格式读写不能先于其数据模型和 CRS——先建数据模型（Feature/Layer/Dataset）与 CRS，再建格式 I/O，否则读出无坐标无属性的裸几何是废数据
 
 ## 3. 命名与编码规范
 
@@ -89,6 +107,8 @@
 - 验收：space 单测通过
 
 后续月度任务见迭代详表。核心 Trait 在 2026-12（`0.1.1.11`）冻结。
+
+**前端平台时序**（据业务适配性评估调整）：`platform/crs` CRS + `platform/data` 要素模型提前到 2027-04/05（先于格式 I/O）；`platform/mesh` + `platform/pcloud` 落在 2028；`platform/data` RasterDataset + 流式 + `platform/io` LAS 落在 2029。详见迭代详表 2027-2029 年。
 
 ## 6. 工程保障
 

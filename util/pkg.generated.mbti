@@ -72,7 +72,9 @@ pub(all) struct Mat4 {
 } derive(@debug.Debug)
 pub fn Mat4::approx_eq(Self, Self, Double) -> Bool
 pub fn Mat4::approx_zero(Self, Double) -> Bool
+pub fn Mat4::det(Self) -> Double
 pub fn Mat4::identity() -> Self
+pub fn Mat4::inv(Self) -> Self raise MatError
 pub fn Mat4::mul_mat(Self, Self) -> Self
 pub fn Mat4::mul_vec(Self, Vec3) -> Vec3
 pub fn Mat4::new(Double, Double, Double, Double, Double, Double, Double, Double, Double, Double, Double, Double, Double, Double, Double, Double) -> Self
@@ -147,6 +149,7 @@ pub(all) struct Vec2 {
   y : Double
 } derive(Eq, @debug.Debug)
 pub fn Vec2::add(Self, Self) -> Self
+pub fn Vec2::angle(Self, Self) -> Double
 pub fn Vec2::approx_eq(Self, Self, Double) -> Bool
 pub fn Vec2::approx_zero(Self, Double) -> Bool
 pub fn Vec2::cross(Self, Self) -> Double
@@ -154,11 +157,13 @@ pub fn Vec2::dot(Self, Self) -> Double
 pub fn Vec2::equal(Self, Self) -> Bool
 pub fn Vec2::len(Self) -> Double
 pub fn Vec2::len_sq(Self) -> Double
+pub fn Vec2::lerp(Self, Self, Double) -> Self
 pub fn Vec2::neg(Self) -> Self
 pub fn Vec2::new(Double, Double) -> Self
 pub fn Vec2::normalize(Self) -> Self
 pub fn Vec2::not_equal(Self, Self) -> Bool
 pub fn Vec2::perp(Self) -> Self
+pub fn Vec2::project(Self, Self) -> Self
 pub fn Vec2::scale(Self, Double) -> Self
 pub fn Vec2::sub(Self, Self) -> Self
 pub fn Vec2::to_repr(Self) -> @debug.Repr
@@ -170,6 +175,7 @@ pub(all) struct Vec3 {
   z : Double
 } derive(Eq, @debug.Debug)
 pub fn Vec3::add(Self, Self) -> Self
+pub fn Vec3::angle(Self, Self) -> Double
 pub fn Vec3::approx_eq(Self, Self, Double) -> Bool
 pub fn Vec3::approx_zero(Self, Double) -> Bool
 pub fn Vec3::cross(Self, Self) -> Self
@@ -177,10 +183,12 @@ pub fn Vec3::dot(Self, Self) -> Double
 pub fn Vec3::equal(Self, Self) -> Bool
 pub fn Vec3::len(Self) -> Double
 pub fn Vec3::len_sq(Self) -> Double
+pub fn Vec3::lerp(Self, Self, Double) -> Self
 pub fn Vec3::neg(Self) -> Self
 pub fn Vec3::new(Double, Double, Double) -> Self
 pub fn Vec3::normalize(Self) -> Self
 pub fn Vec3::not_equal(Self, Self) -> Bool
+pub fn Vec3::project(Self, Self) -> Self
 pub fn Vec3::scale(Self, Double) -> Self
 pub fn Vec3::sub(Self, Self) -> Self
 pub fn Vec3::to_repr(Self) -> @debug.Repr

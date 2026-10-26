@@ -21,7 +21,11 @@ pub fn Quat::identity() -> Quat {
 
 ///|
 /// 从轴角构造：q = cos(angle/2) + sin(angle/2) * axis_normalized
+/// 零轴旋转等价无旋转，返回 identity
 pub fn Quat::from_axis_angle(axis : Vec3, angle : Double) -> Quat {
+  if dbl_approx_zero(axis.len_sq(), EPS) {
+    return Quat::identity()
+  }
   let half = angle * 0.5
   let s = @math.sin(half)
   let n = axis.normalize()
@@ -82,17 +86,18 @@ pub fn Quat::normalize(self : Quat) -> Quat {
 }
 
 ///|
-/// 转换为 4x4 旋转矩阵
+/// 转换为 4x4 旋转矩阵（内部归一化，非单位四元数安全）
 pub fn Quat::to_mat4(self : Quat) -> Mat4 {
-  let xx = self.x * self.x
-  let yy = self.y * self.y
-  let zz = self.z * self.z
-  let xy = self.x * self.y
-  let xz = self.x * self.z
-  let yz = self.y * self.z
-  let wx = self.w * self.x
-  let wy = self.w * self.y
-  let wz = self.w * self.z
+  let q = self.normalize()
+  let xx = q.x * q.x
+  let yy = q.y * q.y
+  let zz = q.z * q.z
+  let xy = q.x * q.y
+  let xz = q.x * q.z
+  let yz = q.y * q.z
+  let wx = q.w * q.x
+  let wy = q.w * q.y
+  let wz = q.w * q.z
   Mat4::new(
     1.0 - 2.0 * (yy + zz),
     2.0 * (xy - wz),

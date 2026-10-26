@@ -220,9 +220,9 @@ pub fn Mat4::transpose(self : Mat4) -> Mat4 {
 }
 
 ///|
+/// 矩阵-向量乘法（仅限仿射变换 w=1，禁止用于透视矩阵；射影用法见后续 Proj 模块）
 pub fn Mat4::mul_vec(self : Mat4, v : Vec3) -> Vec3 {
   let m = self.m
-  // 齐次坐标 w=1
   {
     x: m[0] * v.x + m[1] * v.y + m[2] * v.z + m[3],
     y: m[4] * v.x + m[5] * v.y + m[6] * v.z + m[7],
@@ -242,6 +242,86 @@ pub fn Mat4::mul_mat(self : Mat4, other : Mat4) -> Mat4 {
         sum = sum + a[i * 4 + k] * b[k * 4 + j]
       }
       r[i * 4 + j] = sum
+    }
+  }
+  { m: r, }
+}
+
+///|
+/// 行列式（按第一行 Laplace 展开）
+pub fn Mat4::det(self : Mat4) -> Double {
+  let m = self.m
+  m[0] *
+  (
+    m[5] * (m[10] * m[15] - m[11] * m[14]) -
+    m[6] * (m[9] * m[15] - m[11] * m[13]) +
+    m[7] * (m[9] * m[14] - m[10] * m[13])
+  ) -
+  m[1] *
+  (
+    m[4] * (m[10] * m[15] - m[11] * m[14]) -
+    m[6] * (m[8] * m[15] - m[11] * m[12]) +
+    m[7] * (m[8] * m[14] - m[10] * m[12])
+  ) +
+  m[2] *
+  (
+    m[4] * (m[9] * m[15] - m[11] * m[13]) -
+    m[5] * (m[8] * m[15] - m[11] * m[12]) +
+    m[7] * (m[8] * m[13] - m[9] * m[12])
+  ) -
+  m[3] *
+  (
+    m[4] * (m[9] * m[14] - m[10] * m[13]) -
+    m[5] * (m[8] * m[14] - m[10] * m[12]) +
+    m[6] * (m[8] * m[13] - m[9] * m[12])
+  )
+}
+
+///|
+/// 逆矩阵（Gauss-Jordan 消元，部分选主元）
+pub fn Mat4::inv(self : Mat4) -> Mat4 raise MatError {
+  let m = self.m
+  let aug = Array::make(32, 0.0)
+  for i in 0..<4 {
+    for j in 0..<4 {
+      aug[i * 8 + j] = m[i * 4 + j]
+    }
+    aug[i * 8 + 4 + i] = 1.0
+  }
+  for col in 0..<4 {
+    let mut pivot = col
+    for row in col..<4 {
+      if dbl_abs(aug[row * 8 + col]) > dbl_abs(aug[pivot * 8 + col]) {
+        pivot = row
+      }
+    }
+    if dbl_approx_zero(aug[pivot * 8 + col], EPS) {
+      raise MatError::Singular
+    }
+    if pivot != col {
+      for j in 0..<8 {
+        let tmp = aug[col * 8 + j]
+        aug[col * 8 + j] = aug[pivot * 8 + j]
+        aug[pivot * 8 + j] = tmp
+      }
+    }
+    let inv_pivot = 1.0 / aug[col * 8 + col]
+    for j in 0..<8 {
+      aug[col * 8 + j] = aug[col * 8 + j] * inv_pivot
+    }
+    for row in 0..<4 {
+      if row != col {
+        let factor = aug[row * 8 + col]
+        for j in 0..<8 {
+          aug[row * 8 + j] = aug[row * 8 + j] - factor * aug[col * 8 + j]
+        }
+      }
+    }
+  }
+  let r = Array::make(16, 0.0)
+  for i in 0..<4 {
+    for j in 0..<4 {
+      r[i * 4 + j] = aug[i * 8 + 4 + j]
     }
   }
   { m: r, }
