@@ -115,12 +115,13 @@
 - `0.1.2.1`（2027-03）：`space/`（Proj3 射影空间 + 齐次坐标 + 无穷远点 + 弦距离度量）
 - `0.1.2.2`（2027-04）：`space/`（StereoMap 球极投影 + 复↔3D 保圆映射 + 保圆性测试）
 - `0.1.2.3`（2027-05）：`platform/crs`（CRS + WGS84/UTM/CGCS2000 椭球 + UTM 正反算 + Web Mercator + 坐标变换 + EPSG 查询）
+- `0.1.2.4`（2027-06）：`platform/data`（Feature/Layer/Dataset 要素模型 + Geometry + 属性类型系统 + CRS 变换）
 
 **阶段一完成**。核心 Trait 已冻结。
 
-本月任务包（2027-06，`0.1.2.4`）：
-- `platform/data`：Feature/Layer/Dataset 要素模型（Feature = Geometry + Attributes + CRS）
-- 验收：要素模型测试
+本月任务包（2027-07，`0.1.2.5`）：
+- `space/`：Raster2 栅格空间 + 矢栅转换
+- 验收：矢栅互转测试
 
 后续月度任务见迭代详表。
 

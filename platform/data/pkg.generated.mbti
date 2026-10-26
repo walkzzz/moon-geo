@@ -1,0 +1,101 @@
+// Generated using `moon info`, DON'T EDIT IT
+package "walkzzz/moon-geo/platform/data"
+
+import {
+  "moonbitlang/core/debug",
+  "walkzzz/moon-geo/platform/crs",
+  "walkzzz/moon-geo/util",
+}
+
+// Values
+pub fn field_type_match(FieldType, FieldValue) -> Bool
+
+// Errors
+
+// Types and methods
+pub struct Dataset {
+  name : String
+  layers : Array[Layer]
+  metadata : Array[(String, String)]
+}
+pub fn Dataset::add_layer(Self, Layer) -> Self
+pub fn Dataset::get_layer(Self, String) -> Layer?
+pub fn Dataset::get_layer_by_index(Self, Int32) -> Layer?
+pub fn Dataset::get_meta(Self, String) -> String?
+pub fn Dataset::layer_count(Self) -> Int32
+pub fn Dataset::metadata(Self) -> Array[(String, String)]
+pub fn Dataset::name(Self) -> String
+pub fn Dataset::new(String) -> Self
+pub fn Dataset::set_meta(Self, String, String) -> Self
+pub fn Dataset::total_features(Self) -> Int32
+
+pub struct Feature {
+  geometry : Geometry?
+  attributes : Array[(String, FieldValue)]
+  crs : @crs.Crs
+}
+pub fn Feature::attr_count(Self) -> Int32
+pub fn Feature::crs(Self) -> @crs.Crs
+pub fn Feature::field_names(Self) -> Array[String]
+pub fn Feature::geometry(Self) -> Geometry?
+pub fn Feature::get(Self, String) -> FieldValue?
+pub fn Feature::has_geometry(Self) -> Bool
+pub fn Feature::new(@crs.Crs) -> Self
+pub fn Feature::set(Self, String, FieldValue) -> Self
+pub fn Feature::transform_crs(Self, @crs.Crs) -> Self raise @util.GeoError
+pub fn Feature::with_geometry(Self, Geometry) -> Self
+
+pub enum FieldType {
+  Integer
+  Double
+  String
+  Boolean
+} derive(Eq, @debug.Debug)
+
+pub enum FieldValue {
+  IntVal(Int32)
+  DoubleVal(Double)
+  StringVal(String)
+  BoolVal(Bool)
+  NullVal
+} derive(Eq, @debug.Debug)
+pub fn FieldValue::as_bool(Self) -> Bool?
+pub fn FieldValue::as_double(Self) -> Double?
+pub fn FieldValue::as_int(Self) -> Int32?
+pub fn FieldValue::as_string(Self) -> String?
+pub fn FieldValue::is_null(Self) -> Bool
+pub fn FieldValue::type_of(Self) -> FieldType
+
+pub enum Geometry {
+  Point(Double, Double)
+  PointZ(Double, Double, Double)
+  LineString(Array[(Double, Double)])
+  Polygon(Array[(Double, Double)], Array[Array[(Double, Double)]])
+  MultiPoint(Array[(Double, Double)])
+  MultiLineString(Array[Array[(Double, Double)]])
+  MultiPolygon(Array[(Array[(Double, Double)], Array[Array[(Double, Double)]])])
+}
+pub fn Geometry::coord_count(Self) -> Int32
+pub fn Geometry::type_name(Self) -> String
+
+pub struct Layer {
+  name : String
+  features : Array[Feature]
+  schema : Array[(String, FieldType)]
+  crs : @crs.Crs
+}
+pub fn Layer::add_feature(Self, Feature) -> Self
+pub fn Layer::add_field(Self, String, FieldType) -> Self
+pub fn Layer::crs(Self) -> @crs.Crs
+pub fn Layer::feature_count(Self) -> Int32
+pub fn Layer::field_count(Self) -> Int32
+pub fn Layer::filter(Self, String, FieldValue) -> Self
+pub fn Layer::get_feature(Self, Int32) -> Feature?
+pub fn Layer::name(Self) -> String
+pub fn Layer::new(String, @crs.Crs) -> Self
+pub fn Layer::schema(Self) -> Array[(String, FieldType)]
+pub fn Layer::transform_crs(Self, @crs.Crs) -> Self raise @util.GeoError
+
+// Type aliases
+
+// Traits
