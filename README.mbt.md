@@ -67,8 +67,9 @@ util(-1) → atop(0) → space(1) → alg(2) → bv(3) → brep(4) → algo(5) �
 | `0.1.2.8` | draw style + canvas2 + canvas3 | ✅ |
 | `0.1.2.9` | platform/io geojson 读写 + JSON 解析器 | ✅ |
 | `0.1.2.10` | platform/mesh IndexedMesh + platform/io STL 读写 | ✅ |
+| `0.1.2.11` | 复射影大一统验证 + 阶段二收尾 | ✅ |
 
-测试：590 通过 · CRAP：490 · 变异分数：100%
+测试：617 通过 · CRAP：490 · 变异分数：100%
 
 > **核心 Trait 已冻结**（0.1.1.12）：Geo/Space/Bv/Topo 接口永久锁定，新增能力只扩展不修改。详见 [ADR-005](docs/adr/005-core-trait-freeze.md)
 

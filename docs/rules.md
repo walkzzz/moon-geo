@@ -87,8 +87,9 @@ README 中英文，默认中文。当前 `README.mbt.md` 为项目 README。
 | `0.1.2.8` | draw style + canvas2 + canvas3 | ✅ |
 | `0.1.2.9` | platform/io geojson 读写 + JSON 解析器 | ✅ |
 | `0.1.2.10` | platform/mesh IndexedMesh + platform/io STL 读写 | ✅ |
+| `0.1.2.11` | 复射影大一统验证 + 阶段二收尾 | ✅ |
 
-测试：590 通过 · CRAP：490 · 变异分数：100%
+测试：617 通过 · CRAP：490 · 变异分数：100%
 
 ---
 
