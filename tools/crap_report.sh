@@ -3,7 +3,7 @@
 # CRAP(m) = comp^2 + comp * (1 - cov), cov=1.0 → CRAP = comp^2
 cd "$(dirname "$0")/.." || exit 1
 
-echo "=== CRAP 指标报告 (util + atop + space + alg, 0.1.1.7) ==="
+echo "=== CRAP 指标报告 (util + atop + space + alg, 0.1.1.8) ==="
 echo "公式: CRAP = comp^2 (cov=1.0, 测试全绿)"
 echo "注: 静态表，收尾时需 diff 本表函数列表 vs 实际 pub fn 列表（moon info）以同步"
 echo ""

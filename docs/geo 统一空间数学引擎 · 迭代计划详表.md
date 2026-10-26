@@ -50,7 +50,7 @@
 | 06 | `0.1.1.5` | alg Geo Trait + Pt2/Pt3 + Line2 | 图元核心抽象 + 点/直线 | Geo Trait 评审 ✅ |
 | 07 | `0.1.1.6` | alg Circle + Conic2 + discriminant | 圆/圆锥曲线/判别式 | 圆锥曲线分类测试 ✅ |
 | 08 | `0.1.1.7` | alg Plane3 + Sphere + Quad3 + power | 平面/球/二次曲面/幂定理 | 幂定理大一统测试 ✅ |
-| 09 | `0.1.1.8` | alg intersect + xform Transform | 代数求交 + 变换体系 | 求交基准通过 |
+| 09 | `0.1.1.8` | alg intersect + xform Transform | 代数求交 + 变换体系 | 求交基准通过 ✅ |
 | 10 | `0.1.1.9` | bv Bv Trait + Aabb2/Aabb3 + SphereBv + BVH | 包围体 + 层级树 | 碰撞加速测试 |
 | 11 | `0.1.1.10` | brep Topo Trait + Vtx/Edge/Loop + HalfEdge | 拓扑核心 + 半边 | 邻接关系测试 |
 | 12 | `0.1.1.11` | brep Face/Shell/Solid + check + repair + 顶层 API | 完整 BRep + 检查修复 + 统一入口 | **核心 Trait 冻结**；圆幂/二次曲面大一统验证 |

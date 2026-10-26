@@ -79,6 +79,9 @@ run_mutation "alg/conic2.mbt" "self.b * self.b - 4.0 * self.a * self.c" "self.b 
 run_mutation "alg/sphere.mbt" "dx * dx + dy * dy + dz * dz - self.r * self.r" "dx * dx + dy * dy + dz * dz + self.r * self.r" "Sphere::power: - -> +"
 run_mutation "alg/sphere.mbt" "4.0 / 3.0 * 3.14159265358979323846 * self.r * self.r * self.r" "4.0 / 3.0 * 3.14159265358979323846 * self.r * self.r + self.r" "Sphere::volume: * -> +"
 
+# === alg/intersect.mbt 变异 ===
+run_mutation "alg/intersect.mbt" "2.0 * b * d - 2.0 * a * a * cy" "2.0 * b * d + 2.0 * a * a * cy" "intersect_line_circle qb: - -> +"
+
 ms=$(python3 -c "print(f'{$killed/$total*100:.1f}')" 2>/dev/null || echo "N/A")
 echo ""
 echo "变异分数 MS = $killed/$total = $ms%"

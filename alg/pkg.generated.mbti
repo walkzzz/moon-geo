@@ -3,9 +3,13 @@ package "walkzzz/moon-geo/alg"
 
 import {
   "walkzzz/moon-geo/space",
+  "walkzzz/moon-geo/util",
 }
 
 // Values
+pub fn intersect_circle_circle(Circle, Circle) -> Array[Pt2]
+
+pub fn intersect_line_circle(Line2, Circle) -> Array[Pt2]
 
 // Errors
 
@@ -168,6 +172,30 @@ pub fn Sphere::r(Self) -> Double
 pub fn Sphere::surface_area(Self) -> Double
 pub fn Sphere::tangent_length(Self, Pt3) -> Double
 pub fn Sphere::volume(Self) -> Double
+
+pub struct Transform2 {
+  m : @util.Mat3
+}
+pub fn Transform2::apply(Self, Pt2) -> Pt2
+pub fn Transform2::compose(Self, Self) -> Self
+pub fn Transform2::from_matrix(@util.Mat3) -> Self
+pub fn Transform2::identity() -> Self
+pub fn Transform2::rotation(Double) -> Self
+pub fn Transform2::scaling(Double, Double) -> Self
+pub fn Transform2::translation(Double, Double) -> Self
+
+pub struct Transform3 {
+  m : @util.Mat4
+}
+pub fn Transform3::apply(Self, Pt3) -> Pt3
+pub fn Transform3::compose(Self, Self) -> Self
+pub fn Transform3::from_matrix(@util.Mat4) -> Self
+pub fn Transform3::identity() -> Self
+pub fn Transform3::rotation_x(Double) -> Self
+pub fn Transform3::rotation_y(Double) -> Self
+pub fn Transform3::rotation_z(Double) -> Self
+pub fn Transform3::scaling(Double, Double, Double) -> Self
+pub fn Transform3::translation(Double, Double, Double) -> Self
 
 // Type aliases
 
