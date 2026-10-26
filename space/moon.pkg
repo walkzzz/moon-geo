@@ -1,7 +1,8 @@
 // space 包：空间抽象层（第1层）
-// 依赖：util（EPS、dbl_approx_eq，测试用）、atop（Dim/TopologicalSpace/MetricSpace/Manifold）
+// 依赖：util（EPS、dbl_approx_eq，测试用）、atop（Dim/TopologicalSpace/MetricSpace/Manifold）、math（三角函数）
 
 import {
   "walkzzz/moon-geo/util",
   "walkzzz/moon-geo/atop",
+  "moonbitlang/core/math",
 }

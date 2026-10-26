@@ -3,6 +3,7 @@ package "walkzzz/moon-geo/space"
 
 import {
   "walkzzz/moon-geo/atop",
+  "walkzzz/moon-geo/util",
 }
 
 // Values
@@ -10,6 +11,27 @@ import {
 // Errors
 
 // Types and methods
+pub struct Complex2 {
+  re : Double
+  im : Double
+}
+pub fn Complex2::add(Self, Self) -> Self
+pub fn Complex2::argument(Self) -> Double
+pub fn Complex2::conj(Self) -> Self
+pub fn Complex2::from_cpx(@util.Cpx) -> Self
+pub fn Complex2::from_real(Double) -> Self
+pub fn Complex2::im(Self) -> Double
+pub fn Complex2::modulus(Self) -> Double
+pub fn Complex2::mul(Self, Self) -> Self
+pub fn Complex2::new(Double, Double) -> Self
+pub fn Complex2::norm_sq(Self) -> Double
+pub fn Complex2::re(Self) -> Double
+pub fn Complex2::rotate(Self, Double) -> Self
+pub fn Complex2::scale(Self, Double) -> Self
+pub fn Complex2::space_kind(Self) -> SpaceKind
+pub fn Complex2::sub(Self, Self) -> Self
+pub fn Complex2::to_cpx(Self) -> @util.Cpx
+
 pub struct Embed2In3 {
   z_offset : Double
 }
