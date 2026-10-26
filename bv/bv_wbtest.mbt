@@ -217,3 +217,22 @@ test "E2E: BVH query finds overlapping leaves" {
     None => assert_true(false)
   }
 }
+
+///|
+test "FREEZE: Bv Trait interface stability" {
+  let aabb2 = Aabb2::new(0.0, 0.0, 1.0, 1.0)
+  let aabb3 = Aabb3::new(0.0, 0.0, 0.0, 1.0, 1.0, 1.0)
+  let sphere_bv = SphereBv::new(0.0, 0.0, 0.0, 1.0)
+  let _ = Bv::bv_volume(aabb2)
+  let _ = Bv::bv_is_empty(aabb2)
+  let _ = Bv::bv_volume(aabb3)
+  let _ = Bv::bv_is_empty(aabb3)
+  let _ = Bv::bv_volume(sphere_bv)
+  let _ = Bv::bv_is_empty(sphere_bv)
+  let _ = aabb2.bv_volume()
+  let _ = aabb2.bv_is_empty()
+  let _ = aabb3.bv_volume()
+  let _ = aabb3.bv_is_empty()
+  let _ = sphere_bv.bv_volume()
+  let _ = sphere_bv.bv_is_empty()
+}

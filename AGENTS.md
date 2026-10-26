@@ -110,10 +110,13 @@
 - `0.1.1.9`（2026-10）：`bv/`（Bv Trait + Aabb2/Aabb3 + SphereBv + BVH）
 - `0.1.1.10`（2026-11）：`brep/`（Topo Trait + Vtx/HEdge/Face + HEMesh 半边数据结构）
 - `0.1.1.11`（2026-12）：`brep/`（Shell/Solid + check + repair + BRep 顶层 API + 四面体构造）
+- `0.1.1.12`（2027-01）：核心 Trait 冻结（Geo/Space/Bv/Topo）+ ADR-005 + 稳定性测试
 
-本月任务包（2027-01，`0.1.1.12`）：
-- 核心 Trait 冻结：Geo/Space/Bv/Topo 接口锁定，新增能力只扩展不修改
-- 验收：冻结后全量回归 + 接口稳定性校验
+**阶段一完成**。核心 Trait 已冻结，进入阶段二·能力完善（`0.1.2.z`）。
+
+本月任务包（2027-02，`0.1.2.0`）：
+- `space/`：Complex2 复空间
+- 验收：复平面几何 + 复空间单测
 
 后续月度任务见迭代详表。
 

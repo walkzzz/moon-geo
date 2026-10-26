@@ -52,3 +52,20 @@ test "Euclid2 coords" {
   assert_true(@util.dbl_approx_eq(p.x(), 3.0, @util.EPS))
   assert_true(@util.dbl_approx_eq(p.y(), 5.0, @util.EPS))
 }
+
+///|
+test "FREEZE: Space Trait interface stability" {
+  let p2 = Euclid2::new(1.0, 2.0)
+  let p3 = Euclid3::new(1.0, 2.0, 3.0)
+  // Space Trait 自身方法
+  let _ = Space::space_kind(p2)
+  let _ = Space::space_kind(p3)
+  // 继承的 MetricSpace + Dim + TopologicalSpace 方法
+  let _ = @atop.MetricSpace::distance(p2, Euclid2::new(0.0, 0.0))
+  let _ = @atop.Dim::dim(p2)
+  let _ = @atop.MetricSpace::distance(p3, Euclid3::new(0.0, 0.0, 0.0))
+  let _ = @atop.Dim::dim(p3)
+  // pub extend 点语法
+  let _ = p2.space_kind()
+  let _ = p3.space_kind()
+}

@@ -2,9 +2,10 @@
 // 第3层 bv，依赖 util, alg
 // Bv Trait：统一包围体接口（体积 + 空判定）
 // 具体类型（Aabb2/Aabb3/SphereBv）各自提供 contains/intersect/union 等类型安全方法
+// ⚠️ 0.1.1.12 冻结：接口永久锁定，新增能力只扩展不修改（见 ADR-005）
 
 ///|
-/// 包围体 Trait
+/// 包围体 Trait（0.1.1.12 冻结）
 pub(open) trait Bv {
   /// 体积（2D 为面积，3D 为体积）
   fn bv_volume(self : Self) -> Double

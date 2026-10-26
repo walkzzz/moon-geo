@@ -109,4 +109,20 @@ impl Topo for BRep with fn topo_is_manifold(self) {
 }
 
 ///|
-pub extend BRep with Topo::{topo_dim, topo_is_closed, topo_is_manifold}
+impl Topo for BRep with fn topo_is_oriented(self) {
+  self.solid.mesh.is_oriented()
+}
+
+///|
+impl Topo for BRep with fn topo_is_connected(self) {
+  self.solid.mesh.is_connected()
+}
+
+///|
+pub extend BRep with Topo::{
+  topo_dim,
+  topo_is_closed,
+  topo_is_manifold,
+  topo_is_oriented,
+  topo_is_connected,
+}

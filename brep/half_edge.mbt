@@ -251,4 +251,20 @@ impl Topo for HEMesh with fn topo_is_manifold(self) {
 }
 
 ///|
-pub extend HEMesh with Topo::{topo_dim, topo_is_closed, topo_is_manifold}
+impl Topo for HEMesh with fn topo_is_oriented(self) {
+  self.is_oriented()
+}
+
+///|
+impl Topo for HEMesh with fn topo_is_connected(self) {
+  self.is_connected()
+}
+
+///|
+pub extend HEMesh with Topo::{
+  topo_dim,
+  topo_is_closed,
+  topo_is_manifold,
+  topo_is_oriented,
+  topo_is_connected,
+}

@@ -117,4 +117,20 @@ impl Topo for Solid with fn topo_is_manifold(self) {
 }
 
 ///|
-pub extend Solid with Topo::{topo_dim, topo_is_closed, topo_is_manifold}
+impl Topo for Solid with fn topo_is_oriented(self) {
+  self.mesh.is_oriented()
+}
+
+///|
+impl Topo for Solid with fn topo_is_connected(self) {
+  self.mesh.is_connected()
+}
+
+///|
+pub extend Solid with Topo::{
+  topo_dim,
+  topo_is_closed,
+  topo_is_manifold,
+  topo_is_oriented,
+  topo_is_connected,
+}

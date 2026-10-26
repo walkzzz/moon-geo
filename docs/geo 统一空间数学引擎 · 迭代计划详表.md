@@ -54,7 +54,7 @@
 | 10 | `0.1.1.9` | bv Bv Trait + Aabb2/Aabb3 + SphereBv + BVH | 包围体 + 层级树 | 碰撞加速测试 ✅ |
 | 11 | `0.1.1.10` | brep Topo Trait + Vtx/Edge/Loop + HalfEdge | 拓扑核心 + 半边 | 邻接关系测试 ✅ |
 | 12 | `0.1.1.11` | brep Face/Shell/Solid + check + repair + 顶层 API | 完整 BRep + 检查修复 + 统一入口 | 圆幂/二次曲面大一统验证 ✅ |
-| 13 | `0.1.1.12` | 核心 Trait 冻结 | Geo/Space/Bv/Topo 接口永久锁定 | 冻结后全量回归 + 接口稳定性校验 |
+| 13 | `0.1.1.12` | 核心 Trait 冻结 | Geo/Space/Bv/Topo 接口永久锁定 | 冻结后全量回归 + 接口稳定性校验 ✅ |
 
 ### 2027 年（Y2，阶段二·能力完善，`0.1.2.z`）
 

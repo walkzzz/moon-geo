@@ -28,7 +28,9 @@ pub fn BRep::solid(Self) -> Solid
 pub fn BRep::tetrahedron(@alg.Pt3, @alg.Pt3, @alg.Pt3, @alg.Pt3) -> Self
 pub fn BRep::topo_dim(Self) -> TopoDim
 pub fn BRep::topo_is_closed(Self) -> Bool
+pub fn BRep::topo_is_connected(Self) -> Bool
 pub fn BRep::topo_is_manifold(Self) -> Bool
+pub fn BRep::topo_is_oriented(Self) -> Bool
 pub fn BRep::vertex_count(Self) -> Int32
 
 pub struct CheckResult {
@@ -70,7 +72,9 @@ pub fn HEMesh::is_connected(Self) -> Bool
 pub fn HEMesh::is_oriented(Self) -> Bool
 pub fn HEMesh::topo_dim(Self) -> TopoDim
 pub fn HEMesh::topo_is_closed(Self) -> Bool
+pub fn HEMesh::topo_is_connected(Self) -> Bool
 pub fn HEMesh::topo_is_manifold(Self) -> Bool
+pub fn HEMesh::topo_is_oriented(Self) -> Bool
 pub fn HEMesh::vertex(Self, Int32) -> Vtx
 pub fn HEMesh::vertex_count(Self) -> Int32
 pub fn HEMesh::vertex_half_edges(Self, Int32) -> Array[Int32]
@@ -106,7 +110,9 @@ pub fn Solid::outer(Self) -> Shell
 pub fn Solid::tetrahedron(@alg.Pt3, @alg.Pt3, @alg.Pt3, @alg.Pt3) -> Self
 pub fn Solid::topo_dim(Self) -> TopoDim
 pub fn Solid::topo_is_closed(Self) -> Bool
+pub fn Solid::topo_is_connected(Self) -> Bool
 pub fn Solid::topo_is_manifold(Self) -> Bool
+pub fn Solid::topo_is_oriented(Self) -> Bool
 
 pub enum TopoDim {
   Vertex
@@ -129,4 +135,6 @@ pub(open) trait Topo {
   fn topo_dim(Self) -> TopoDim
   fn topo_is_closed(Self) -> Bool
   fn topo_is_manifold(Self) -> Bool
+  fn topo_is_oriented(Self) -> Bool
+  fn topo_is_connected(Self) -> Bool
 }

@@ -533,3 +533,121 @@ test "E2E: tetrahedron -> check -> repair diagnostics -> all valid" {
   let boundary = brep.find_boundary_half_edges()
   assert_eq(boundary.length(), 0)
 }
+
+///|
+test "Topo trait topo_is_oriented HEMesh" {
+  let p0 = @alg.Pt3::new(0.0, 0.0, 0.0)
+  let p1 = @alg.Pt3::new(1.0, 0.0, 0.0)
+  let p2 = @alg.Pt3::new(0.0, 1.0, 0.0)
+  let mesh = HEMesh::from_triangle(p0, p1, p2)
+  assert_true(Topo::topo_is_oriented(mesh))
+  assert_true(mesh.topo_is_oriented())
+}
+
+///|
+test "Topo trait topo_is_connected HEMesh" {
+  let p0 = @alg.Pt3::new(0.0, 0.0, 0.0)
+  let p1 = @alg.Pt3::new(1.0, 0.0, 0.0)
+  let p2 = @alg.Pt3::new(0.0, 1.0, 0.0)
+  let mesh = HEMesh::from_triangle(p0, p1, p2)
+  assert_true(Topo::topo_is_connected(mesh))
+  assert_true(mesh.topo_is_connected())
+}
+
+///|
+test "Topo trait topo_is_oriented Solid" {
+  let v0 = @alg.Pt3::new(0.0, 0.0, 0.0)
+  let v1 = @alg.Pt3::new(1.0, 0.0, 0.0)
+  let v2 = @alg.Pt3::new(0.0, 1.0, 0.0)
+  let v3 = @alg.Pt3::new(0.0, 0.0, 1.0)
+  let solid = Solid::tetrahedron(v0, v1, v2, v3)
+  assert_true(Topo::topo_is_oriented(solid))
+  assert_true(solid.topo_is_oriented())
+}
+
+///|
+test "Topo trait topo_is_connected Solid" {
+  let v0 = @alg.Pt3::new(0.0, 0.0, 0.0)
+  let v1 = @alg.Pt3::new(1.0, 0.0, 0.0)
+  let v2 = @alg.Pt3::new(0.0, 1.0, 0.0)
+  let v3 = @alg.Pt3::new(0.0, 0.0, 1.0)
+  let solid = Solid::tetrahedron(v0, v1, v2, v3)
+  assert_true(Topo::topo_is_connected(solid))
+  assert_true(solid.topo_is_connected())
+}
+
+///|
+test "Topo trait topo_is_oriented BRep" {
+  let v0 = @alg.Pt3::new(0.0, 0.0, 0.0)
+  let v1 = @alg.Pt3::new(1.0, 0.0, 0.0)
+  let v2 = @alg.Pt3::new(0.0, 1.0, 0.0)
+  let v3 = @alg.Pt3::new(0.0, 0.0, 1.0)
+  let brep = BRep::tetrahedron(v0, v1, v2, v3)
+  assert_true(Topo::topo_is_oriented(brep))
+  assert_true(brep.topo_is_oriented())
+}
+
+///|
+test "Topo trait topo_is_connected BRep" {
+  let v0 = @alg.Pt3::new(0.0, 0.0, 0.0)
+  let v1 = @alg.Pt3::new(1.0, 0.0, 0.0)
+  let v2 = @alg.Pt3::new(0.0, 1.0, 0.0)
+  let v3 = @alg.Pt3::new(0.0, 0.0, 1.0)
+  let brep = BRep::tetrahedron(v0, v1, v2, v3)
+  assert_true(Topo::topo_is_connected(brep))
+  assert_true(brep.topo_is_connected())
+}
+
+///|
+test "FREEZE: Topo Trait interface stability" {
+  let v0 = @alg.Pt3::new(0.0, 0.0, 0.0)
+  let v1 = @alg.Pt3::new(1.0, 0.0, 0.0)
+  let v2 = @alg.Pt3::new(0.0, 1.0, 0.0)
+  let v3 = @alg.Pt3::new(0.0, 0.0, 1.0)
+  let mesh = HEMesh::from_triangle(v0, v1, v2)
+  let solid = Solid::tetrahedron(v0, v1, v2, v3)
+  let brep = BRep::tetrahedron(v0, v1, v2, v3)
+  // 调用全部 5 个 Topo Trait 方法（签名稳定性编译检查）
+  let _ = Topo::topo_dim(mesh)
+  let _ = Topo::topo_is_closed(mesh)
+  let _ = Topo::topo_is_manifold(mesh)
+  let _ = Topo::topo_is_oriented(mesh)
+  let _ = Topo::topo_is_connected(mesh)
+  let _ = Topo::topo_dim(solid)
+  let _ = Topo::topo_is_closed(solid)
+  let _ = Topo::topo_is_manifold(solid)
+  let _ = Topo::topo_is_oriented(solid)
+  let _ = Topo::topo_is_connected(solid)
+  let _ = Topo::topo_dim(brep)
+  let _ = Topo::topo_is_closed(brep)
+  let _ = Topo::topo_is_manifold(brep)
+  let _ = Topo::topo_is_oriented(brep)
+  let _ = Topo::topo_is_connected(brep)
+  // pub extend 点语法稳定性
+  let _ = mesh.topo_dim()
+  let _ = mesh.topo_is_closed()
+  let _ = mesh.topo_is_manifold()
+  let _ = mesh.topo_is_oriented()
+  let _ = mesh.topo_is_connected()
+  let _ = solid.topo_dim()
+  let _ = solid.topo_is_closed()
+  let _ = solid.topo_is_manifold()
+  let _ = solid.topo_is_oriented()
+  let _ = solid.topo_is_connected()
+  let _ = brep.topo_dim()
+  let _ = brep.topo_is_closed()
+  let _ = brep.topo_is_manifold()
+  let _ = brep.topo_is_oriented()
+  let _ = brep.topo_is_connected()
+}
+
+///|
+test "FREEZE: Geo Trait interface stability" {
+  let p2 = @alg.Pt2::new(1.0, 2.0)
+  let p3 = @alg.Pt3::new(1.0, 2.0, 3.0)
+  // pub extend 点语法稳定性（跨包可见）
+  let _ = p2.geo_dim()
+  let _ = p2.is_degenerate()
+  let _ = p3.geo_dim()
+  let _ = p3.is_degenerate()
+}
