@@ -82,8 +82,9 @@ README 中英文，默认中文。当前 `README.mbt.md` 为项目 README。
 | `0.1.2.3` | platform/crs CRS + WGS84/UTM/CGCS2000 + 投影变换 | ✅ |
 | `0.1.2.4` | platform/data Feature/Layer/Dataset 要素模型 | ✅ |
 | `0.1.2.5` | space Raster2 栅格空间 + 矢栅转换 | ✅ |
+| `0.1.2.6` | algo boolean 布尔运算（交/并/差） | ✅ |
 
-测试：406 通过 · CRAP：490 · 变异分数：100%
+测试：431 通过 · CRAP：490 · 变异分数：100%
 
 ---
 

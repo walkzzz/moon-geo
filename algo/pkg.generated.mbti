@@ -1,0 +1,41 @@
+// Generated using `moon info`, DON'T EDIT IT
+package "walkzzz/moon-geo/algo"
+
+// Values
+pub fn clip_polygon(Array[(Double, Double)], Array[(Double, Double)]) -> Array[(Double, Double)]
+
+pub fn ensure_counterclockwise(Array[(Double, Double)]) -> Array[(Double, Double)]
+
+pub fn intersect_convex(Array[(Double, Double)], Array[(Double, Double)]) -> Array[(Double, Double)]
+
+pub fn is_counterclockwise(Array[(Double, Double)]) -> Bool
+
+pub fn polygon_area(Array[(Double, Double)]) -> Double
+
+pub fn polygon_centroid(Array[(Double, Double)]) -> (Double, Double)
+
+pub fn polygon_signed_area(Array[(Double, Double)]) -> Double
+
+// Errors
+
+// Types and methods
+pub struct Rect {
+  min_x : Double
+  min_y : Double
+  max_x : Double
+  max_y : Double
+}
+pub fn Rect::area(Self) -> Double
+pub fn Rect::center(Self) -> (Double, Double)
+pub fn Rect::contains(Self, Double, Double) -> Bool
+pub fn Rect::height(Self) -> Double
+pub fn Rect::intersect(Self, Self) -> Self?
+pub fn Rect::intersects(Self, Self) -> Bool
+pub fn Rect::new(Double, Double, Double, Double) -> Self
+pub fn Rect::to_polygon(Self) -> Array[(Double, Double)]
+pub fn Rect::union(Self, Self) -> Self
+pub fn Rect::width(Self) -> Double
+
+// Type aliases
+
+// Traits
