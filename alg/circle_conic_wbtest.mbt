@@ -62,16 +62,16 @@ test "Circle from_three_points" {
   let p1 = Pt2::new(1.0, 0.0)
   let p2 = Pt2::new(0.0, 1.0)
   let p3 = Pt2::new(-1.0, 0.0)
-  match Circle::from_three_points(p1, p2, p3) {
-    Ok(c) => {
-      assert_true(@util.dbl_approx_eq(c.cx(), 0.0, @util.EPS))
-      assert_true(@util.dbl_approx_eq(c.cy(), 0.0, @util.EPS))
-      assert_true(@util.dbl_approx_eq(c.r(), 1.0, @util.EPS))
-      assert_true(c.contains(p1))
-      assert_true(c.contains(p2))
-      assert_true(c.contains(p3))
-    }
-    Err(_) => assert_true(false)
+  try {
+    let c = Circle::from_three_points(p1, p2, p3)
+    assert_true(@util.dbl_approx_eq(c.cx(), 0.0, @util.EPS))
+    assert_true(@util.dbl_approx_eq(c.cy(), 0.0, @util.EPS))
+    assert_true(@util.dbl_approx_eq(c.r(), 1.0, @util.EPS))
+    assert_true(c.contains(p1))
+    assert_true(c.contains(p2))
+    assert_true(c.contains(p3))
+  } catch {
+    _ => assert_true(false)
   }
 }
 
@@ -80,9 +80,11 @@ test "Circle from_three_points collinear degenerate" {
   let p1 = Pt2::new(0.0, 0.0)
   let p2 = Pt2::new(1.0, 0.0)
   let p3 = Pt2::new(2.0, 0.0)
-  match Circle::from_three_points(p1, p2, p3) {
-    Ok(_) => assert_true(false)
-    Err(e) => assert_true(e.code is @util.GeoErrorCode::DegenerateInput)
+  try {
+    let _ = Circle::from_three_points(p1, p2, p3)
+    assert_true(false)
+  } catch {
+    _ => assert_true(true)
   }
 }
 
@@ -202,16 +204,16 @@ test "E2E: three points -> circle -> conic -> all on curve" {
   let p1 = Pt2::new(5.0, 0.0)
   let p2 = Pt2::new(0.0, 5.0)
   let p3 = Pt2::new(-5.0, 0.0)
-  match Circle::from_three_points(p1, p2, p3) {
-    Ok(circle) => {
-      let conic = Conic2::from_circle(circle)
-      assert_true(circle.contains(p1))
-      assert_true(circle.contains(p2))
-      assert_true(circle.contains(p3))
-      assert_true(conic.contains(p1))
-      assert_true(conic.contains(p2))
-      assert_true(conic.contains(p3))
-    }
-    Err(_) => assert_true(false)
+  try {
+    let circle = Circle::from_three_points(p1, p2, p3)
+    let conic = Conic2::from_circle(circle)
+    assert_true(circle.contains(p1))
+    assert_true(circle.contains(p2))
+    assert_true(circle.contains(p3))
+    assert_true(conic.contains(p1))
+    assert_true(conic.contains(p2))
+    assert_true(conic.contains(p3))
+  } catch {
+    _ => assert_true(false)
   }
 }

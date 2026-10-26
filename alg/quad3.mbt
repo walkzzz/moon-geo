@@ -113,3 +113,6 @@ impl Geo for Quad3 with fn is_degenerate(self) {
   @util.dbl_approx_eq(self.e, 0.0, @util.EPS) &&
   @util.dbl_approx_eq(self.f, 0.0, @util.EPS)
 }
+
+///|
+pub extend Quad3 with Geo::{geo_dim, is_degenerate}

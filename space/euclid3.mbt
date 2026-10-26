@@ -59,3 +59,6 @@ impl @atop.MetricSpace for Euclid3 with fn distance(self, other) {
 impl Space for Euclid3 with fn space_kind(_) {
   SpaceKind::Euclidean3
 }
+
+///|
+pub extend Euclid3 with Space::{space_kind}

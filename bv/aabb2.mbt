@@ -96,3 +96,6 @@ impl Bv for Aabb2 with fn bv_volume(self) {
 impl Bv for Aabb2 with fn bv_is_empty(self) {
   self.max_x < self.min_x || self.max_y < self.min_y
 }
+
+///|
+pub extend Aabb2 with Bv::{bv_volume, bv_is_empty}

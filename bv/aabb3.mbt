@@ -121,3 +121,6 @@ impl Bv for Aabb3 with fn bv_volume(self) {
 impl Bv for Aabb3 with fn bv_is_empty(self) {
   self.max_x < self.min_x || self.max_y < self.min_y || self.max_z < self.min_z
 }
+
+///|
+pub extend Aabb3 with Bv::{bv_volume, bv_is_empty}

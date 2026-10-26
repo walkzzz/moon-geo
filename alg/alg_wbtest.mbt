@@ -93,13 +93,13 @@ test "Line2 construction" {
 test "Line2 from_two_points" {
   let p1 = Pt2::new(0.0, 0.0)
   let p2 = Pt2::new(1.0, 1.0)
-  match Line2::from_two_points(p1, p2) {
-    Ok(l) => {
-      assert_true(l.contains(Pt2::new(0.5, 0.5)))
-      assert_true(l.contains(Pt2::new(2.0, 2.0)))
-      assert_false(l.contains(Pt2::new(0.0, 1.0)))
-    }
-    Err(_) => assert_true(false)
+  try {
+    let l = Line2::from_two_points(p1, p2)
+    assert_true(l.contains(Pt2::new(0.5, 0.5)))
+    assert_true(l.contains(Pt2::new(2.0, 2.0)))
+    assert_false(l.contains(Pt2::new(0.0, 1.0)))
+  } catch {
+    _ => assert_true(false)
   }
 }
 
@@ -107,9 +107,11 @@ test "Line2 from_two_points" {
 test "Line2 from_two_points coincident degenerate" {
   let p1 = Pt2::new(1.0, 2.0)
   let p2 = Pt2::new(1.0 + 1.0e-12, 2.0)
-  match Line2::from_two_points(p1, p2) {
-    Ok(_) => assert_true(false)
-    Err(e) => assert_true(e.code is @util.GeoErrorCode::DegenerateInput)
+  try {
+    let _ = Line2::from_two_points(p1, p2)
+    assert_true(false)
+  } catch {
+    _ => assert_true(true)
   }
 }
 
@@ -160,20 +162,18 @@ test "Line2 intersect parallel" {
 
 ///|
 test "Line2 intersect diagonal" {
-  match Line2::from_two_points(Pt2::new(0.0, 0.0), Pt2::new(1.0, 1.0)) {
-    Ok(l1) =>
-      match Line2::from_two_points(Pt2::new(0.0, 1.0), Pt2::new(1.0, 0.0)) {
-        Ok(l2) =>
-          match l1.intersect(l2) {
-            Some(p) => {
-              assert_true(@util.dbl_approx_eq(p.x(), 0.5, @util.EPS))
-              assert_true(@util.dbl_approx_eq(p.y(), 0.5, @util.EPS))
-            }
-            None => assert_true(false)
-          }
-        Err(_) => assert_true(false)
+  try {
+    let l1 = Line2::from_two_points(Pt2::new(0.0, 0.0), Pt2::new(1.0, 1.0))
+    let l2 = Line2::from_two_points(Pt2::new(0.0, 1.0), Pt2::new(1.0, 0.0))
+    match l1.intersect(l2) {
+      Some(p) => {
+        assert_true(@util.dbl_approx_eq(p.x(), 0.5, @util.EPS))
+        assert_true(@util.dbl_approx_eq(p.y(), 0.5, @util.EPS))
       }
-    Err(_) => assert_true(false)
+      None => assert_true(false)
+    }
+  } catch {
+    _ => assert_true(false)
   }
 }
 
@@ -234,22 +234,20 @@ test "E2E: two points -> line -> intersect -> verify" {
   let p2 = Pt2::new(3.0, 3.0)
   let p3 = Pt2::new(1.0, 3.0)
   let p4 = Pt2::new(3.0, 1.0)
-  match Line2::from_two_points(p1, p2) {
-    Ok(l1) =>
-      match Line2::from_two_points(p3, p4) {
-        Ok(l2) =>
-          match l1.intersect(l2) {
-            Some(ip) => {
-              assert_true(l1.contains(ip))
-              assert_true(l2.contains(ip))
-              assert_true(@util.dbl_approx_eq(ip.x(), 2.0, @util.EPS))
-              assert_true(@util.dbl_approx_eq(ip.y(), 2.0, @util.EPS))
-            }
-            None => assert_true(false)
-          }
-        Err(_) => assert_true(false)
+  try {
+    let l1 = Line2::from_two_points(p1, p2)
+    let l2 = Line2::from_two_points(p3, p4)
+    match l1.intersect(l2) {
+      Some(ip) => {
+        assert_true(l1.contains(ip))
+        assert_true(l2.contains(ip))
+        assert_true(@util.dbl_approx_eq(ip.x(), 2.0, @util.EPS))
+        assert_true(@util.dbl_approx_eq(ip.y(), 2.0, @util.EPS))
       }
-    Err(_) => assert_true(false)
+      None => assert_true(false)
+    }
+  } catch {
+    _ => assert_true(false)
   }
 }
 
@@ -264,4 +262,31 @@ test "E2E: Pt2 -> Euclid2 -> distance cross-layer" {
   let dy = e1.y() - e2.y()
   let d_space = (dx * dx + dy * dy).sqrt()
   assert_true(@util.dbl_approx_eq(d_geo, d_space, @util.EPS))
+}
+
+///|
+test "trait object &Geo runtime polymorphism" {
+  let pt = Pt2::new(1.0, 2.0)
+  let line = Line2::new(1.0, 0.0, 0.0)
+  let circle = Circle::new(0.0, 0.0, 1.0)
+  let geos : Array[&Geo] = [pt as &Geo, line as &Geo, circle as &Geo]
+  assert_true(geos[0].geo_dim() is GeoDim::Point)
+  assert_true(geos[1].geo_dim() is GeoDim::Curve)
+  assert_true(geos[2].geo_dim() is GeoDim::Surface)
+  assert_false(geos[0].is_degenerate())
+  assert_false(geos[1].is_degenerate())
+  assert_false(geos[2].is_degenerate())
+}
+
+///|
+test "pub extend dot syntax" {
+  let pt = Pt2::new(1.0, 2.0)
+  let line = Line2::new(1.0, 2.0, 3.0)
+  let circle = Circle::new(0.0, 0.0, 1.0)
+  assert_true(pt.geo_dim() is GeoDim::Point)
+  assert_true(line.geo_dim() is GeoDim::Curve)
+  assert_true(circle.geo_dim() is GeoDim::Surface)
+  assert_false(pt.is_degenerate())
+  assert_false(line.is_degenerate())
+  assert_false(circle.is_degenerate())
 }

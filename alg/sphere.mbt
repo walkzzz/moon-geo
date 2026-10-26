@@ -107,6 +107,9 @@ impl Geo for Sphere with fn is_degenerate(self) {
 }
 
 ///|
+pub extend Sphere with Geo::{geo_dim, is_degenerate}
+
+///|
 /// 2D 圆的幂定理：点 P 对圆 C 的幂 pow = |P - C|² - r²
 pub fn Circle::power(self : Circle, p : Pt2) -> Double {
   let dx = p.x() - self.cx

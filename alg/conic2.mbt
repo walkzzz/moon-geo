@@ -135,3 +135,6 @@ impl Geo for Conic2 with fn is_degenerate(self) {
   @util.dbl_approx_eq(self.b, 0.0, @util.EPS) &&
   @util.dbl_approx_eq(self.c, 0.0, @util.EPS)
 }
+
+///|
+pub extend Conic2 with Geo::{geo_dim, is_degenerate}

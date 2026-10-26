@@ -16,6 +16,8 @@ pub struct Aabb2 {
   max_x : Double
   max_y : Double
 }
+pub fn Aabb2::bv_is_empty(Self) -> Bool
+pub fn Aabb2::bv_volume(Self) -> Double
 pub fn Aabb2::center(Self) -> @alg.Pt2
 pub fn Aabb2::contains(Self, @alg.Pt2) -> Bool
 pub fn Aabb2::from_two_points(@alg.Pt2, @alg.Pt2) -> Self
@@ -35,6 +37,8 @@ pub struct Aabb3 {
   max_y : Double
   max_z : Double
 }
+pub fn Aabb3::bv_is_empty(Self) -> Bool
+pub fn Aabb3::bv_volume(Self) -> Double
 pub fn Aabb3::center(Self) -> @alg.Pt3
 pub fn Aabb3::contains(Self, @alg.Pt3) -> Bool
 pub fn Aabb3::from_two_points(@alg.Pt3, @alg.Pt3) -> Self
@@ -64,6 +68,8 @@ pub struct SphereBv {
   cz : Double
   r : Double
 }
+pub fn SphereBv::bv_is_empty(Self) -> Bool
+pub fn SphereBv::bv_volume(Self) -> Double
 pub fn SphereBv::contains(Self, @alg.Pt3) -> Bool
 pub fn SphereBv::cx(Self) -> Double
 pub fn SphereBv::cy(Self) -> Double
@@ -77,7 +83,7 @@ pub fn SphereBv::union(Self, Self) -> Self
 // Type aliases
 
 // Traits
-pub trait Bv {
+pub(open) trait Bv {
   fn bv_volume(Self) -> Double
   fn bv_is_empty(Self) -> Bool
 }

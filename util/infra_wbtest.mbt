@@ -49,31 +49,32 @@ test "ctx_approx_eq" {
 }
 
 ///|
-test "GeoError construction" {
-  let e1 = GeoError::new(GeoErrorCode::DegenerateInput, "zero length line")
-  assert_true(e1.code is GeoErrorCode::DegenerateInput)
-  let e2 = GeoError::with_context(
-    GeoErrorCode::IntersectFailed,
-    "parallel lines",
-    ["line1", "line2"],
-  )
-  assert_true(e2.context.length() == 2)
-  let e3 = GeoError::with_suggestion(
-    GeoErrorCode::TransformFailed,
-    "singular matrix",
-    "use pseudo-inverse",
-  )
-  assert_true(e3.suggestion is Some(_))
+test "GeoError suberror construction" {
+  let e1 : Error = GeoError::DegenerateInput("zero length line", [])
+  match e1 {
+    GeoError::DegenerateInput(msg, _) => assert_eq(msg, "zero length line")
+    _ => assert_true(false)
+  }
+  let e2 : Error = GeoError::NumericalOverflow("overflow")
+  match e2 {
+    GeoError::NumericalOverflow(msg) => assert_eq(msg, "overflow")
+    _ => assert_true(false)
+  }
+  let e3 : Error = GeoError::IntersectFailed("parallel lines")
+  match e3 {
+    GeoError::IntersectFailed(msg) => assert_eq(msg, "parallel lines")
+    _ => assert_true(false)
+  }
 }
 
 ///|
-test "geo_error_code_str" {
-  assert_eq(
-    geo_error_code_str(GeoErrorCode::DegenerateInput),
-    "DegenerateInput",
-  )
-  assert_eq(geo_error_code_str(GeoErrorCode::IoError), "IoError")
-  assert_eq(geo_error_code_str(GeoErrorCode::Unknown), "Unknown")
+test "GeoError raise and catch" {
+  try {
+    raise GeoError::DegenerateInput("test", ["ctx"])
+    assert_true(false)
+  } catch {
+    _ => assert_true(true)
+  }
 }
 
 ///|

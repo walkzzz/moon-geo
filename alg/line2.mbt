@@ -32,25 +32,19 @@ pub fn Line2::c(self : Line2) -> Double {
 
 ///|
 /// 从两点构造直线
-/// 退化：两点重合时返回 Err(GeoError::DegenerateInput)
-pub fn Line2::from_two_points(
-  p1 : Pt2,
-  p2 : Pt2,
-) -> Result[Line2, @util.GeoError] {
+/// 退化：两点重合时 raise GeoError::DegenerateInput
+pub fn Line2::from_two_points(p1 : Pt2, p2 : Pt2) -> Line2 raise @util.GeoError {
   let a = p1.y() - p2.y()
   let b = p2.x() - p1.x()
   let c = p1.x() * p2.y() - p2.x() * p1.y()
   if @util.dbl_approx_eq(a, 0.0, @util.EPS) &&
     @util.dbl_approx_eq(b, 0.0, @util.EPS) {
-    Err(
-      @util.GeoError::with_context(
-        @util.GeoErrorCode::DegenerateInput,
-        "Line2::from_two_points: two points are coincident",
-        ["p1", "p2"],
-      ),
+    raise @util.GeoError::DegenerateInput(
+      "Line2::from_two_points: two points are coincident",
+      ["p1", "p2"],
     )
   } else {
-    Ok({ a, b, c, })
+    { a, b, c, }
   }
 }
 
@@ -109,3 +103,6 @@ impl Geo for Line2 with fn is_degenerate(self) {
   @util.dbl_approx_eq(self.a, 0.0, @util.EPS) &&
   @util.dbl_approx_eq(self.b, 0.0, @util.EPS)
 }
+
+///|
+pub extend Line2 with Geo::{geo_dim, is_degenerate}

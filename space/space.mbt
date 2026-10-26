@@ -17,7 +17,7 @@ pub enum SpaceKind {
 ///|
 /// Space Trait：统一空间接口
 /// 继承 MetricSpace（有距离）+ Dim（有维度），加空间类型标识
-pub trait Space: @atop.MetricSpace + @atop.Dim {
+pub(open) trait Space: @atop.MetricSpace + @atop.Dim {
   /// 空间类型标识
   fn space_kind(self : Self) -> SpaceKind
 }

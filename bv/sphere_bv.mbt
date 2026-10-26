@@ -102,3 +102,6 @@ impl Bv for SphereBv with fn bv_volume(self) {
 impl Bv for SphereBv with fn bv_is_empty(self) {
   self.r < @util.EPS
 }
+
+///|
+pub extend SphereBv with Bv::{bv_volume, bv_is_empty}

@@ -27,7 +27,9 @@ pub fn Circle::contains_interior(Self, Pt2) -> Bool
 pub fn Circle::cx(Self) -> Double
 pub fn Circle::cy(Self) -> Double
 pub fn Circle::distance_to_point(Self, Pt2) -> Double
-pub fn Circle::from_three_points(Pt2, Pt2, Pt2) -> Result[Self, @util.GeoError]
+pub fn Circle::from_three_points(Pt2, Pt2, Pt2) -> Self raise @util.GeoError
+pub fn Circle::geo_dim(Self) -> GeoDim
+pub fn Circle::is_degenerate(Self) -> Bool
 pub fn Circle::new(Double, Double, Double) -> Self
 pub fn Circle::power(Self, Pt2) -> Double
 pub fn Circle::r(Self) -> Double
@@ -52,6 +54,8 @@ pub fn Conic2::e(Self) -> Double
 pub fn Conic2::eval(Self, Pt2) -> Double
 pub fn Conic2::f(Self) -> Double
 pub fn Conic2::from_circle(Circle) -> Self
+pub fn Conic2::geo_dim(Self) -> GeoDim
+pub fn Conic2::is_degenerate(Self) -> Bool
 pub fn Conic2::new(Double, Double, Double, Double, Double, Double) -> Self
 
 pub enum ConicType {
@@ -79,8 +83,10 @@ pub fn Line2::c(Self) -> Double
 pub fn Line2::contains(Self, Pt2) -> Bool
 pub fn Line2::distance_to_point(Self, Pt2) -> Double
 pub fn Line2::eval(Self, Pt2) -> Double
-pub fn Line2::from_two_points(Pt2, Pt2) -> Result[Self, @util.GeoError]
+pub fn Line2::from_two_points(Pt2, Pt2) -> Self raise @util.GeoError
+pub fn Line2::geo_dim(Self) -> GeoDim
 pub fn Line2::intersect(Self, Self) -> Pt2?
+pub fn Line2::is_degenerate(Self) -> Bool
 pub fn Line2::is_parallel(Self, Self) -> Bool
 pub fn Line2::new(Double, Double, Double) -> Self
 
@@ -97,7 +103,9 @@ pub fn Plane3::contains(Self, Pt3) -> Bool
 pub fn Plane3::d(Self) -> Double
 pub fn Plane3::distance_to_point(Self, Pt3) -> Double
 pub fn Plane3::eval(Self, Pt3) -> Double
-pub fn Plane3::from_three_points(Pt3, Pt3, Pt3) -> Result[Self, @util.GeoError]
+pub fn Plane3::from_three_points(Pt3, Pt3, Pt3) -> Self raise @util.GeoError
+pub fn Plane3::geo_dim(Self) -> GeoDim
+pub fn Plane3::is_degenerate(Self) -> Bool
 pub fn Plane3::new(Double, Double, Double, Double) -> Self
 
 pub struct Pt2 {
@@ -107,6 +115,8 @@ pub struct Pt2 {
 pub fn Pt2::coincident(Self, Self) -> Bool
 pub fn Pt2::distance_to(Self, Self) -> Double
 pub fn Pt2::from_euclid(@space.Euclid2) -> Self
+pub fn Pt2::geo_dim(Self) -> GeoDim
+pub fn Pt2::is_degenerate(Self) -> Bool
 pub fn Pt2::new(Double, Double) -> Self
 pub fn Pt2::to_euclid(Self) -> @space.Euclid2
 pub fn Pt2::x(Self) -> Double
@@ -120,6 +130,8 @@ pub struct Pt3 {
 pub fn Pt3::coincident(Self, Self) -> Bool
 pub fn Pt3::distance_to(Self, Self) -> Double
 pub fn Pt3::from_euclid(@space.Euclid3) -> Self
+pub fn Pt3::geo_dim(Self) -> GeoDim
+pub fn Pt3::is_degenerate(Self) -> Bool
 pub fn Pt3::new(Double, Double, Double) -> Self
 pub fn Pt3::to_euclid(Self) -> @space.Euclid3
 pub fn Pt3::x(Self) -> Double
@@ -141,6 +153,8 @@ pub struct Quad3 {
 pub fn Quad3::contains(Self, Pt3) -> Bool
 pub fn Quad3::eval(Self, Pt3) -> Double
 pub fn Quad3::from_sphere(Sphere) -> Self
+pub fn Quad3::geo_dim(Self) -> GeoDim
+pub fn Quad3::is_degenerate(Self) -> Bool
 pub fn Quad3::new(Double, Double, Double, Double, Double, Double, Double, Double, Double, Double) -> Self
 
 pub enum Quad3Type {
@@ -166,6 +180,8 @@ pub fn Sphere::contains_interior(Self, Pt3) -> Bool
 pub fn Sphere::cx(Self) -> Double
 pub fn Sphere::cy(Self) -> Double
 pub fn Sphere::cz(Self) -> Double
+pub fn Sphere::geo_dim(Self) -> GeoDim
+pub fn Sphere::is_degenerate(Self) -> Bool
 pub fn Sphere::new(Double, Double, Double, Double) -> Self
 pub fn Sphere::power(Self, Pt3) -> Double
 pub fn Sphere::r(Self) -> Double
@@ -200,7 +216,7 @@ pub fn Transform3::translation(Double, Double, Double) -> Self
 // Type aliases
 
 // Traits
-pub trait Geo {
+pub(open) trait Geo {
   fn geo_dim(Self) -> GeoDim
   fn is_degenerate(Self) -> Bool
 }

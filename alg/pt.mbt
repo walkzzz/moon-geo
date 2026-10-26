@@ -124,3 +124,9 @@ impl Geo for Pt3 with fn geo_dim(_) {
 impl Geo for Pt3 with fn is_degenerate(_) {
   false
 }
+
+///|
+pub extend Pt2 with Geo::{geo_dim, is_degenerate}
+
+///|
+pub extend Pt3 with Geo::{geo_dim, is_degenerate}

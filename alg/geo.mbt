@@ -15,7 +15,7 @@ pub enum GeoDim {
 /// 几何图元核心 Trait
 /// 统一所有几何图元的接口：维度 + 退化判定
 /// 后续迭代扩展：area/length/transform/bbox 等
-pub trait Geo {
+pub(open) trait Geo {
   /// 几何维度
   fn geo_dim(self : Self) -> GeoDim
 

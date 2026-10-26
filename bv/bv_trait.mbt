@@ -5,7 +5,7 @@
 
 ///|
 /// 包围体 Trait
-pub trait Bv {
+pub(open) trait Bv {
   /// 体积（2D 为面积，3D 为体积）
   fn bv_volume(self : Self) -> Double
 

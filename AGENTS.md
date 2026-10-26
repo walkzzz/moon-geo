@@ -53,7 +53,7 @@
 4. **开闭统一**：代数给形状，拓扑定开闭，开闭定体面
 5. **不可变原则**：几何/拓扑对象默认不可变，修改操作返回新对象
 6. **公差原则**：所有几何比较使用近似相等，禁止直接 `==` 比较浮点数。提供三层公差：`dbl_approx_eq`（绝对）、`rel_approx_eq`（相对）、`mixed_approx_eq`/`ctx_approx_eq`（混合，推荐默认）。`GeoContext` 封装精度配置（Engineering/Surveying/Game/Custom）。详见 [ADR-003](docs/adr/003-precision-strategy.md)
-7. **错误处理**：可能失败的操作返回 `Result<T, GeoError>` 或 `raise GeoError`，禁止 panic。`GeoError` 含错误码（`GeoErrorCode`）+ 结构化上下文 + 可选恢复建议
+7. **错误处理**：可能失败的操作使用 `raise GeoError`（suberror）+ `try/catch`，禁止 panic。`GeoError` 为 `pub(all) suberror`，每个构造器对应一种错误类型，携带消息和可选上下文，自动提升为 `Error` 支持 `raise`/`catch`/模式匹配
 8. **前后端分离**：后端九层处理纯数学空间的几何/拓扑/代数运算，不感知数据模型/CRS/I/O；前端 `platform/` 层承载数据模型/CRS/格式 I/O，将业务数据拆解为几何对象委托后端计算，再包装回业务数据模型
 9. **时序铁律**：I/O 格式读写不能先于其数据模型和 CRS——先建数据模型（Feature/Layer/Dataset）与 CRS，再建格式 I/O，否则读出无坐标无属性的裸几何是废数据
 

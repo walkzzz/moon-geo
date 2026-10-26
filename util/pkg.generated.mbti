@@ -16,8 +16,6 @@ pub fn dbl_approx_eq(Double, Double, Double) -> Bool
 
 pub fn dbl_approx_zero(Double, Double) -> Bool
 
-pub fn geo_error_code_str(GeoErrorCode) -> String
-
 pub fn log_level_str(LogLevel) -> String
 
 pub fn mixed_approx_eq(Double, Double, Double, Double) -> Bool
@@ -29,6 +27,22 @@ pub(all) suberror CpxError {
   ZeroInverse
   ZeroDivide
 }
+
+pub(all) suberror GeoError {
+  DegenerateInput(String, Array[String])
+  NumericalOverflow(String)
+  NumericalUnderflow(String)
+  NotConverged(String)
+  TopoInconsistent(String)
+  IntersectFailed(String)
+  TransformFailed(String)
+  OutOfBounds(String)
+  IoError(String)
+  FormatError(String)
+  Unsupported(String)
+  Unknown(String)
+} derive(@debug.Debug)
+pub fn GeoError::to_repr(Self) -> @debug.Repr
 
 pub(all) suberror MatError {
   Singular
@@ -73,31 +87,6 @@ pub fn GeoContext::custom(Double, Double) -> Self
 pub fn GeoContext::default() -> Self
 pub fn GeoContext::game() -> Self
 pub fn GeoContext::surveying() -> Self
-
-pub(all) struct GeoError {
-  code : GeoErrorCode
-  message : String
-  context : Array[String]
-  suggestion : String?
-}
-pub fn GeoError::new(GeoErrorCode, String) -> Self
-pub fn GeoError::with_context(GeoErrorCode, String, Array[String]) -> Self
-pub fn GeoError::with_suggestion(GeoErrorCode, String, String) -> Self
-
-pub(all) enum GeoErrorCode {
-  DegenerateInput
-  NumericalOverflow
-  NumericalUnderflow
-  NotConverged
-  TopoInconsistent
-  IntersectFailed
-  TransformFailed
-  OutOfBounds
-  IoError
-  FormatError
-  Unsupported
-  Unknown
-}
 
 pub enum LogLevel {
   Debug

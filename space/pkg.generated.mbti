@@ -22,6 +22,7 @@ pub struct Euclid2 {
   y : Double
 }
 pub fn Euclid2::new(Double, Double) -> Self
+pub fn Euclid2::space_kind(Self) -> SpaceKind
 pub fn Euclid2::x(Self) -> Double
 pub fn Euclid2::y(Self) -> Double
 
@@ -31,6 +32,7 @@ pub struct Euclid3 {
   z : Double
 }
 pub fn Euclid3::new(Double, Double, Double) -> Self
+pub fn Euclid3::space_kind(Self) -> SpaceKind
 pub fn Euclid3::x(Self) -> Double
 pub fn Euclid3::y(Self) -> Double
 pub fn Euclid3::z(Self) -> Double
@@ -53,7 +55,7 @@ pub enum SpaceKind {
 // Type aliases
 
 // Traits
-pub trait Space : @atop.MetricSpace + @atop.Dim {
+pub(open) trait Space : @atop.MetricSpace + @atop.Dim {
   fn space_kind(Self) -> SpaceKind
 }
 

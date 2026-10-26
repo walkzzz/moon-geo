@@ -22,7 +22,7 @@
 - 浮点比较用 `approx_eq`/`dbl_approx_eq`，禁止 `==` 比浮点
 - 命名：大驼峰（类型）、小蛇形（函数/方法/文件）、全大写下划线（常量）
 - 顶层块用 `///|` 分隔
-- 错误返回 `Result<T, GeoError>` 或 `raise GeoError`，禁止 panic
+- 错误使用 `raise GeoError`（suberror）+ `try/catch`，禁止 panic
 - 不可变原则：修改操作返回新对象
 - 依赖铁律：上层只能依赖下层，禁止反向/环依赖
 
