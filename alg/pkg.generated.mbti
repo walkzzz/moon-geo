@@ -25,7 +25,9 @@ pub fn Circle::cy(Self) -> Double
 pub fn Circle::distance_to_point(Self, Pt2) -> Double
 pub fn Circle::from_three_points(Pt2, Pt2, Pt2) -> Self
 pub fn Circle::new(Double, Double, Double) -> Self
+pub fn Circle::power(Self, Pt2) -> Double
 pub fn Circle::r(Self) -> Double
+pub fn Circle::tangent_length(Self, Pt2) -> Double
 
 pub struct Conic2 {
   a : Double
@@ -78,6 +80,22 @@ pub fn Line2::intersect(Self, Self) -> Pt2?
 pub fn Line2::is_parallel(Self, Self) -> Bool
 pub fn Line2::new(Double, Double, Double) -> Self
 
+pub struct Plane3 {
+  a : Double
+  b : Double
+  c : Double
+  d : Double
+}
+pub fn Plane3::a(Self) -> Double
+pub fn Plane3::b(Self) -> Double
+pub fn Plane3::c(Self) -> Double
+pub fn Plane3::contains(Self, Pt3) -> Bool
+pub fn Plane3::d(Self) -> Double
+pub fn Plane3::distance_to_point(Self, Pt3) -> Double
+pub fn Plane3::eval(Self, Pt3) -> Double
+pub fn Plane3::from_three_points(Pt3, Pt3, Pt3) -> Self
+pub fn Plane3::new(Double, Double, Double, Double) -> Self
+
 pub struct Pt2 {
   x : Double
   y : Double
@@ -103,6 +121,53 @@ pub fn Pt3::to_euclid(Self) -> @space.Euclid3
 pub fn Pt3::x(Self) -> Double
 pub fn Pt3::y(Self) -> Double
 pub fn Pt3::z(Self) -> Double
+
+pub struct Quad3 {
+  a : Double
+  b : Double
+  c : Double
+  d : Double
+  e : Double
+  f : Double
+  g : Double
+  h : Double
+  i : Double
+  j : Double
+}
+pub fn Quad3::contains(Self, Pt3) -> Bool
+pub fn Quad3::eval(Self, Pt3) -> Double
+pub fn Quad3::from_sphere(Sphere) -> Self
+pub fn Quad3::new(Double, Double, Double, Double, Double, Double, Double, Double, Double, Double) -> Self
+
+pub enum Quad3Type {
+  Ellipsoid
+  HyperboloidOneSheet
+  HyperboloidTwoSheets
+  EllipticParaboloid
+  HyperbolicParaboloid
+  EllipticCone
+  EllipticCylinder
+  Other
+}
+
+pub struct Sphere {
+  cx : Double
+  cy : Double
+  cz : Double
+  r : Double
+}
+pub fn Sphere::center(Self) -> Pt3
+pub fn Sphere::contains(Self, Pt3) -> Bool
+pub fn Sphere::contains_interior(Self, Pt3) -> Bool
+pub fn Sphere::cx(Self) -> Double
+pub fn Sphere::cy(Self) -> Double
+pub fn Sphere::cz(Self) -> Double
+pub fn Sphere::new(Double, Double, Double, Double) -> Self
+pub fn Sphere::power(Self, Pt3) -> Double
+pub fn Sphere::r(Self) -> Double
+pub fn Sphere::surface_area(Self) -> Double
+pub fn Sphere::tangent_length(Self, Pt3) -> Double
+pub fn Sphere::volume(Self) -> Double
 
 // Type aliases
 
